@@ -28,3 +28,9 @@ data[1:2, ]
 ##2    36     118  8.0   72     5   2
 
 ##The `tail()' function is an easy way to extract the last few elements of an R object.
+
+
+x <- read.csv("specdata/001.csv")
+x[complete.cases(x),]
+
+
