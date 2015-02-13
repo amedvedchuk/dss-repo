@@ -46,5 +46,5 @@ pollutantmean <- function(directory, pollutant, id = 1:332) {
     print(polmean)
     
     polmean
-#   r[complete.cases(r),]     
+    
 }
