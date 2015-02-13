@@ -21,8 +21,11 @@ complete <- function(directory, id = 1:332) {
     
     #   r[complete.cases(r),]   
     cc <- readed3[complete.cases(readed3),]
-    fcc <- factor(cc[["ID"]])
+#     print(cc)
+    fcc <- factor(cc[["ID"]], levels = as.character(id))
+#     print(fcc)
     t <- table(fcc)
+#     print(t)
     res <- data.frame( stack(t)[2], stack(t)[1])
     colnames(res) <- c("id","nobs")
     
