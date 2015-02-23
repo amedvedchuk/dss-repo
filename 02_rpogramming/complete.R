@@ -1,3 +1,7 @@
+
+
+source("readspec.R")
+
 complete <- function(directory, id = 1:332) {
     ## 'directory' is a character vector of length 1 indicating
     ## the location of the CSV files
@@ -14,11 +18,13 @@ complete <- function(directory, id = 1:332) {
     ## number of complete cases
     
     
-    files <- paste(directory, "/" ,formatC(id, width = 3, flag = "0", format = "d"), ".csv", sep = "")
-    print(files)
-    
-    readed3 <- do.call("rbind", lapply(files, read.csv))
-    
+#     files <- paste(directory, "/" ,formatC(id, width = 3, flag = "0", format = "d"), ".csv", sep = "")
+#     print(files)
+#     
+#     readed3 <- do.call("rbind", lapply(files, read.csv))
+  
+  readed3 <- readspec(directory = directory, id = id)
+  
     #   r[complete.cases(r),]   
     cc <- readed3[complete.cases(readed3),]
 #     print(cc)
