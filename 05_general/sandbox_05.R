@@ -55,3 +55,12 @@ predictedSpam = rep("nonspam", dim(testSpam)[1])
 predictedSpam[predictionModel$fitted > 0.5] = "spam"
 
 
+############ Get a measure of uncertainty Get a measure of uncertainty
+## Classification table
+table(predictedSpam, testSpam$type)
+
+## Error rate
+(61 + 458)/(1346 + 458 + 61 + 449)
+
+
+
