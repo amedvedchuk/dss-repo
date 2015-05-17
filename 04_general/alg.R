@@ -37,6 +37,9 @@ par(mfrow = c(2, 5))
 #ll<-lapply(seq(1,10), function(i) qplot(svd1$u[, i],40:1))
 lapply(seq_along(svd1$u[1,]), function(i) plot(svd1$u[, i], 40:1, main = paste("U_col", i), 
                                                xlab = "Value", ylab = "Row", pch = 19))
+# another way to print plots without closure:
+lapply(as.data.frame(svd1$u), plot , 40:1, xlab = "Value", ylab = "Row", pch = 19)
+
 lapply(seq_along(svd1$v[1,]), function(i) plot(svd1$v[, i], main = paste("V_col", i), 
                                                xlab = "Column", ylab = "Value", pch = 19))
 # --------------------------------------
@@ -117,3 +120,8 @@ par(mfrow = c(1, 2))
 plot(svd1$d, xlab = "Column", ylab = "Singular value", pch = 19)
 plot(svd1$d^2/sum(svd1$d^2), xlab = "Column", ylab = "Percent of variance explained",
      pch = 19)
+
+
+
+
+
