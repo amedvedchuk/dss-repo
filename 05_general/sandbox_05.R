@@ -63,4 +63,26 @@ table(predictedSpam, testSpam$type)
 (61 + 458)/(1346 + 458 + 61 + 449)
 
 
+########################  FROM ASSIGNEMENT 1 #######################
+activity <- read.csv(file = "data/activity.csv")
+meanStepsByInterval <- aggregate(steps ~ interval, activity, FUN = mean)
 
+convert interval variable to time for interpreting x axis as time scale
+meanStepsByInterval$time <-  strptime(sprintf("%04d",meanStepsByInterval$interval), format = "%H%M")
+
+plot(x=meanStepsByInterval$time, y=meanStepsByInterval$steps, type="l",
+     main = "Average number of steps by 5-minute interval",
+     xlab = "time of day", 
+     ylab="average steps count")
+
+# g <- ggplot(data = meanStepsByInterval, aes(x = interval, y = steps))
+# p <- g + geom_line() +
+#     labs(title = "Average number of steps by 5-minute interval") + 
+#     xlab("time interval")
+# p
+
+# set locale to English to print weekday names in English.
+Sys.setlocale("LC_ALL","English")
+
+
+##################################################################
