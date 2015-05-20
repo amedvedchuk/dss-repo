@@ -1,0 +1,51 @@
+---
+title: "Reproducible research - assignement 2"
+author: "amedvedchuk"
+date: "Wednesday, May 20, 2015"
+output: html_document
+---
+
+## Synopsis
+
+
+## Data Processing
+
+Download raw Storm data for analysis:
+
+```{r, echo=TRUE}
+
+dataUrl <- "http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
+dataDir <- "data"
+destFile <- paste(dataDir, "/FStormData.bz2", sep="")
+
+if(!file.exists(dataDir)){
+    dir.create(dataDir)
+    if(.Platform$OS.type == "windows"){
+        download.file(dataUrl, destFile)
+    } else {
+        download.file(dataUrl, destFile, method = "wget")
+    }
+}
+
+```
+**NOTE:** Data will be downloaded only once. If you need to do it again just delete `data` folder in working directory.
+
+
+Additional documentation for data can be found here:
+
+[Storm Data Documentation](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf)
+
+[Storm Data FAQ Page](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2FNCDC%20Storm%20Events-FAQ%20Page.pdf)
+
+```{r, echo=TRUE, cache=TRUE}
+rawData <- read.csv(destFile)
+
+```
+
+## Results 
+
+
+```{r, echo=TRUE}
+
+
+```
