@@ -56,28 +56,22 @@ str(rawData)
 
 ```
 
-Select data needed for analysis:
+Select data needed for analysis and see a brief structure of data:
+```{r, echo=TRUE}
+selectedData <- select(rawData, EVTYPE, INJURIES, FATALITIES, PROPDMG, PROPDMGEXP, CROPDMG, CROPDMGEXP, WFO)
+str(selectedData)
+```
+
+Let's look closer to `EVTYPE` variable. In [Storm Data Documentation] described only 48 events (see paragraph 2.1.1 -  Storm Data Event Table).
+But in selected data there are `r length(levels(selectedData$EVTYPE))` different event types.
+Let see all of them for better understanding:
+```{r, echo=TRUE}
+levels(selectedData$EVTYPE)
+```
+
+We will try to resolve this problem for each question further.
 
 ```{r, echo=TRUE}
-
-selectedData <- select(rawData, EVTYPE, INJURIES, FATALITIES, PROPDMG, PROPDMGEXP, CROPDMG, CROPDMGEXP, WFO)
-head(selectedData)
-arrangedByHarm <- selectedData %>% group_by(EVTYPE) %>% summarise(count=n(), health_harms=sum(INJURIES+FATALITIES))  %>% arrange(desc(health_harms))
-head(arrangedByHarm)
-
-topHarmEvt <- arrangedByHarm[1,]
-topHarmEvt
-totalHarms <- sum(arrangedByHarm$health_harms)
-totalHarms
-restHarmEvt <- totalHarms - topHarmEvt$health_harms
-restHarmEvt
-
-
-
-sum(arrangedByHarm$health_harms) - arrangedByHarm$health_harms[1] >= arrangedByHarm$health_harms[1]
-
-ggplot(data = arrangedByHarm[1:10, ], aes(factor(EVTYPE[1:10], levels=EVTYPE[10:1]), health_harms)) + geom_bar(stat =  "identity")  + ylab("Health harm count") + xlab("Event type")+  coord_flip()
-
 
 View(selectedData %>% group_by(PROPDMGEXP) 
      %>% summarise(count=n()) 
@@ -88,8 +82,49 @@ View(selectedData %>% group_by(PROPDMGEXP)
 
 ## Results 
 
+### Addressing question 1
+Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
+
+Let see the aggregation of health harms by event type.
+There is `health_harms` variable introduced. It is calculated as sum of `INJURIES` and `FATALITIES`:
+```{r, echo=TRUE}
+arrangedByHarm <- selectedData %>% group_by(EVTYPE) %>% summarise(count=n(), health_harms=sum(INJURIES+FATALITIES)) %>% arrange(desc(health_harms))
+head(arrangedByHarm)
+```
+
+So TORNADO event seems to be most harmful with `r health_harms=arrangedByHarm[1,]$health_harms`
+But what for event type levels from raw data and declared in documentation? 
+Event type still not mapped and contains much more levels then 48 (declared in Storm Data Documentation):
 
 ```{r, echo=TRUE}
+str(arrangedByHarm)
 
+```
+
+To decide if we need to map levels from data to levels from documentation lets calculate next variables:
+
+```{r, echo=TRUE}
+topHarmEvt <- arrangedByHarm[1,]
+totalHarms <- sum(arrangedByHarm$health_harms)
+restHarmEvt <- totalHarms - topHarmEvt$health_harms
+```
+
+values of variables:
+```{r, echo=TRUE}
+topHarmEvt
+totalHarms
+restHarmEvt
+```
+
+As `topHarmEvt > restHarmEvt` we can conclude that we do not need to map event types to addressing this question because even if we map ALL other events except TORNADO to single type it do not change the result.
+
+So TORNADO  ***************!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+############################## AAAAAAAAAAAAAAAAAAA!!!!!!!!!!!!!!!!!!!!!!!
+There is plural in question!!!!
+
+```{r, echo=TRUE}
+sum(arrangedByHarm$health_harms) - arrangedByHarm$health_harms[1] >= arrangedByHarm$health_harms[1]
+
+ggplot(data = arrangedByHarm[1:10, ], aes(factor(EVTYPE[1:10], levels=EVTYPE[10:1]), health_harms)) + geom_bar(stat =  "identity")  + ylab("Health harm count") + xlab("Event type")+  coord_flip()
 
 ```
