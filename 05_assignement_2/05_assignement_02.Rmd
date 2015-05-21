@@ -10,6 +10,13 @@ output: html_document
 
 ## Data Processing
 
+Load needed libraries:
+
+```{r, echo=TRUE}
+library(dplyr)
+library(ggplot2)
+```
+
 Download raw Storm data for analysis:
 
 ```{r, echo=TRUE}
@@ -37,8 +44,45 @@ Additional documentation for data can be found here:
 
 [Storm Data FAQ Page](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2FNCDC%20Storm%20Events-FAQ%20Page.pdf)
 
+Readin raw data. Please note that operation can take a while due to size.
 ```{r, echo=TRUE, cache=TRUE}
 rawData <- read.csv(destFile)
+
+```
+
+There is high level observation for raw data:
+```{r, echo=TRUE}
+str(rawData)
+
+```
+
+Select data needed for analysis:
+
+```{r, echo=TRUE}
+
+selectedData <- select(rawData, EVTYPE, INJURIES, FATALITIES, PROPDMG, PROPDMGEXP, CROPDMG, CROPDMGEXP, WFO)
+head(selectedData)
+arrangedByHarm <- selectedData %>% group_by(EVTYPE) %>% summarise(count=n(), health_harms=sum(INJURIES+FATALITIES))  %>% arrange(desc(health_harms))
+head(arrangedByHarm)
+
+topHarmEvt <- arrangedByHarm[1,]
+topHarmEvt
+totalHarms <- sum(arrangedByHarm$health_harms)
+totalHarms
+restHarmEvt <- totalHarms - topHarmEvt$health_harms
+restHarmEvt
+
+
+
+sum(arrangedByHarm$health_harms) - arrangedByHarm$health_harms[1] >= arrangedByHarm$health_harms[1]
+
+ggplot(data = arrangedByHarm[1:10, ], aes(factor(EVTYPE[1:10], levels=EVTYPE[10:1]), health_harms)) + geom_bar(stat =  "identity")  + ylab("Health harm count") + xlab("Event type")+  coord_flip()
+
+
+View(selectedData %>% group_by(PROPDMGEXP) 
+     %>% summarise(count=n()) 
+     %>% arrange(desc(count))
+     ,title="quickView1")
 
 ```
 
