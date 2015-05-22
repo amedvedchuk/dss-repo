@@ -72,15 +72,12 @@ Let's look closer to `EVTYPE` variable. In [Storm Data Documentation][1] describ
 But in selected data there are `r length(levels(selectedData$EVTYPE))` different event types.
 We will try to resolve this problem for each question further.
 
-
-## Results 
-
-### Addressing question 1
+## Analysis for question 1
 
 *Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?*
 
-Let's see the aggregation of health harms by event type.
-There is `health_harms` variable introduced. It is calculated as sum of `INJURIES` and `FATALITIES`:
+Population health harm calculated as sum of `INJURIES` and `FATALITIES`.
+There is the ggregation of health harms by event type (with `health_harms` variable introduced):
 ```{r, echo=TRUE}
 arrangedByHarm <- selectedData %>% 
   group_by(EVTYPE) %>% 
@@ -88,6 +85,8 @@ arrangedByHarm <- selectedData %>%
   arrange(desc(health_harms))
 head(arrangedByHarm)
 ```
+
+### Event type exploring
 
 But what for event type levels from raw data and declared in [documentation][1]? 
 Event type still not mapped and contains much more levels then 48:
@@ -110,21 +109,7 @@ topToTotal
 
 As we can see that top `r topHarm` events covers about `r topToTotal*100`% of all harms. So for addressing question 1 it was decided enough to use only these top events.
 
-In next figure you can see the distribution of health harm count by top `r topHarm` event types:
-```{r, echo=TRUE}
-ggplot(data = arrangedByHarm[1:topHarm, ], aes(factor(EVTYPE[1:topHarm], levels=EVTYPE[topHarm:1]), health_harms)) + 
-  geom_bar(stat =  "identity")  + 
-  geom_text(aes(label=round(health_harms,2), hjust=-0.05)) +
-  ylim(0, 110000) +
-  labs(title = "Top 25 most harmful events for public health") +
-  xlab("Event type") +
-  ylab("Health harm count") + 
-  coord_flip()
-
-```
-
-
-### Addressing question 2
+## Analysis for question 2
 
 *Across the United States, which types of events have the greatest economic consequences?*
 
@@ -133,6 +118,8 @@ But these values is not absolute. They should be multiplied by magnitutde (`PROP
 So the total damage in dollars can be calculeted as:
 `TOTAL_DMG = PROPDMG*PROPDMGEXP + CROPDMG*CROPDMGEXP`
 
+### Damage magnitude exploring
+
 Let's analyse `*EXP` columns for understanding magnitute decoding rules. There are all unique values of columns `PROPDMGEXP` and `CROPDMGEXP` transformed to upper case (to reduce count):
 
 ```{r, echo=TRUE}
@@ -140,7 +127,7 @@ expUniqe <- sort(unique(toupper(union(levels(selectedData$PROPDMGEXP), levels(se
 expUniqe
 ```
 
-So magnidude mapping rules are defined as:
+Is is decided to define magnidude mapping rules as follows:
 
 - B = 1000000000
 - M = 1000000
@@ -156,7 +143,7 @@ So magnidude mapping rules are defined as:
 - 8 = 100000000
 - assume that all other values = 1 (for example "0" "+" "?" "-" "", ...)
 
-Function for mapping defuned as follows:
+There is the function for mapping magnitude codes to its values:
 
 ```{r, echo=TRUE}
 mapExp <- function(x) {
@@ -168,6 +155,8 @@ mapExp <- function(x) {
 }
 
 ```
+
+### Damage data transformation and aggregation
 
 Aggregate data by `EVTYPE, toupper(PROPDMGEXP), toupper(CROPDMGEXP)` then filter only thoose records where any damage more than 0 and after that add absolute values for property and crop damage:
 
@@ -211,6 +200,26 @@ topGmgToTotal
 
 As we can see that top `r topDmg` events covers about `r topGmgToTotal*100`% of all damage value. So for addressing question 2 it was decided enough to use only these top events.
 
+
+## Results 
+
+### Addressing question 1
+
+In next figure you can see the distribution of health harm count by top `r topHarm` event types:
+```{r, echo=TRUE}
+ggplot(data = arrangedByHarm[1:topHarm, ], aes(factor(EVTYPE[1:topHarm], levels=EVTYPE[topHarm:1]), health_harms)) + 
+  geom_bar(stat =  "identity")  + 
+  geom_text(aes(label=round(health_harms,2), hjust=-0.05)) +
+  ylim(0, 110000) +
+  labs(title = "Top 25 most harmful events for public health") +
+  xlab("Event type") +
+  ylab("Health harm count") + 
+  coord_flip()
+
+```
+
+
+### Addressing question 2
 
 In next figure you can see the distribution of damage value by top `r topDmg` event types:
 ```{r, echo=TRUE}
