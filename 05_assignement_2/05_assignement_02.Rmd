@@ -1,18 +1,35 @@
 ---
-title: "Reproducible research - assignement 2"
-author: "amedvedchuk"
-date: "Wednesday, May 20, 2015"
+title: "Most harmful weather events for public health and economic in US between 1950 and 2011"
 output: html_document
 ---
 
+
 ## Synopsis
 
+There is an analysis of U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database in time range between 1950 and 2011 years.
+
+The main goal of analysis is to answer two basic questions:
+
+1. Across the United States, which types of events (as indicated in the `EVTYPE` variable) are most harmful with respect to population health?
+2. Across the United States, which types of events have the greatest economic consequences?
+
+
+## Links
+
+Additional documentation for data can be found here:
+
+[1]: https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf "Storm Data Documentation"
+[2]: https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2FNCDC%20Storm%20Events-FAQ%20Page.pdf "Storm Data FAQ"
+
+National Weather Service [Storm Data Documentation][1]
+
+National Climatic Data Center [Storm Data FAQ][2]
 
 ## Data Processing
 
 Load needed libraries:
 
-```{r, echo=TRUE}
+```{r, echo=TRUE, warning=FALSE, message=FALSE}
 library(dplyr)
 library(ggplot2)
 ```
@@ -20,7 +37,6 @@ library(ggplot2)
 Download raw Storm data for analysis:
 
 ```{r, echo=TRUE}
-
 dataUrl <- "http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
 dataDir <- "data"
 destFile <- paste(dataDir, "/FStormData.bz2", sep="")
@@ -33,98 +49,179 @@ if(!file.exists(dataDir)){
         download.file(dataUrl, destFile, method = "wget")
     }
 }
-
 ```
 **NOTE:** Data will be downloaded only once. If you need to do it again just delete `data` folder in working directory.
 
-
-Additional documentation for data can be found here:
-
-[Storm Data Documentation](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf)
-
-[Storm Data FAQ Page](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2FNCDC%20Storm%20Events-FAQ%20Page.pdf)
-
-Readin raw data. Please note that operation can take a while due to size.
+Reading raw data. Please note that operation can take a while due to data size.
 ```{r, echo=TRUE, cache=TRUE}
 rawData <- read.csv(destFile)
-
 ```
 
-There is high level observation for raw data:
+There is a high level observation for raw data:
 ```{r, echo=TRUE}
 str(rawData)
-
 ```
 
 Select data needed for analysis and see a brief structure of data:
 ```{r, echo=TRUE}
-selectedData <- select(rawData, EVTYPE, INJURIES, FATALITIES, PROPDMG, PROPDMGEXP, CROPDMG, CROPDMGEXP, WFO)
+selectedData <- select(rawData, EVTYPE, INJURIES, FATALITIES, PROPDMG, PROPDMGEXP, CROPDMG, CROPDMGEXP)
 str(selectedData)
 ```
 
-Let's look closer to `EVTYPE` variable. In [Storm Data Documentation] described only 48 events (see paragraph 2.1.1 -  Storm Data Event Table).
+Let's look closer to `EVTYPE` variable. In [Storm Data Documentation][1] described only 48 events (see paragraph 2.1.1 -  Storm Data Event Table).
 But in selected data there are `r length(levels(selectedData$EVTYPE))` different event types.
-Let see all of them for better understanding:
-```{r, echo=TRUE}
-levels(selectedData$EVTYPE)
-```
-
 We will try to resolve this problem for each question further.
 
-```{r, echo=TRUE}
-
-View(selectedData %>% group_by(PROPDMGEXP) 
-     %>% summarise(count=n()) 
-     %>% arrange(desc(count))
-     ,title="quickView1")
-
-```
 
 ## Results 
 
 ### Addressing question 1
-Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
 
-Let see the aggregation of health harms by event type.
+*Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?*
+
+Let's see the aggregation of health harms by event type.
 There is `health_harms` variable introduced. It is calculated as sum of `INJURIES` and `FATALITIES`:
 ```{r, echo=TRUE}
-arrangedByHarm <- selectedData %>% group_by(EVTYPE) %>% summarise(count=n(), health_harms=sum(INJURIES+FATALITIES)) %>% arrange(desc(health_harms))
+arrangedByHarm <- selectedData %>% 
+  group_by(EVTYPE) %>% 
+  summarise(count=n(), health_harms=sum(INJURIES+FATALITIES)) %>% 
+  arrange(desc(health_harms))
 head(arrangedByHarm)
 ```
 
-So TORNADO event seems to be most harmful with `r health_harms=arrangedByHarm[1,]$health_harms`
-But what for event type levels from raw data and declared in documentation? 
-Event type still not mapped and contains much more levels then 48 (declared in Storm Data Documentation):
+But what for event type levels from raw data and declared in [documentation][1]? 
+Event type still not mapped and contains much more levels then 48:
 
 ```{r, echo=TRUE}
-str(arrangedByHarm)
+str(arrangedByHarm$EVTYPE)
+```
+
+To decide if we need to map levels from data to levels from documentation lets calculate next variables:
+
+```{r, echo=TRUE}
+topHarm <- 25
+topHarmEvtSum <- sum(arrangedByHarm$health_harms[1:topHarm])
+totalHarmsSum <- sum(arrangedByHarm$health_harms)
+topToTotal <- round(topHarmEvtSum/totalHarmsSum,2)
+topHarmEvtSum
+totalHarmsSum
+topToTotal
+```
+
+As we can see that top `r topHarm` events covers about `r topToTotal*100`% of all harms. So for addressing question 1 it was decided enough to use only these top events.
+
+In next figure you can see the distribution of health harm count by top `r topHarm` event types:
+```{r, echo=TRUE}
+ggplot(data = arrangedByHarm[1:topHarm, ], aes(factor(EVTYPE[1:topHarm], levels=EVTYPE[topHarm:1]), health_harms)) + 
+  geom_bar(stat =  "identity")  + 
+  geom_text(aes(label=round(health_harms,2), hjust=-0.05)) +
+  ylim(0, 110000) +
+  labs(title = "Top 25 most harmful events for public health") +
+  xlab("Event type") +
+  ylab("Health harm count") + 
+  coord_flip()
+
+```
+
+
+### Addressing question 2
+
+*Across the United States, which types of events have the greatest economic consequences?*
+
+Economic consequences will be calculated as sum of property (`PROPDMG`) damage and crop dadamage (`CROPDMG`).
+But these values is not absolute. They should be multiplied by magnitutde (`PROPDMGEXP` and `CROPDMGEXP` respectively).
+So the total damage in dollars can be calculeted as:
+`TOTAL_DMG = PROPDMG*PROPDMGEXP + CROPDMG*CROPDMGEXP`
+
+Let's analyse `*EXP` columns for understanding magnitute decoding rules. There are all unique values of columns `PROPDMGEXP` and `CROPDMGEXP` transformed to upper case (to reduce count):
+
+```{r, echo=TRUE}
+expUniqe <- sort(unique(toupper(union(levels(selectedData$PROPDMGEXP), levels(selectedData$CROPDMGEXP)))), decreasing = T)
+expUniqe
+```
+
+So magnidude mapping rules are defined as:
+
+- B = 1000000000
+- M = 1000000
+- K = 1000
+- H = 100
+- 1 = 10
+- 2 = 100
+- 3 = 1000
+- 4 = 10000
+- 5 = 100000
+- 6 = 1000000
+- 7 = 10000000
+- 8 = 100000000
+- assume that all other values = 1 (for example "0" "+" "?" "-" "", ...)
+
+Function for mapping defuned as follows:
+
+```{r, echo=TRUE}
+mapExp <- function(x) {
+  map <- c("H"=100,"K"=1000, "M"=1000000, "B"=1000000000,
+              "1"=10, "2"=100, "3"=1000, "4"=10000, "5"=100000, "6"=1000000, "7"=10000000, "8"=100000000)
+  y <- map[x]
+  y[is.na(y)] <- 1
+  y 
+}
+
+```
+
+Aggregate data by `EVTYPE, toupper(PROPDMGEXP), toupper(CROPDMGEXP)` then filter only thoose records where any damage more than 0 and after that add absolute values for property and crop damage:
+
+```{r, echo=TRUE}
+aggrDamage <- selectedData %>% 
+  group_by(EVTYPE, 
+           UP_PROPDMGEXP = toupper(PROPDMGEXP), 
+           UP_CROPDMGEXP = toupper(CROPDMGEXP)) %>% 
+  summarise(PROPDMG=sum(PROPDMG), 
+            CROPDMG=sum(CROPDMG), 
+            count=n()) %>%
+  filter(PROPDMG>0 | CROPDMG>0) %>%
+  mutate(ABS_PROPDMG=PROPDMG*mapExp(UP_PROPDMGEXP),
+         ABS_CROPDMG=CROPDMG*mapExp(UP_CROPDMGEXP))
+
+head(aggrDamage)
+````
+
+Calculate total damage by event type in billions of dollars and arrange by `TOT_DMG_BLN` in descending order.
+
+```{r, echo=TRUE}
+totalDmg <- aggrDamage %>% group_by(EVTYPE) %>%
+  summarise(TOT_DMG_BLN = sum(ABS_PROPDMG+ABS_CROPDMG)/1000000000, count=sum(count)) %>%
+  arrange(desc(TOT_DMG_BLN))
+
+head(totalDmg, 10)
 
 ```
 
 To decide if we need to map levels from data to levels from documentation lets calculate next variables:
 
 ```{r, echo=TRUE}
-topHarmEvt <- arrangedByHarm[1,]
-totalHarms <- sum(arrangedByHarm$health_harms)
-restHarmEvt <- totalHarms - topHarmEvt$health_harms
+topDmg <- 25
+topDmgEvtSum <- sum(totalDmg$TOT_DMG_BLN[1:topDmg])
+totalDmgSum <- sum(totalDmg$TOT_DMG_BLN)
+topGmgToTotal <- round(topDmgEvtSum/totalDmgSum,2)
+topDmgEvtSum
+totalDmgSum
+topGmgToTotal
 ```
 
-values of variables:
+As we can see that top `r topDmg` events covers about `r topGmgToTotal*100`% of all damage value. So for addressing question 2 it was decided enough to use only these top events.
+
+
+In next figure you can see the distribution of damage value by top `r topDmg` event types:
 ```{r, echo=TRUE}
-topHarmEvt
-totalHarms
-restHarmEvt
-```
-
-As `topHarmEvt > restHarmEvt` we can conclude that we do not need to map event types to addressing this question because even if we map ALL other events except TORNADO to single type it do not change the result.
-
-So TORNADO  ***************!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
-############################## AAAAAAAAAAAAAAAAAAA!!!!!!!!!!!!!!!!!!!!!!!
-There is plural in question!!!!
-
-```{r, echo=TRUE}
-sum(arrangedByHarm$health_harms) - arrangedByHarm$health_harms[1] >= arrangedByHarm$health_harms[1]
-
-ggplot(data = arrangedByHarm[1:10, ], aes(factor(EVTYPE[1:10], levels=EVTYPE[10:1]), health_harms)) + geom_bar(stat =  "identity")  + ylab("Health harm count") + xlab("Event type")+  coord_flip()
+ggplot(data = totalDmg[1:topDmg, ], aes(factor(EVTYPE[1:topDmg], levels=EVTYPE[topDmg:1]), TOT_DMG_BLN)) + 
+  geom_bar(stat =  "identity")  + 
+  geom_text(aes(label=round(TOT_DMG_BLN,2), hjust=-0.05)) +
+  ylim(0, 170) +
+  labs(title = "Top 25 most harmful events for economic") +
+  xlab("Event type") +
+  ylab("Total damage (billions USD)") + 
+  coord_flip()
 
 ```
+
