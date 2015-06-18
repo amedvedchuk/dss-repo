@@ -1,0 +1,69 @@
+---
+title: "Inferrential statistic"
+author: "Anatoliy Medvedchuk"
+date: "16.06.2015"
+output: html_document
+---
+
+
+
+```{r}
+
+nosim <- 1000
+n <- 40
+lambda <- 0.2
+
+set.seed(1221)
+
+experiments <- matrix(rexp(nosim * n, lambda), nrow = nosim)
+expmeans <- apply(experiments, 1, mean)
+
+# theoretical mean:
+1/lambda
+# sample mean
+sample_mu <- mean(expmeans)
+sample_mu
+
+# theoretical variance
+lambda^-2/n
+# sample variance:
+sample_var <- var(expmeans)
+sample_var
+
+library(ggplot2)
+
+g <- ggplot(data = data.frame(x = expmeans), aes(x = x)) + 
+  geom_histogram(aes(y = ..density..), alpha = .20, colour="black", binwidth=.3) +
+  stat_function(fun = dnorm, args = c(sample_mu, sqrt(sample_var)), colour = "red", size =2)+
+  geom_vline(x = sample_mu, size = 2)
+g
+
+hist(expmeans, freq = F)
+hist(rexp(1000,rate = lambda))
+
+
+dnorm()
+
+
+```
+
+
+```{r, echo=FALSE}
+dat <- data.frame(
+  x = c(apply(matrix(sample(1 : 6, nosim * 10, replace = TRUE), 
+                     nosim), 1, var),
+        apply(matrix(sample(1 : 6, nosim * 20, replace = TRUE), 
+                     nosim), 1, var),
+        apply(matrix(sample(1 : 6, nosim * 30, replace = TRUE), 
+                     nosim), 1, var)
+        ),
+  size = factor(rep(c(10, 20, 30), rep(nosim, 3))))
+g <- ggplot(dat, aes(x = x, fill = size)) + geom_histogram(alpha = .20, binwidth=.3, colour = "black") 
+g <- g + geom_vline(xintercept = 2.92, size = 2)
+g + facet_grid(. ~ size)
+
+
+
+
+```
+
