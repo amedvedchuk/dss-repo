@@ -1,0 +1,76 @@
+---
+title: "Exploring tooth growth of Guinea pigs by supp and dose of vitamin C"
+author: "Anatoliy Medvedchuk"
+date: "16.06.2015"
+output:
+  pdf_document:
+    fig_height: 3
+    fig_width: 6
+  html_document: default
+---
+
+#Overview
+In this report tooth growth of Guinea pigs is compared by supp and dose. Basic exploratory analys performed at firts. Student's test (T test) is used for hypothesis testing. 
+
+#Exploratory analysis
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(ggplot2)    
+```
+
+Load data from ToothGrowth dataset built in R. There is data structure:
+
+```{r, echo=TRUE}
+data(ToothGrowth)
+str(ToothGrowth)
+```
+
+where `len` is tooth length, `dose` is vitamin C dose and `supp` is supplement type (Orange Juice or Vitamin C)
+
+There is exploratory figure where length compared by dose:
+```{r, echo=T}
+ggplot(data = ToothGrowth, aes(factor(dose), len)) + geom_boxplot() +
+    labs(title = "Tooth length by dose") +  xlab("dose")
+```
+
+There is exploratory figure where length compared by dose and supp:
+```{r, echo=T}
+ggplot(data = ToothGrowth, aes(factor(dose), len)) + geom_boxplot(aes(fill=factor(supp)))+
+        labs(title = "Tooth length by dose and supp") +  xlab("dose")
+```
+
+#Hypothesis testing
+
+##Compare length by dose regardless of supp
+- H0: difference between lengths for dose 2.0 and dose 0.5 is equals 0
+- Ha: difference between lengths for dose 2.0 and dose 0.5 is not equals 0
+
+```{r, echo=T}
+dose_20_05 <- ToothGrowth[ToothGrowth$dose %in% c(0.5, 2),]
+t <- t.test(data = dose_20_05, len ~ relevel(factor(dose), ref = 2), var.equal = F, paired = F)
+t
+```
+**Conclusion:**
+H0 should be rejected (t statistic `r t$statistic` is more than 0.95 t-quantile: `r qt(0.95, t$parameter)`). According to confidential interval we can see tooth difference is positive, and it seems that diet with more vitamin C increases tooth length.
+
+##Compare length by supplement type for dose 0.5
+- H0: difference between lengths for dose 0.5 and supp OJ vs VC is equals 0
+- Ha: difference between lengths for dose 0.5 and supp OJ vs VC is not equals 0
+```{r, echo=T}
+supp_dose_05_OJ_VC <- ToothGrowth[ToothGrowth$dose == 0.5,]
+t <- t.test(data = supp_dose_05_OJ_VC, len ~ supp, var.equal = F, paired = F)
+t
+```
+**Conclusion:**
+H0 should be rejected (t statistic `r t$statistic` is more than 0.95 t-quantile: `r qt(0.95, t$parameter)`). According to confidential interval we can see tooth difference is positive, and it seems that supplementary type OJ increases tooth length more than VC for dose 0.5. May be vitamin C provided with orange juice (OJ) in dose 0.5 is assimilates better for pigs.  
+
+##Compare length by supplement type for dose 2.0:
+- H0: difference between lengths for dose 2.0 and supp OJ vs VC is equals 0
+- Ha: difference between lengths for dose 2.0 and supp OJ vs VC is not equals 0
+```{r, echo=T}
+supp_dose_20_OJ_VC <- ToothGrowth[ToothGrowth$dose == 2,]
+t <- t.test(data = supp_dose_20_OJ_VC, len ~ supp, var.equal = F, paired = F)
+t
+```
+**Conclusion:**
+H0 should be confirmed (t statistic `r t$statistic` is less than 0.95 t-quantile: `r qt(0.95, t$parameter)`). According to confidential interval we can see tooth difference is near 0, and it seems that for dose 2.0 supplement type doesn't affect tooth length. So we can assume that after some dose threshold (may be above 1.0) supplement type does not matter. But to prove this there is not enough data.
+
