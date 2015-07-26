@@ -1,0 +1,140 @@
+---
+title: Exploring relationship between transmission and other variables for MPG in
+  mtcars dataset
+author: "Anatoliy Medvedchuk"
+date: "25.07.2015"
+output:
+  pdf_document:
+    fig_height: 2.7
+    fig_width: 6
+  html_document: default
+---
+
+#Overview
+
+This report contains discovering the relationship between a set of predictor variables and miles per gallon (MPG) for `mtcars` dataset using linear regression models. The two basic question of interest are:
+
+1. Is an automatic or manual transmission better for MPG?
+2. Quantify the MPG difference between automatic and manual transmissions
+
+#Exploratory analysis
+
+`mtcars` dataset structure is as follows:
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(datasets)
+data(mtcars)
+
+head(mtcars)
+
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+g <- ggplot(data = mtcars, aes(x = am, y = mpg)) +
+    geom_boxplot(aes(fill = factor(am))) +
+    labs(title = "MPG for manual and automatic transmission")
+g
+```
+
+Additionl exploratory plots you can find in appendix.
+
+#Regression analysis
+
+Lets try to fit simplest model where `mpg ~ am` and print coefficients (according to `?mtcars` transmission type variable is `am` with meaning: 0 - automatic, 1 - mechanic):
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+fit <- lm(mpg~am, mtcars)
+
+#summary(lm(mpg~factor(am), mtcars))
+#summary(lm(mpg~factor(am)+hp+wt, mtcars))
+
+summary(fit)$coefficients
+```
+According to P-value coefficients are statistically signifficant so we should reject null hypotesis (H0: there is no differences between MPG in mechanic and automatic transmission). `Intercept` = `r summary(fit)$coefficients[1,1]` and `am` = `r summary(fit)$coefficients[2,1]`. It means expected value of MPG for mechanic is on `r summary(fit)$coefficients[2,1]` greater than MPG for automatic transmission.
+
+But accourding to r.squared value (`r summary(fit)$r.squared`) only about 36% of variation is explained by relation mpg~am. So there are some other dependencies.
+
+Let's fit additional model with different number of predictors. To compare each next one model to previous one Analysis ov variance is used (ANOVA):
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+
+#plot(mtcars$am, mtcars$mpg)
+#plot(mtcars$hp, mtcars$mpg)
+#plot(mtcars$wt, mtcars$mpg)
+
+#fit0 <- lm(mpg ~ hp, data = mtcars)
+
+fit1 <- lm(mpg ~ am, data = mtcars)
+fit11 <- update(fit1, mpg ~ hp)
+fit2 <- update(fit1, mpg ~ am + hp)
+fit3 <- update(fit1, mpg ~ am + hp + wt)
+fit31 <- update(fit1, mpg ~ hp + wt)
+fit4 <- update(fit1, mpg ~ am + hp + wt + cyl + disp + drat + qsec + vs + gear + carb)
+
+anova(fit1, fit2, fit3, fit4)
+
+# t<-anova(fit1, fit2, fit3, fit4, fit5)
+
+```
+
+From the anova table we can see that residual square sum (RSS) becomes smaller when new variables intoduced as predictors. But for model #4 (including all variables) P-value is too large, so this model can not be statistically significant. So model #3 (mpg ~ am + hp + wt) is most useful model for prediction MPG based on current analysis.
+R squared for third model is `r summary(fit3)$r.squared`, `sigma` = `r summary(fit3)$sigma`, coeficients:
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+summary(fit3)$coefficients
+```
+
+#Summary
+Answers for questions:
+
+1. Manual transmission is better for MPG than automatic according to `mtcars` data sample.
+2. Difference between expected values of MPG for manual and automatic transmission is `r summary(fit)$coefficients[2,1]`
+
+Based on comparing different models with anova method, model `mpg ~ am + hp + wt` was defined as most useful for explaining the data.
+
+#Appendix
+
+## Exploratory plots
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+g <- ggplot(data = mtcars, aes(x = am, y = mpg)) +
+    geom_point(aes(color = factor(am)), size=5) +
+    geom_smooth(method = "lm") +
+    labs(title = "Regression for manual and automatic transmission")
+g
+
+g <- ggplot(data = mtcars, aes(x = hp, y = mpg)) +
+    geom_point(aes(color = factor(am)), size=5) +
+    geom_smooth(data = mtcars[mtcars$am==1,], method = "lm") +
+    geom_smooth(data = mtcars[mtcars$am==0,], method = "lm") +
+    labs(title = "Regression for hp as predictor in context of transmission type")
+g
+
+g <- ggplot(data = mtcars, aes(x = wt, y = mpg)) +
+    geom_point(aes(color = factor(am)), size=5) +
+#     geom_smooth(method = "lm") +
+    geom_smooth(data = mtcars[mtcars$am==1,], method = "lm") +
+    geom_smooth(data = mtcars[mtcars$am==0,], method = "lm") +
+    labs(title = "Regression for wt as predictor in context of transmission type")
+g
+```
+
+## Residual plots
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+
+g <- ggplot(data = mtcars, aes(x = am, y = resid(fit))) +
+    geom_point(size=5, colour="blue", alpha = 0.4) +
+    labs(title = "Residual plot for lm(mpg ~ am)")
+g
+
+g <- ggplot(data = mtcars, aes(x = hp, y = resid(fit3))) +
+    geom_point(size=5, colour="blue", alpha = 0.4) +
+    labs(title = "Residual plot for hp from lm(mpg ~ am + hp + wt)")
+g
+
+g <- ggplot(data = mtcars, aes(x = wt, y = resid(fit3))) +
+    geom_point(size=5, colour="blue", alpha = 0.4) +
+    labs(title = "Residual plot for wt from lm(mpg ~ am + hp + wt)")
+g
+```
+
