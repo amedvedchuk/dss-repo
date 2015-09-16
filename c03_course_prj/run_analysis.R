@@ -20,6 +20,7 @@ template_subjects <- paste(destUnzipFolder, "/UCI HAR Dataset/<subset>/subject_<
 template_x <- paste(destUnzipFolder, "/UCI HAR Dataset/<subset>/X_<subset>.txt", sep="")
 template_y <- paste(destUnzipFolder, "/UCI HAR Dataset/<subset>/y_<subset>.txt", sep="")
 
+## function for downloading data from external source declared in "dataUrl" variable.
 downloadRawData <- function(){
     
     if(!file.exists(dataDir)){
@@ -34,6 +35,8 @@ downloadRawData <- function(){
     
 }
 
+## function for obtaining needed features from whole features list.
+#  uses grep command for features filtering thoose matches "mean" or "std" patterns.
 getNeededFeatures <- function() {
     
     features <- read.delim(file_features, header = FALSE, sep = " ")
@@ -47,7 +50,12 @@ getNeededFeatures <- function() {
     result
 }
 
-
+## function read raw data set and returns.
+# act_labels - labels table - used to map activity indexes to names
+# f_need - list with features indexes and names needed for furthur processing
+# subset - subset identifier; possible values: ["train", "test"]
+# 
+# returns merged subset with subject, action and needed features columns
 readRawDataSubset <- function(act_labels, f_need, subset) {
     
     resolveTemplateToFile <- function(template){
@@ -84,6 +92,8 @@ readRawDataSubset <- function(act_labels, f_need, subset) {
     
 }
 
+# main function for reading and analysing data.
+# return desired data set and also save dataset in file declared in "outputTable" variable
 prepareTidyData <- function(){
     
     downloadRawData()
@@ -97,14 +107,14 @@ prepareTidyData <- function(){
     # merge train and test data
     tidyData <- rbind(res_test, res_train)
     
-    resultData <- ddply(tr_res, .variables = .(subject, activity), colwise(mean))
+    resultData <- ddply(tidyData, .variables = .(subject, activity), colwise(mean))
     #make names human readable
     data_names <- gsub("\\.\\.\\.", ".", names(resultData))
     data_names <- gsub("\\.\\.", "", data_names)
     data_names[-(1:2)] <- paste("MEAN.",data_names[-(1:2)], sep="")
     names(resultData) <- data_names
     
-    write.table(res, file = outputTable, row.name=FALSE)
+    write.table(resultData, file = outputTable, row.name=FALSE)
     print(paste("output data set saved to:", outputTable, " dimensions: ", dim(resultData)[1], dim(resultData)[2]))
     resultData
 }
