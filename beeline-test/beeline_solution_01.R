@@ -46,21 +46,21 @@ exploreData <- function(){
 # analyzeData(beeNoLFactors)
 
 # Naive Bayes    nb - 0.40
-# Linear Discriminant Analysis lda
+# Linear Discriminant Analysis lda - 0.51
 # CART    rpart - 0.66
-#         rpart2 (maxdepth 4, data w/o large factors) - 0.703
-# Boosted Classification Trees    ada
+#         rpart2 (maxdepth 6, data w/o large factors) - 0.7197
+# Boosted Classification Trees    ada   ---- Currently this procedure can not directly handle > 2 class response
 # Support Vector Machines with Linear Kernel    svmLinear
 # Least Squares Support Vector Machine    lssvmLinear
-# Random Forest    rf
+# Random Forest  (mtry = 20)   rf - 0.75
 
 analyzeData <- function(){
     
     library(caret)
     
     set.seed(21121)
-         data <- beeNoLFactors
-#     data <- beeNumsOnly
+#          data <- beeNoLFactors
+    data <- beeNumsOnly
     
     
     data$y <- as.factor(data$y)
@@ -74,15 +74,22 @@ analyzeData <- function(){
     testing = data[-inTrain,]
     dim(training)
 
+
     rm(modelFitAsIs)
 
-    modelFitAsIs <- train(y ~ ., method = "rpart2", data = training, 
-                          trControl = trainControl(method = "cv", verboseIter = T, number = 5)
+# for lda   (just for beeNumOnly)
+#     training <- training[,-2]
+
+    modelFitAsIs <- train(y ~ ., method = "rf", data = training, 
+                          trControl = trainControl(method = "cv", verboseIter = T, number = 3)
 #                           ,preProcess = c("center", "scale")
 #                           ,preProcess = "pca"
-#                           ,tuneGrid = data.frame(fL = 1, usekernel = T)
-                          ,tuneGrid = data.frame(maxdepth = 3:7)
+#                           ,tuneGrid = data.frame(fL = 1, usekernel = T)     # for nb
+#                           ,tuneGrid = data.frame(maxdepth = 3:7)            # for rpart2
+                          ,tuneGrid = data.frame(mtry=20)     # for rf
     )
+
+    
 
     modelFitAsIs
     plot(modelFitAsIs)
@@ -90,6 +97,8 @@ analyzeData <- function(){
   
     predictions <- predict(modelFitAsIs, newdata = na.omit(testing))
     confusionMatrix(predictions, na.omit(testing)$y)
+    length(predictions)
+    dim(testing)
 
 
     ?predict
@@ -116,6 +125,24 @@ analyzeData <- function(){
     11907/14998
 
 } 
+
+test <- function(){
+    final_test <- read.csv("unpacked/test.csv")
+    
+    final_test <- final_test[!(final_test$x14 %in% c("94f7a0566f", "c82fb3b2f7")),]
+    final_test <- final_test[!(final_test$x17 %in% c("ab6738e02f")),]
+    final_test <- final_test[!(final_test$x20 %in% c("d000d40d38")),]
+    
+    
+    final_pred <- predict(modelFitAsIs, newdata = na.omit(final_test))
+    
+    result_df <- data.frame(na.omit(final_test)$ID, final_pred)
+    colnames (result_df)<- c("ID","y")
+    head(result_df, 10)
+    class(result_df$y)
+    
+    write.table(result_df, file = "result.csv", quote = F, col.names = c("ID", "y"), row.names = F)
+}
 
 getRawData()
 beeData <- readData()
