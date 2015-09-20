@@ -52,7 +52,7 @@ exploreData <- function(){
 # Boosted Classification Trees    ada   ---- Currently this procedure can not directly handle > 2 class response
 # Support Vector Machines with Linear Kernel    svmLinear
 # Least Squares Support Vector Machine    lssvmLinear
-# Random Forest  (mtry = 20)   rf - 0.75
+# Random Forest  (mtry = 16, p=0.7, beeAlnum)   rf - 0.7572
 
 analyzeData <- function(){
     
@@ -81,12 +81,12 @@ analyzeData <- function(){
 #     training <- training[,-2]
 
     modelFitAsIs <- train(y ~ ., method = "rf", data = training, 
-                          trControl = trainControl(method = "cv", verboseIter = T, number = 3)
+                          trControl = trainControl(method = "boot", verboseIter = T, number = 3)
 #                           ,preProcess = c("center", "scale")
 #                           ,preProcess = "pca"
 #                           ,tuneGrid = data.frame(fL = 1, usekernel = T)     # for nb
 #                           ,tuneGrid = data.frame(maxdepth = 3:7)            # for rpart2
-                          ,tuneGrid = data.frame(mtry=20)     # for rf
+                          ,tuneGrid = data.frame(mtry=42)     # for rf
     )
 
     
