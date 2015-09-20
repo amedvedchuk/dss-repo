@@ -45,9 +45,10 @@ exploreData <- function(){
 
 # analyzeData(beeNoLFactors)
 
-# Naive Bayes    nb
+# Naive Bayes    nb - 0.40
 # Linear Discriminant Analysis lda
-# CART    rpart
+# CART    rpart - 0.66
+#         rpart2 (maxdepth 4, data w/o large factors) - 0.703
 # Boosted Classification Trees    ada
 # Support Vector Machines with Linear Kernel    svmLinear
 # Least Squares Support Vector Machine    lssvmLinear
@@ -57,24 +58,44 @@ analyzeData <- function(){
     
     library(caret)
     
-    set.seed(2112)
-    #      data <- beeNoLFactors
-    data <- beeNumsOnly
+    set.seed(21121)
+         data <- beeNoLFactors
+#     data <- beeNumsOnly
+    
     
     data$y <- as.factor(data$y)
-    
+#     table(data[,c(1:2,44)])
+
+    # for nb:
+#      data <- data[,-c(1,2)]
+
     inTrain = createDataPartition(y=data$y, p = 0.7, list=F)
     training = data[ inTrain,]
     testing = data[-inTrain,]
     dim(training)
-    
-    modelFitAsIs <- train(y ~ ., method = "nb", data = training, trControl = trainControl(verboseIter = T, number = 5))
+
+    rm(modelFitAsIs)
+
+    modelFitAsIs <- train(y ~ ., method = "rpart2", data = training, 
+                          trControl = trainControl(method = "cv", verboseIter = T, number = 5)
+#                           ,preProcess = c("center", "scale")
+#                           ,preProcess = "pca"
+#                           ,tuneGrid = data.frame(fL = 1, usekernel = T)
+                          ,tuneGrid = data.frame(maxdepth = 3:7)
+    )
+
     modelFitAsIs
+    plot(modelFitAsIs)
     varImp(modelFitAsIs)
   
     predictions <- predict(modelFitAsIs, newdata = na.omit(testing))
+    confusionMatrix(predictions, na.omit(testing)$y)
+
 
     ?predict
+
+    table(training$y)
+    table(testing$y)    
 
     preInt <- as.integer(predictions)
     preInt[preInt<0] <- 0
