@@ -52,7 +52,7 @@ exploreData <- function(){
 # Boosted Classification Trees    ada   ---- Currently this procedure can not directly handle > 2 class response
 # Support Vector Machines with Linear Kernel    svmLinear
 # Least Squares Support Vector Machine    lssvmLinear
-# Random Forest  (mtry = 16, p=0.7, beeAlnum)   rf - 0.7572
+# Random Forest  (mtry = 16, p=0.7, beeAlnum)   rf - 0.7553
 
 analyzeData <- function(){
     
@@ -69,7 +69,7 @@ analyzeData <- function(){
     # for nb:
 #      data <- data[,-c(1,2)]
 
-    inTrain = createDataPartition(y=data$y, p = 0.7, list=F)
+    inTrain = createDataPartition(y=data$y, p = 0.1, list=F)
     training = data[ inTrain,]
     testing = data[-inTrain,]
     dim(training)
@@ -80,13 +80,14 @@ analyzeData <- function(){
 # for lda   (just for beeNumOnly)
 #     training <- training[,-2]
 
-    modelFitAsIs <- train(y ~ ., method = "rf", data = training, 
-                          trControl = trainControl(method = "boot", verboseIter = T, number = 3)
+    modelFitAsIs <- train(y ~ ., method = "AdaBag", data = training, 
+                          trControl = trainControl(method = "cv", verboseIter = T, number = 3)
 #                           ,preProcess = c("center", "scale")
 #                           ,preProcess = "pca"
 #                           ,tuneGrid = data.frame(fL = 1, usekernel = T)     # for nb
 #                           ,tuneGrid = data.frame(maxdepth = 3:7)            # for rpart2
-                          ,tuneGrid = data.frame(mtry=42)     # for rf
+#                           ,tuneGrid = data.frame(mtry=16)     # for rf
+                          ,tuneGrid = data.frame(maxdepth=3:6, mfinal = 50)     # for adaBag
     )
 
     
