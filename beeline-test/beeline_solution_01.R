@@ -159,8 +159,8 @@ test <- function(){
     
     # head(imputed)
     
-#     numsOnlyFinal <- sapply(final_test, is.numeric)
-#     final_test <- final_test[,numsOnlyFinal]
+    numsOnlyFinal <- sapply(final_test, is.numeric)
+    final_test <- final_test[,numsOnlyFinal]
 #     final_test[,2] <- as.numeric(final_test[,2])
 #     final_test <- final_test[,-3]
 #     
@@ -170,9 +170,11 @@ test <- function(){
 #     
     final_test_p <- final_test
     
+    imputed$ID <- final_test[1:1000,]$ID
+    
     final_test <- imputed
     
-    final_pred <- predict(modelFitAsIs, newdata = na.omit(final_test))
+    final_pred <- predict(modelFitAsIs, newdata = final_test)
     head(final_pred)
     length(final_pred)
     
@@ -190,7 +192,7 @@ impute_NA <- function(dtaset){
   result <- dtaset[,numsOnlyFinal]
   # result[,2] <- as.numeric(result[,2])
   
-  result <- result[,-which(names(result) %in% c("x7"))]
+  result <- result[,-which(names(result) %in% c("x7", "ID"))]
   # result <- result[,-1]
   
   print("result dim:")
