@@ -1,69 +1,109 @@
 ---
-title: "Inferrential statistic"
+title: "Exponential distribution investigation according to Central Limit Theorem"
 author: "Anatoliy Medvedchuk"
 date: "16.06.2015"
-output: html_document
+output:
+  pdf_document:
+    fig_height: 3
+    fig_width: 6
+  html_document: default
 ---
 
+#Overview
 
+This report contains comparation of theoretical and simulated mean and variance of distribution of averages of 40 exponentials. Comparsion of exponential distribution probability density and distribution of averages of 40 exponentials reported as well to illustrate the Central Limit Theorem.
 
-```{r}
+#Simulation
 
-nosim <- 1000
-n <- 40
+We will use `lambda = 0.2` and number of exponential samples for mean calculation `n = 40`. Number of sumulation for all cases is `nosim = 1000`.
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(ggplot2)    
 lambda <- 0.2
+n <- 40 
+nosim <- 1000
+```
 
+At first matrix `experiments` with exponential is created with dimentions `r nosim` columns and `r n` rows.
+And then for each row calculate mean and put to result vector `expmean`:
+```{r}
 set.seed(1221)
-
 experiments <- matrix(rexp(nosim * n, lambda), nrow = nosim)
 expmeans <- apply(experiments, 1, mean)
+```
 
-# theoretical mean:
-1/lambda
-# sample mean
+##Sample Mean versus Theoretical Mean
+
+Sample mean can be calculated as follows:
+```{r}
 sample_mu <- mean(expmeans)
 sample_mu
+```
 
-# theoretical variance
-lambda^-2/n
-# sample variance:
-sample_var <- var(expmeans)
-sample_var
+And the theoretical mean of exponential distribution is `1/lambda`:
+```{r}
+theoretical_mu = 1/lambda
+theoretical_mu
+```
 
-library(ggplot2)
+There is the plot with sample and theoretical means:
+
+```{r echo=FALSE}
+mu_legend <- c("theoretical_mu", "sample_mu")
 
 g <- ggplot(data = data.frame(x = expmeans), aes(x = x)) + 
   geom_histogram(aes(y = ..density..), alpha = .20, colour="black", binwidth=.3) +
-  stat_function(fun = dnorm, args = c(sample_mu, sqrt(sample_var)), colour = "red", size =2)+
-  geom_vline(x = sample_mu, size = 2)
+  geom_vline(aes(xintercept=c(theoretical_mu, sample_mu), colour = mu_legend), 
+             show_guide = TRUE, size = 1 ) +
+  labs(title = "Sample mean versus theoretical mean")
 g
 
-hist(expmeans, freq = F)
-hist(rexp(1000,rate = lambda))
+```
 
+So we can conclude that sample mean and theoretical mean is really close and difference = `r theoretical_mu - sample_mu`.
 
-dnorm()
+##Sample Variance versus Theoretical Variance
 
+Sample variance can be calculated as follows:
+```{r}
+sample_var <- var(expmeans)
+sample_var
+```
+
+Theoretical variance is `lambda^-2/n`:
+```{r}
+theoretical_var <- lambda^-2/n
+theoretical_var
+```
+
+So difference between theoretical andsample variances is `r theoretical_var - sample_var`
+
+# Distribution comparsion
+
+There is the probability density histogram for 1000 random variables from exponential distribution with lambda = `r lambda`
+```{r}
+set.seed(1221)
+exp1000 <- rexp(1000,rate = lambda)
+g <- ggplot(data = data.frame(x = exp1000), aes(x = x)) +
+    geom_histogram(aes(y = ..density..), alpha = .20, colour="black", binwidth=2) +
+    labs(title = "Probability density for exponential distribution")
+g
+```
+
+And on the next plot we can see density distribution for means of 40 exponentials with the same lambda:
+
+```{r}
+Legend <- c("sample_mu", "normal distribution")
+
+g <- ggplot(data = data.frame(x = expmeans), aes(x = x)) + 
+    geom_histogram(aes(y = ..density..), alpha = .20, colour="black", binwidth=.3) +
+    geom_vline(aes(xintercept=sample_mu, colour = Legend), show_guide = T, size = 2 )+
+    stat_function(fun = dnorm, args = c(sample_mu, sqrt(sample_var)), aes(colour = Legend[2]), 
+                  show_guide = F, size =2)+
+    labs(title = "Probability density for means of 40 exponentials")
+g
 
 ```
 
+Normal distribution line with parameters `mu = sample_mu` and `sd = sqrt(sample_var)` added to the plot for better visualization of Central Limit Theorem: the arithmetic mean of a sufficiently large number of iterates of independent random variables, each with a well-defined expected value and well-defined variance, will be approximately normally distributed, regardless of the underlying distribution.
 
-```{r, echo=FALSE}
-dat <- data.frame(
-  x = c(apply(matrix(sample(1 : 6, nosim * 10, replace = TRUE), 
-                     nosim), 1, var),
-        apply(matrix(sample(1 : 6, nosim * 20, replace = TRUE), 
-                     nosim), 1, var),
-        apply(matrix(sample(1 : 6, nosim * 30, replace = TRUE), 
-                     nosim), 1, var)
-        ),
-  size = factor(rep(c(10, 20, 30), rep(nosim, 3))))
-g <- ggplot(dat, aes(x = x, fill = size)) + geom_histogram(alpha = .20, binwidth=.3, colour = "black") 
-g <- g + geom_vline(xintercept = 2.92, size = 2)
-g + facet_grid(. ~ size)
-
-
-
-
-```
 

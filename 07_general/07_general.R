@@ -103,7 +103,6 @@ lm(mpg ~I(wt+0), mtcars)
 lm(mpg ~I(wt+1), mtcars)
 
 
-
 #Quizz2 Q9 ====================================================
 fitsl <- lm(mpg~wt, mtcars)
 fititc <- lm(mpg~1, mtcars) # intercept only
@@ -114,4 +113,116 @@ sum(resid(fitsl)^2) / sum(resid(fititc)^2)
 #Quizz2 Q10 ====================================================
 sum(resid(lm(mpg~wt, mtcars)))
 sum(resid(lm(mpg~wt-1, mtcars)))
+
+
+#===============================================================
+#===============================================================
+
+#Quizz3 Q1 ====================================================
+data(mtcars)
+summary(lm(mpg~factor(cyl)+wt, mtcars))
+# ans factor(cyl)8  -6.0709 
+
+#Quizz3 Q2 ====================================================
+summary(lm(mpg~factor(cyl)+wt, mtcars))
+summary(lm(mpg~factor(cyl), mtcars))
+
+#Quizz3 Q3 ====================================================
+lm32_1 <- lm(mpg~factor(cyl)+wt, mtcars)
+lm32_2 <- lm(mpg~factor(cyl)+wt+factor(cyl)*wt, mtcars)
+# lm32_2 <- lm(mpg~factor(cyl)+wt+cyl*wt, mtcars)
+summary(lm32_1)
+summary(lm32_2)
+anova(lm32_1,lm32_2)
+#ans: The P-value is larger than 0.05. So, according to our criterion, we would fail to reject, 
+#    which suggests that the interaction terms may not be necessary. 
+
+#Quizz3 Q4 ====================================================
+lm(mpg ~ I(wt * 0.5) + factor(cyl), data = mtcars)
+lm(mpg ~ factor(cyl) + I(wt * 0.5), data = mtcars)
+# ans: The estimated expected change in MPG per  ton increase in weight for 
+    #a specific number of cylinders (4, 6, 8). 
+
+#Quizz3 Q5 ====================================================
+
+x <- c(0.586, 0.166, -0.042, -0.614, 11.72)
+y <- c(0.549, -0.026, -0.127, -0.751, 1.344)
+lm35 <- lm(y~x)
+hatvalues(lm35)
+?hatvalues
+# ans - 0.9945734
+
+
+#Quizz3 Q6 ====================================================
+x <- c(0.586, 0.166, -0.042, -0.614, 11.72)
+y <- c(0.549, -0.026, -0.127, -0.751, 1.344)
+lm36 <- lm(y~x)
+hatvalues(lm36)
+?dfbeta
+influence.measures(lm36)
+
+
+#===============================================================
+#===============================================================
+
+#Quizz4 Q1 ====================================================
+
+library(MASS)
+?shuttle
+shuttle$useNum[shuttle$use == 'auto'] <- 1
+shuttle$useNum[shuttle$use != 'auto'] <- 0
+tail(shuttle, 100)
+
+logShut <- glm(useNum~wind, shuttle, family = "binomial")
+logShut
+summary(logShut)
+exp(logShut$coef)
+1/exp(logShut$coef)[2]
+
+#Quizz4 Q2 ====================================================
+logShut2 <- glm(useNum~wind+magn, shuttle, family = "binomial")
+logShut2
+summary(logShut2)
+exp(logShut2$coef)
+1/exp(logShut2$coef)[2]
+
+#Quizz4 Q3 ====================================================
+
+glm(useNum~wind, shuttle, family = "binomial")
+glm(1-useNum~wind, shuttle, family = "binomial")
+
+#Quizz4 Q4 ====================================================
+
+data(InsectSprays)
+str(InsectSprays)
+
+poisStray <- glm(count~spray, InsectSprays, family = 'poisson')
+poisStray
+summary(poisStray)
+exp(poisStray$coef)
+1/exp(poisStray$coef)[2]
+
+
+#Quizz4 Q5 ====================================================
+glm(count~spray, InsectSprays, family = 'poisson', offset=log(seq_along(InsectSprays[,1])))$coef
+glm(count~spray, InsectSprays, family = 'poisson', offset=(log(10) + log(seq_along(InsectSprays[,1]))))$coef
+
+seq_along(InsectSprays[,1])
+0.802 - log(10)
+
+#Quizz4 Q5 ====================================================
+
+x <- -5:5
+y <- c(5.12, 3.93, 2.67, 1.87, 0.52, 0.08, 0.93, 2.05, 2.54, 3.87, 4.97)
+plot(x,y)
+knots = c(0);
+splineTerms <- sapply(knots, function(knot) (x > knot)*(x-knot) )
+xMat <- cbind(1, x, splineTerms)
+yhat <- predict(lm(y ~ xMat))
+plot(x, y, frame = FALSE, pch = 21, bg = "lightblue", cex = 2)
+lines(x, yhat, col = "red", lwd = 2)
+
+lm(y ~ xMat)
+
+http://rstudio-pubs-static.s3.amazonaws.com/31791_aed7e217745248f2b174e26a3e774c8c.html
 
