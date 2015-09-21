@@ -70,6 +70,7 @@ analyzeData <- function(){
     # data <- beeNoLFactors
     # data <- beeNumsOnly
     data <- impute_NA(beeData)
+    data$y <- beeData$y
 
 #         
 #     dataNA <- data[!complete.cases(data),]
@@ -86,7 +87,7 @@ analyzeData <- function(){
     # for nb:
 #      data <- data[,-c(1,2)]
 
-    inTrain = createDataPartition(y=data$y, p = 1, list=F)
+    inTrain = createDataPartition(y=data$y, p = 0.1, list=F)
     training = data[ inTrain,]
     testing = data[-inTrain,]
     dim(training)
