@@ -39,7 +39,8 @@ exploreData <- function(){
     numsOnly <- sapply(beeData, is.numeric)
     beeNumsOnly <- beeData[,numsOnly]
     
-    
+    summary(beeData)
+    beeNA <- beeData[!complete.cases(beeData),]
     
 }
 
@@ -64,6 +65,13 @@ analyzeData <- function(){
 #          data <- beeNoLFactors
     data <- beeNumsOnly
     
+    dataNA <- data[!complete.cases(data),]
+    
+    dataOnly <- data[,-length(data)]
+    
+    preObj <- preProcess(dataOnly, method = "knnImpute")
+    data <- predict(preObj, dataOnly)
+    
     
     data$y <- as.factor(data$y)
 #     table(data[,c(1:2,44)])
@@ -71,7 +79,7 @@ analyzeData <- function(){
     # for nb:
 #      data <- data[,-c(1,2)]
 
-    inTrain = createDataPartition(y=data$y, p = 0.7, list=F)
+    inTrain = createDataPartition(y=data$y, p = 0.1, list=F)
     training = data[ inTrain,]
     testing = data[-inTrain,]
     dim(training)
@@ -82,13 +90,14 @@ analyzeData <- function(){
 # for lda   (just for beeNumOnly)
 #     training <- training[,-2]
 
-    modelFitAsIs <- train(y ~ ., method = "AdaBoost.M1", data = training, 
+    modelFitAsIs <- train(y ~ ., method = "rf", data = training, 
                           trControl = trainControl(method = "cv", verboseIter = T, number = 3)
 #                           ,preProcess = c("center", "scale")
+                          ,preProcess = "knnImpute"
 #                           ,preProcess = "pca"
 #                           ,tuneGrid = data.frame(fL = 1, usekernel = T)     # for nb
 #                           ,tuneGrid = data.frame(maxdepth = 3:7)            # for rpart2
-#                           ,tuneGrid = data.frame(mtry=16)     # for rf
+                          ,tuneGrid = data.frame(mtry=19)     # for rf
 #                           ,tuneGrid = data.frame(maxdepth=7, mfinal = c(50,100,150))     # for adaBag
     )
 
@@ -144,7 +153,7 @@ test <- function(){
     head(result_df, 10)
     class(result_df$y)
     
-    write.table(result_df, file = "result.csv", quote = F, col.names = c("ID", "y"), row.names = F)
+    write.table(result_df, file = "result.csv", quote = F, col.names = c("ID", "y"), row.names = F, sep = ",")
 }
 
 getRawData()
