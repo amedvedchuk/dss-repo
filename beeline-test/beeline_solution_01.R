@@ -148,12 +148,14 @@ analyzeData <- function(){
 
 test <- function(){
     final_test <- read.csv("unpacked/test.csv")
+
     
 #     final_test <- final_test[!(final_test$x14 %in% c("94f7a0566f", "c82fb3b2f7")),]
 #     final_test <- final_test[!(final_test$x17 %in% c("ab6738e02f")),]
 #     final_test <- final_test[!(final_test$x20 %in% c("d000d40d38")),]
     
     imputed <- impute_NA(final_test[1:1000,])
+    
     # head(imputed)
     
 #     numsOnlyFinal <- sapply(final_test, is.numeric)
@@ -185,8 +187,9 @@ test <- function(){
 impute_NA <- function(dtaset){
   numsOnlyFinal <- sapply(dtaset, is.numeric)
   result <- dtaset[,numsOnlyFinal]
-  result[,2] <- as.numeric(result[,2])
-  result <- result[,-3]
+  # result[,2] <- as.numeric(result[,2])
+  
+  result <- result[,-which(names(result) %in% c("x7"))]
   # result <- result[,-1]
   
   print("result dim:")
