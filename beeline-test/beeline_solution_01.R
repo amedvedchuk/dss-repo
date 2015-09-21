@@ -62,15 +62,22 @@ analyzeData <- function(){
     library(caret)
     
     set.seed(21121)
-#          data <- beeNoLFactors
-    data <- beeNumsOnly
+
+    # imputeMethod <- "medianImpute"
+    imputeMethod <- "knnImpute"
     
-    dataNA <- data[!complete.cases(data),]
     
-    dataOnly <- data[,-length(data)]
+    # data <- beeNoLFactors
+    # data <- beeNumsOnly
+    data <- impute_NA(beeData)
+
+#         
+#     dataNA <- data[!complete.cases(data),]
+#     dataOnly <- data[,-length(data)]
+#     preObj <- preProcess(dataOnly, method = imputeMethod)
+#     data <- predict(preObj, data)
     
-    preObj <- preProcess(dataOnly, method = "knnImpute")
-    data <- predict(preObj, dataOnly)
+    
     
     
     data$y <- as.factor(data$y)
@@ -79,10 +86,11 @@ analyzeData <- function(){
     # for nb:
 #      data <- data[,-c(1,2)]
 
-    inTrain = createDataPartition(y=data$y, p = 0.1, list=F)
+    inTrain = createDataPartition(y=data$y, p = 1, list=F)
     training = data[ inTrain,]
     testing = data[-inTrain,]
     dim(training)
+    dim(testing)
 
 
     rm(modelFitAsIs)
@@ -93,7 +101,7 @@ analyzeData <- function(){
     modelFitAsIs <- train(y ~ ., method = "rf", data = training, 
                           trControl = trainControl(method = "cv", verboseIter = T, number = 3)
 #                           ,preProcess = c("center", "scale")
-                          ,preProcess = "knnImpute"
+                          # ,preProcess = imputeMethod
 #                           ,preProcess = "pca"
 #                           ,tuneGrid = data.frame(fL = 1, usekernel = T)     # for nb
 #                           ,tuneGrid = data.frame(maxdepth = 3:7)            # for rpart2
@@ -141,19 +149,56 @@ analyzeData <- function(){
 test <- function(){
     final_test <- read.csv("unpacked/test.csv")
     
-    final_test <- final_test[!(final_test$x14 %in% c("94f7a0566f", "c82fb3b2f7")),]
-    final_test <- final_test[!(final_test$x17 %in% c("ab6738e02f")),]
-    final_test <- final_test[!(final_test$x20 %in% c("d000d40d38")),]
+#     final_test <- final_test[!(final_test$x14 %in% c("94f7a0566f", "c82fb3b2f7")),]
+#     final_test <- final_test[!(final_test$x17 %in% c("ab6738e02f")),]
+#     final_test <- final_test[!(final_test$x20 %in% c("d000d40d38")),]
     
+    imputed <- impute_NA(final_test[1:1000,])
+    # head(imputed)
+    
+#     numsOnlyFinal <- sapply(final_test, is.numeric)
+#     final_test <- final_test[,numsOnlyFinal]
+#     final_test[,2] <- as.numeric(final_test[,2])
+#     final_test <- final_test[,-3]
+#     
+#     preObj <- preProcess(final_test, method = imputeMethod)
+#     final_test <- predict(preObj, final_test)
+#     dataNA <- final_test[!complete.cases(final_test),]
+#     
+    final_test_p <- final_test
+    
+    final_test <- imputed
     
     final_pred <- predict(modelFitAsIs, newdata = na.omit(final_test))
+    head(final_pred)
+    length(final_pred)
     
     result_df <- data.frame(na.omit(final_test)$ID, final_pred)
     colnames (result_df)<- c("ID","y")
     head(result_df, 10)
     class(result_df$y)
     
-    write.table(result_df, file = "result.csv", quote = F, col.names = c("ID", "y"), row.names = F, sep = ",")
+    write.table(result_df, file = paste("result",format(Sys.time(), "%y%m%d_%H%M"), ".csv", sep=""), quote = F, col.names = c("ID", "y"), row.names = F, sep = ",")
+    
+}
+
+impute_NA <- function(dtaset){
+  numsOnlyFinal <- sapply(dtaset, is.numeric)
+  result <- dtaset[,numsOnlyFinal]
+  result[,2] <- as.numeric(result[,2])
+  result <- result[,-3]
+  # result <- result[,-1]
+  
+  print("result dim:")
+  print(dim(result))
+  
+  print("start preprocess with predict...")
+  preObj <- preProcess(result, method = imputeMethod)
+  result <- predict(preObj, result)
+  NAs <- result[!complete.cases(result),]
+  print("Nas dataset dim:")
+  print(dim(NAs))
+  result
 }
 
 getRawData()
