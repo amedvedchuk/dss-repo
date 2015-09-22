@@ -154,7 +154,10 @@ test <- function(){
     #     final_test <- final_test[!(final_test$x17 %in% c("ab6738e02f")),]
     #     final_test <- final_test[!(final_test$x20 %in% c("d000d40d38")),]
     
-    print("prediction...")
+    print(sprintf("prediction on model [%s] with Estimated Accuracy = %f ..."
+                  , modelFitAsIs$modelInfo$label
+                  , modelFitAsIs$results$Accuracy))
+    
     final_pred <- predict(modelFitAsIs, newdata = final_test)
     print(head(final_pred))
     print(length(final_pred))
@@ -163,7 +166,7 @@ test <- function(){
     head(result_df, 10)
     
     #write predictions
-    file_prefix <- paste("result",format(Sys.time(), "%y%m%d_%H%M"), sep="")
+    file_prefix <- paste("result",format(Sys.time(), "%y%m%d_%H%M"),"_EA", round(modelFitAsIs$results$Accuracy, 5), sep="")
     print(paste("write result with file prefix:",file_prefix))
     
     write.table(result_df, 
@@ -226,3 +229,4 @@ preprocessColumns <- function(dataset, numonly=TRUE, delCol=c()){
 
 # getRawData()
 # beeData <- readData()
+# 76.36
