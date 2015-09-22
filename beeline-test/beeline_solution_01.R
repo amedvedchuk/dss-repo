@@ -66,10 +66,8 @@ analyzeData <- function(){
     
     set.seed(21121)
 
-    desc <- "description: \n"
-    
-    # imputeMethod <- "medianImpute"
-    imputeMethod <- "knnImpute"
+    imputeMethod <- "medianImpute"
+    # imputeMethod <- "knnImpute"
     
     
     # data <- beeNoLFactors
@@ -92,7 +90,7 @@ analyzeData <- function(){
     # for nb:
 #      data <- data[,-c(1,2)]
 
-    inTrain = createDataPartition(y=data$y, p = 1, list=F)
+    inTrain = createDataPartition(y=data$y, p = 0.8, list=F)
     training = data[ inTrain,]
     testing = data[-inTrain,]
     dim(training)
@@ -151,17 +149,18 @@ test <- function(){
 #     final_test <- final_test[!(final_test$x17 %in% c("ab6738e02f")),]
 #     final_test <- final_test[!(final_test$x20 %in% c("d000d40d38")),]
     
-    imputed <- impute_NA(final_test)
-    imputed$ID <- final_test$ID
+    # imputed <- impute_NA(final_test)
+    # imputed$ID <- final_test$ID
     
         
     # head(imputed)
     
-#     numsOnlyFinal <- sapply(final_test, is.numeric)
-#     final_test <- final_test[,numsOnlyFinal]
+    numsOnlyFinal <- sapply(final_test, is.numeric)
+    final_test <- final_test[,numsOnlyFinal]
+    final_test <- final_test[,-which(names(final_test) %in% c("x7"))]
 
     
-    final_test <- imputed
+    # final_test <- imputed
     
     final_pred <- predict(modelFitAsIs, newdata = final_test)
     head(final_pred)
@@ -173,9 +172,19 @@ test <- function(){
     head(result_df, 10)
     class(result_df$y)
     
-    write.table(result_df, file = paste("result",format(Sys.time(), "%y%m%d_%H%M"), ".csv", sep=""), quote = F, col.names = c("ID", "y"), row.names = F, sep = ",")
-    desc <- paste(sep=" | ", capture.output(dim(training)), capture.output(dim(testing)), imputeMethod, capture.output(modelFitAsIs))
-    desc    
+    #write predictions
+    file_prefix <- paste("result",format(Sys.time(), "%y%m%d_%H%M"), sep="")
+    write.table(result_df, 
+                file = paste(file_prefix, ".csv", sep=""), 
+                quote = F, col.names = c("ID", "y"), row.names = F, sep = ",")
+    desc <- paste(sep=" | ", "description: ",
+                  capture.output(dim(training)), 
+                  capture.output(dim(testing)), 
+                  imputeMethod, 
+                  capture.output(modelFitAsIs), 
+                  capture.output(dim(final_test)))
+    desc
+    write(desc, file=paste(file_prefix, ".description", sep=""))
 }
 
 impute_NA <- function(dtaset){
