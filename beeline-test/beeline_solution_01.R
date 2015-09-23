@@ -60,6 +60,7 @@ exploreData <- function(){
 # Support Vector Machines with Linear Kernel    svmLinear
 # Least Squares Support Vector Machine    lssvmLinear
 # Random Forest  (mtry = 16, p=0.7, beeAlnum)   rf - 0.7553
+# amdai - 0.5012
 trainModel <- function(){
     
     
@@ -83,6 +84,12 @@ trainModel <- function(){
     #     data <- predict(preObj, data)
     
     
+    library(doParallel)
+    cl <- makeCluster(5, type='PSOCK')
+    registerDoParallel(cl)
+    
+    registerDoSEQ()
+    
     
     
     #     table(data[,c(1:2,44)])
@@ -90,19 +97,26 @@ trainModel <- function(){
     # for nb:
     #      data <- data[,-c(1,2)]
     
-    inTrain = createDataPartition(y=data$y, p = 0.8, list=F)
+    inTrain = createDataPartition(y=data$y, p = 0.1, list=F)
     training = data[ inTrain,]
     testing = data[-inTrain,]
     dim(training)
     dim(testing)
     
     
+#     library(snow)
+#     cl<-makeCluster(4,type="SOCK")
+#     stopCluster(cl)    
+    
+    
+    
+
     rm(modelFitAsIs)
     
     # for lda   (just for beeNumOnly)
     #     training <- training[,-2]
     
-    modelFitAsIs <<- train(y ~ ., method = "amdai", data = training, 
+    modelFitAsIs <<- train(y ~ ., method = "ORFlog", data = training, 
                           trControl = trainControl(method = "cv", verboseIter = T
                                                    , number = 5
                                                    )
@@ -112,6 +126,7 @@ trainModel <- function(){
                           # ,tuneGrid = data.frame(fL = 1, usekernel = T)     # for nb
                           # ,tuneGrid = data.frame(maxdepth = 3:7)            # for rpart2
 #                           ,tuneGrid = data.frame(mtry=18)     # for rf
+                           ,tuneGrid = data.frame(mtry=5)     # for rf
 #                           ,tuneGrid = data.frame(maxdepth=9, mfinal = 150)     # for adaBag
     )
     
