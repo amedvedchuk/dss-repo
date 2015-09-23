@@ -90,7 +90,7 @@ trainModel <- function(){
     # for nb:
     #      data <- data[,-c(1,2)]
     
-    inTrain = createDataPartition(y=data$y, p = 0.1, list=F)
+    inTrain = createDataPartition(y=data$y, p = 1, list=F)
     training = data[ inTrain,]
     testing = data[-inTrain,]
     dim(training)
@@ -104,7 +104,7 @@ trainModel <- function(){
     
     modelFitAsIs <<- train(y ~ ., method = "AdaBag", data = training, 
                           trControl = trainControl(method = "cv", verboseIter = T
-                                                   , number = 5, repeats = 1
+                                                   , number = 5
                                                    )
                           # ,preProcess = c("center", "scale")
                           # ,preProcess = imputeMethod
@@ -112,7 +112,7 @@ trainModel <- function(){
                           # ,tuneGrid = data.frame(fL = 1, usekernel = T)     # for nb
                           # ,tuneGrid = data.frame(maxdepth = 3:7)            # for rpart2
 #                           ,tuneGrid = data.frame(mtry=18)     # for rf
-                          ,tuneGrid = data.frame(maxdepth=8:11, mfinal = c(150))     # for adaBag
+                          ,tuneGrid = data.frame(maxdepth=9, mfinal = 150)     # for adaBag
     )
     
     
