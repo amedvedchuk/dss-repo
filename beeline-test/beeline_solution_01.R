@@ -85,7 +85,7 @@ trainModel <- function(){
     
     
     library(doParallel)
-    cl <- makeCluster(5, type='PSOCK')
+    cl <- makeCluster(2, type='PSOCK')
     registerDoParallel(cl)
     
     registerDoSEQ()
@@ -97,7 +97,7 @@ trainModel <- function(){
     # for nb:
     #      data <- data[,-c(1,2)]
     
-    inTrain = createDataPartition(y=data$y, p = 0.1, list=F)
+    inTrain = createDataPartition(y=data$y, p = 0.5, list=F)
     training = data[ inTrain,]
     testing = data[-inTrain,]
     dim(training)
@@ -116,7 +116,8 @@ trainModel <- function(){
     # for lda   (just for beeNumOnly)
     #     training <- training[,-2]
     
-    modelFitAsIs <<- train(y ~ ., method = "ORFlog", data = training, 
+
+    modelFitAsIs <<- train(y ~ ., method = "rf", data = training, 
                           trControl = trainControl(method = "cv", verboseIter = T
                                                    , number = 5
                                                    )
@@ -126,15 +127,21 @@ trainModel <- function(){
                           # ,tuneGrid = data.frame(fL = 1, usekernel = T)     # for nb
                           # ,tuneGrid = data.frame(maxdepth = 3:7)            # for rpart2
 #                           ,tuneGrid = data.frame(mtry=18)     # for rf
-                           ,tuneGrid = data.frame(mtry=5)     # for rf
+                           ,tuneGrid = data.frame(mtry=18)     # for rf
+ ,prox = T
 #                           ,tuneGrid = data.frame(maxdepth=9, mfinal = 150)     # for adaBag
     )
     
     
     modelFitAsIs
     plot(modelFitAsIs)
-    varImp(modelFitAsIs)
+    vi <- varImp(modelFitAsIs)
+
+# idea 0.
+#     training <- data.frame(training[, order(vi$importance$Overall, decreasing = T)[1:20]], y=training$y)
     
+        
+
     predictions <- predict(modelFitAsIs, newdata = na.omit(testing))
     confusionMatrix(predictions, na.omit(testing)$y)
     length(predictions)
