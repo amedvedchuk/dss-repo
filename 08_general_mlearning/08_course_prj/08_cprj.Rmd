@@ -1,0 +1,157 @@
+---
+title: "Machine learning practice on Human Activity Recognition dataset"
+author: "amedvedchuk"
+date: "Thursday, September 22, 2015"
+output: html_document
+---
+
+# Ovewrview
+
+The goal of this report is practical machine learning algorithm experiene obtaining on Human Activity Recognision (HAR) dataset. This dataset contains data from on-body sensors during execution of some exercises by subjects.
+
+The question: Predict the manner in which subjects did the exercise. This is the "classe" variable in the training set.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(caret)
+
+```
+
+# Data retrieaving and reading
+
+The training data for this project are available here: 
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+
+The test data are available here: 
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+
+The data for this project come from this source: http://groupware.les.inf.puc-rio.br/har.
+
+```{r, echo=FALSE}
+if(!file.exists("pml-training.csv")){
+    download.file(url = "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv", destfile = "pml-training.csv")
+    }
+
+if(!file.exists("pml-testing.csv")){
+    download.file(url = "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv", destfile = "pml-testing.csv")
+    }
+```
+
+```{r, echo=TRUE}
+pml_training <- read.csv("pml-training.csv")
+pml_testing <- read.csv("pml-testing.csv")
+dim(pml_training)
+dim(pml_testing)
+```
+
+
+#Exploratory analysis
+
+There is the structure of the training data:
+```{r, echo=TRUE}
+str(pml_training)
+tail(pml_training$X)
+
+```
+
+From this point we can make next conclusions:
+ 
+ - Variables `X`, `user_name`, `raw_timestamp_part_1`, `raw_timestamp_part_2`, `cvtd_timestamp`, `new_window`, `num_window` are technical variables need for data set navigation and should be excluded from prediction.
+ - Some of the variables are dependend variables from basic variables. These names cntains names of mathematical and statistical operations such as `sum`, `avg`, `min`, `max`, `var` and so on. It was decided to excude these variabled form prediction model to reduce time for model caclulation.
+
+
+Resulting training set has next structre: 
+```{r, echo=FALSE}
+
+pml_training <- pml_training[,-grep("min|max|var|avg|stddev|amplitude|kurtosis|skewness", names(pml_training))]
+pml_training <- pml_training[,-grep("X|raw_timestamp_part_1|raw_timestamp_part_2|num_window|new_window|cvtd_timestamp|user_name", names(pml_training))]
+
+str(pml_training)
+
+
+# column X can be deleted as well because its just identifier
+# tail(pml_training$X)
+# pml_training <- preprocessColumns(pml_training, numonly = F, delCol = c("X", "raw_timestamp_part_1","raw_timestamp_part_2","num_window" ))
+# pml_training <- preprocessColumns(pml_training, numonly = F, delCol = c("user_name", "cvtd_timestamp", "new_window" ))
+
+
+# sapply(pml_training, function(x){str(all(is.na(x)))})
+# all(is.na(pml_training$min_yaw_arm))
+
+# pml_factors <- pml_training[, sapply(pml_training, is.factor)]
+# str(pml_factors)
+# 
+# pml_factors <- preprocessColumns(pml_factors, numonly = F, delCol = c("user_name", "cvtd_timestamp", "new_window", "classe" ))
+# pml_factors <- data.frame(lapply(pml_factors, function(x){as.numeric(as.character(x))}))
+# 
+# pml_training <- data.frame(classe = pml_training$classe, pml_training[, !sapply(pml_training, is.factor)], pml_factors)
+
+
+```
+
+So due to exploratory analysis we reduces numer of variables from **160** to **r length(pml_training)`**
+
+
+#Model training and error estimate
+
+For model training `caret` package was used.
+
+Train dataset was splitted into two additional partitions: `training` - for model learning (proportion 0.8) and `testing` - for model validation (proportion 0.2)
+
+```{r, echo=TRUE}
+
+# split into training and testing for valudation
+inTrain = createDataPartition(y=pml_training$classe, p = 0.8, list=F)
+training = pml_training[ inTrain,]
+testing = pml_training[-inTrain,]
+dim(training)
+dim(testing)
+
+```
+
+Learning process was divided into two prats: 
+
+1. Estimate variable importance with some fast classification algorithm and reduce number of variables.
+2. Run Rundom Forest (which take much more time) algorithm on reduced dataset.
+
+## Use tree prediction to estimate variable importanse
+
+It was decided to use Classification And Regression Tree (CART) algorithm for estimating most important variables.
+In `caret` package this algorithm implemented as `method = "rpart2"`. It was also explored that best acuracy acheived when `mtry = 24`. As a validation method 5-fold `cv` is used.
+
+```{r, echo=TRUE, cache=TRUE}
+set.seed(1221)
+fit1 <- train(classe ~ ., method = "rpart2", data = training, 
+              trControl = trainControl(method = "cv", number = 5  )
+              ,tuneGrid = data.frame(maxdepth =24 ))
+fit1
+fit1$results$Accuracy
+```
+
+So the acuracy of `rpart2` method is `r fit1$results$Accuracy` (without validation on `testing` dataset).
+
+It was decided to use only thoose variables where importance > 0 to reduce time of calculation. So final `training` dataset structure will be as follow:
+
+```{r, echo=TRUE, cache=TRUE}
+vi <- varImp(fit1)
+training <- data.frame(training[, vi$importance$Overall>0])
+str(training)
+```
+
+So due to feature selection we reduces numer of variables to **r length(pml_training)`**
+
+## Model training with Rundom Forests algorithm
+
+Random Forest algorithm implemeted in `caret` package with `method = "rf"`. It was used with 5-fold cross validation and `mtry = 9` (estimated during analysis)
+
+```{r, echo=TRUE, cache=TRUE}
+
+fit2 <- train(classe ~ ., method = "rf", data = training, 
+              trControl = trainControl(method = "cv", number = 5  )
+              ,tuneGrid = data.frame(mtry=9))
+fit2
+
+confusionMatrix(predict(fit2, newdata = na.omit(testing)), na.omit(testing)$classe)
+```
+
+
+
