@@ -50,6 +50,18 @@ exploreData <- function(){
     
 }
 
+runParallel <- function(){
+  library(doParallel)
+  cl <- makeCluster(2, type='PSOCK')
+  registerDoParallel(cl)
+  
+  
+}
+
+runSeq <- function(){
+  registerDoSEQ()
+}
+
 # analyzeData(beeNoLFactors)
 # Naive Bayes    nb - 0.40
 # Linear Discriminant Analysis lda - 0.51
@@ -66,7 +78,7 @@ trainModel <- function(){
     
     set.seed(21121)
     
-    imputeMethod <- "medianImpute"
+    # imputeMethod <- "medianImpute"
     #     imputeMethod <- "knnImpute"
     
     #     beeData[!complete.cases(beeData),]
@@ -75,7 +87,7 @@ trainModel <- function(){
     # data <- beeNumsOnly
     data<- beeData
     data <- preprocessColumns(beeData, delCol = c())  #"x7"
-    data <- impute_NA(data, excludeCol = "y")
+    data <- impute_NA(data, excludeCol = "y", imputeMethod = "medianImpute", imputeSetName = "data")
     data$y <- as.factor(data$y)
     
     #         
@@ -85,22 +97,14 @@ trainModel <- function(){
     #     data <- predict(preObj, data)
     
     
-    library(doParallel)
-    cl <- makeCluster(2, type='PSOCK')
-    registerDoParallel(cl)
-    
-    registerDoSEQ()
-    
-    
-    
     #     table(data[,c(1:2,44)])
     
     # for nb:
     #      data <- data[,-c(1,2)]
     
-    inTrain = createDataPartition(y=data$y, p = 0.1, list=F)
-    training = data[ inTrain,]
-    testing = data[-inTrain,]
+    inTrain <- createDataPartition(y=data$y, p = 0.1, list=F)
+    training <<- data[ inTrain,]
+    testing <<- data[-inTrain,]
     dim(training)
     dim(testing)
     
@@ -112,13 +116,13 @@ trainModel <- function(){
     
     
 
-    rm(modelFitAsIs)
+#     rm(modelFitAsIs)
     
     # for lda   (just for beeNumOnly)
     #     training <- training[,-2]
     
 
-    modelFitAsIs <<- train(y ~ ., method = "ORFsvm", data = training, 
+    modelFitAsIs <<- train(y ~ ., method = "rpart2", data = training, 
                           trControl = trainControl(method = "cv", verboseIter = T
                                                    , number = 5
                                                    )
@@ -126,7 +130,7 @@ trainModel <- function(){
                           # ,preProcess = imputeMethod
                           # ,preProcess = "pca"
                           # ,tuneGrid = data.frame(fL = 1, usekernel = T)     # for nb
-                          # ,tuneGrid = data.frame(maxdepth = 20)            # for rpart2
+                          ,tuneGrid = data.frame(maxdepth = 20)            # for rpart2
 #                           ,tuneGrid = data.frame(mtry=18)     # for rf
                            # ,tuneGrid = data.frame(mtry=18)     # for rf
  # ,prox = T
@@ -136,9 +140,16 @@ trainModel <- function(){
     
     modelFitAsIs
     modelFitAsIs$finalModel
-    plot(modelFitAsIs)
-    vi <- varImp(modelFitAsIs)
-
+    # plot(modelFitAsIs)
+    
+    varImp(modelFitAsIs)
+    
+#     vi <- varImp(modelFitAsIs)
+#     vi
+#     
+#     vi$importance
+    
+    
 # idea 0.
 #     training <- data.frame(training[, order(vi$importance$Overall, decreasing = T)[1:20]], y=training$y)
     
@@ -146,9 +157,9 @@ trainModel <- function(){
 
     predictions <- predict(modelFitAsIs, newdata = na.omit(testing))
     confusionMatrix(predictions, na.omit(testing)$y)
-    length(predictions)
-    dim(testing)
-    
+#     length(predictions)
+#     dim(testing)
+#     
     
 #     table(training$y)
 #     table(testing$y)    
@@ -174,7 +185,7 @@ test <- function(){
     final_test <- read.csv("unpacked/test.csv")
     
     final_test <- preprocessColumns(final_test, delCol = c()) #"x7"
-    final_test <- impute_NA(final_test, excludeCol = "ID")
+    final_test <- impute_NA(final_test, excludeCol = "ID", imputeMethod = "medianImpute", imputeSetName = "final_test")
     
     #     final_test <- final_test[!(final_test$x14 %in% c("94f7a0566f", "c82fb3b2f7")),]
     #     final_test <- final_test[!(final_test$x17 %in% c("ab6738e02f")),]
@@ -203,16 +214,17 @@ test <- function(){
                 "dim(training): ", capture.output(dim(training)), 
                 "dim(testing): ", capture.output(dim(testing)),
                 "dim(final_test): ", capture.output(dim(final_test)),
-                "imputeMethod: ",  imputeMethod,
-                "FIT call: ", capture.output(modelFitAsIs$call),
-                "TRAINING vars: ", capture.output(names(training)),
+                "\nimputingInfo: ",  capture.output(imputingInfo),
+                "\nFIT call: ", capture.output(modelFitAsIs$call),
+                "\nTRAINING vars: ", capture.output(names(training)),
                 "\n\nMODEL SETTINGS: ", capture.output(modelFitAsIs),
-                "\n\n predicted df head: ", capture.output( head(result_df, 10))
+                "\n\npredicted df head: ", capture.output( head(result_df, 10))
                 ))
+    rm(imputingInfo, inherits = T)
     write(desc, file=paste(file_prefix, ".desc", sep=""))
 }
 
-impute_NA <- function(dtaset, excludeCol = c()){
+impute_NA <- function(dtaset, excludeCol = c(), imputeSetName, imputeMethod){
     
     print(sprintf("impute_NA: start preprocess with predict(method = %s)", imputeMethod))
     
@@ -227,6 +239,13 @@ impute_NA <- function(dtaset, excludeCol = c()){
         print(sprintf("exclude cols: %s", capture.output(excludeCol)))
     } else{
         result <- predict(preProcess(dtaset, method = imputeMethod), dtaset)
+    }
+    
+    if(!exists("imputingInfo")){
+      print("createimputeDF")
+      imputingInfo <<- data.frame(ds = imputeSetName, imMetod = imputeMethod)
+    }else{
+      imputingInfo <<- rbind(imputingInfo, data.frame(ds=imputeSetName,imMetod = imputeMethod))
     }
     
     NAs <- result[!complete.cases(result),]
