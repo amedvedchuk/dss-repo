@@ -148,7 +148,7 @@ vowel.test$y <- as.factor(vowel.test$y)
 set.seed(33833)
 
 fit5 <- train(y ~ ., method = "rf", data = vowel.train, trControl = 
-                  trainControl(verboseIter = T), prox=T, allowParallel=TRUE)
+                  trainControl(verboseIter = T, number =1), allowParallel=TRUE)
 
 varImp(fit5)
 fit5
