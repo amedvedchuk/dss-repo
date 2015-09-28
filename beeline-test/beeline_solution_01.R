@@ -86,7 +86,7 @@ trainModel <- function(){
     
     
     library(doParallel)
-    cl <- makeCluster(4, type='PSOCK')
+    cl <- makeCluster(2, type='PSOCK')
     registerDoParallel(cl)
     
     registerDoSEQ()
