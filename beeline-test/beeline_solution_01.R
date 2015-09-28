@@ -73,7 +73,8 @@ trainModel <- function(){
     
     # data <- beeNoLFactors
     # data <- beeNumsOnly
-    data <- preprocessColumns(beeData, delCol = c("x7"))
+    data<- beeData
+    data <- preprocessColumns(beeData, delCol = c())  #"x7"
     data <- impute_NA(data, excludeCol = "y")
     data$y <- as.factor(data$y)
     
@@ -85,7 +86,7 @@ trainModel <- function(){
     
     
     library(doParallel)
-    cl <- makeCluster(2, type='PSOCK')
+    cl <- makeCluster(4, type='PSOCK')
     registerDoParallel(cl)
     
     registerDoSEQ()
@@ -97,7 +98,7 @@ trainModel <- function(){
     # for nb:
     #      data <- data[,-c(1,2)]
     
-    inTrain = createDataPartition(y=data$y, p = 0.5, list=F)
+    inTrain = createDataPartition(y=data$y, p = 0.1, list=F)
     training = data[ inTrain,]
     testing = data[-inTrain,]
     dim(training)
@@ -117,7 +118,7 @@ trainModel <- function(){
     #     training <- training[,-2]
     
 
-    modelFitAsIs <<- train(y ~ ., method = "rf", data = training, 
+    modelFitAsIs <<- train(y ~ ., method = "ORFsvm", data = training, 
                           trControl = trainControl(method = "cv", verboseIter = T
                                                    , number = 5
                                                    )
@@ -125,15 +126,16 @@ trainModel <- function(){
                           # ,preProcess = imputeMethod
                           # ,preProcess = "pca"
                           # ,tuneGrid = data.frame(fL = 1, usekernel = T)     # for nb
-                          # ,tuneGrid = data.frame(maxdepth = 3:7)            # for rpart2
+                          # ,tuneGrid = data.frame(maxdepth = 20)            # for rpart2
 #                           ,tuneGrid = data.frame(mtry=18)     # for rf
-                           ,tuneGrid = data.frame(mtry=18)     # for rf
- ,prox = T
+                           # ,tuneGrid = data.frame(mtry=18)     # for rf
+ # ,prox = T
 #                           ,tuneGrid = data.frame(maxdepth=9, mfinal = 150)     # for adaBag
     )
     
     
     modelFitAsIs
+    modelFitAsIs$finalModel
     plot(modelFitAsIs)
     vi <- varImp(modelFitAsIs)
 
@@ -171,7 +173,7 @@ test <- function(){
     
     final_test <- read.csv("unpacked/test.csv")
     
-    final_test <- preprocessColumns(final_test, delCol = c("x7"))
+    final_test <- preprocessColumns(final_test, delCol = c()) #"x7"
     final_test <- impute_NA(final_test, excludeCol = "ID")
     
     #     final_test <- final_test[!(final_test$x14 %in% c("94f7a0566f", "c82fb3b2f7")),]
