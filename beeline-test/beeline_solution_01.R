@@ -87,7 +87,8 @@ trainModel <- function(){
     # data <- beeNumsOnly
     data<- beeData
     data <- preprocessColumns(beeData, delCol = c())  #"x7"
-    data <- impute_NA(data, excludeCol = "y", imputeMethod = "medianImpute", imputeSetName = "data")
+#     data <- impute_NA(data, excludeCol = "y", imputeMethod = "medianImpute", imputeSetName = "data")
+#     data <- na.omit(data)
     data$y <- as.factor(data$y)
     
     #         
@@ -102,12 +103,36 @@ trainModel <- function(){
     # for nb:
     #      data <- data[,-c(1,2)]
     
-    inTrain <- createDataPartition(y=data$y, p = 0.1, list=F)
+    inTrain <- createDataPartition(y=data$y, p = 0.8, list=F)
     training <<- data[ inTrain,]
     testing <<- data[-inTrain,]
-    dim(training)
-    dim(testing)
     
+    
+#     training <<- na.omit(training)
+#     testing <<- impute_NA(testing, excludeCol = "y", imputeMethod = "medianImpute", imputeSetName = "testing")
+
+
+#     training <<- preprocessColumns(training, numonly = F,  delCol = "x7")
+#     testing <<- preprocessColumns(testing, numonly = F, delCol = "x7")
+#     training <<- na.omit(training)
+#     testing <<- impute_NA(testing, excludeCol = "y", imputeMethod = "knnImpute", imputeSetName = "testing")
+
+
+#     training <<- preprocessColumns(training, numonly = F,  delCol = "x7")
+#     testing <<- preprocessColumns(testing, numonly = F, delCol = "x7")
+#     training <<- na.omit(training)
+#     testing <<- impute_NA(testing, excludeCol = "y", imputeMethod = "knnImpute", imputeSetName = "testing")
+
+#     testing <<- impute_NA(testing, excludeCol = "y", imputeMethod = "medianImpute", imputeSetName = "testing")
+#     training <<- impute_NA(training, excludeCol = "y", imputeMethod = "medianImpute", imputeSetName = "training")
+
+    impRes <- impute_NA(training, excludeCol = "y", imputeMethod = "medianImpute", imputeSetName = "training")
+    training <<- impRes$result
+    testing <<- data.frame(predict(impRes$preProc, testing[,-length(testing)]), y=testing$y)
+
+
+    print(dim(training))
+    print(dim(testing))
     
 #     library(snow)
 #     cl<-makeCluster(4,type="SOCK")
@@ -122,7 +147,7 @@ trainModel <- function(){
     #     training <- training[,-2]
     
 
-    modelFitAsIs <<- train(y ~ ., method = "rpart2", data = training, 
+    modelFitAsIs <<- train(y ~ ., method = "rf", data = training, 
                           trControl = trainControl(method = "cv", verboseIter = T
                                                    , number = 5
                                                    )
@@ -130,15 +155,15 @@ trainModel <- function(){
                           # ,preProcess = imputeMethod
                           # ,preProcess = "pca"
                           # ,tuneGrid = data.frame(fL = 1, usekernel = T)     # for nb
-                          ,tuneGrid = data.frame(maxdepth = 20)            # for rpart2
-#                           ,tuneGrid = data.frame(mtry=18)     # for rf
+#                           ,tuneGrid = data.frame(maxdepth = 20)            # for rpart2
+                          ,tuneGrid = data.frame(mtry=18)     # for rf
                            # ,tuneGrid = data.frame(mtry=18)     # for rf
  # ,prox = T
 #                           ,tuneGrid = data.frame(maxdepth=9, mfinal = 150)     # for adaBag
     )
     
     
-    modelFitAsIs
+    print(modelFitAsIs$results)
     modelFitAsIs$finalModel
     # plot(modelFitAsIs)
     
@@ -228,17 +253,20 @@ impute_NA <- function(dtaset, excludeCol = c(), imputeSetName, imputeMethod){
     
     print(sprintf("impute_NA: start preprocess with predict(method = %s)", imputeMethod))
     
+    preProc <- NULL
     if (length(excludeCol) > 0){
         preprocData <- dtaset[,-which(names(dtaset) %in% excludeCol)]
         restData <- data.frame(dtaset[,which(names(dtaset) %in% excludeCol)])
         if(length(excludeCol) == 1){
             names(restData) <- excludeCol
         }
-        result <- predict(preProcess(preprocData, method = imputeMethod), preprocData)
+        preProc <- preProcess(preprocData, method = imputeMethod)
+        result <- predict(preProc, preprocData)
         result <- cbind(result, restData)
         print(sprintf("exclude cols: %s", capture.output(excludeCol)))
     } else{
-        result <- predict(preProcess(dtaset, method = imputeMethod), dtaset)
+        preProc <- preProcess(dtaset, method = imputeMethod)
+        result <- predict(preProc, dtaset)
     }
     
     if(!exists("imputingInfo")){
@@ -252,7 +280,8 @@ impute_NA <- function(dtaset, excludeCol = c(), imputeSetName, imputeMethod){
     print("Nas dataset dim:")
     print(dim(NAs))
     print("impute_NA finish!")
-    result
+    list(result=result, preProc = preProc)
+#     result
     
 }
 

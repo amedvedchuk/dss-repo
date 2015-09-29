@@ -14,6 +14,51 @@
    - заімпютити дані в ТЕСТ сет методом МЕДІАН/КНН
    - перевірити точність
 
+        #1  data <- na.omit(data)
+
+            mtry  Accuracy     Kappa  AccuracySD     KappaSD
+            1   18 0.7596124 0.6790366 0.002403609 0.003384821
+            Accuracy : 0.7586   
+        
+        #2  training <<- na.omit(training)
+
+            mtry  Accuracy     Kappa  AccuracySD     KappaSD
+            1   18 0.7589502 0.6782122 0.002122441 0.002804792
+            Accuracy : 0.756 
+        
+        #3  training <<- preprocessColumns(training, numonly = F,  delCol = "x7")
+            testing <<- preprocessColumns(testing, numonly = F, delCol = "x7")
+            training <<- na.omit(training)
+            testing <<- impute_NA(testing, excludeCol = "y", imputeMethod = "medianImpute", imputeSetName = "testing")
+            
+            mtry  Accuracy     Kappa  AccuracySD     KappaSD
+            1   18 0.7589502 0.6782122 0.002122441 0.002804792
+            Accuracy : 0.7497        
+
+        #4  training <<- preprocessColumns(training, numonly = F,  delCol = "x7")
+            testing <<- preprocessColumns(testing, numonly = F, delCol = "x7")
+            training <<- na.omit(training)
+            testing <<- impute_NA(testing, excludeCol = "y", imputeMethod = "knnImpute", imputeSetName = "testing")
+
+            mtry Accuracy     Kappa  AccuracySD     KappaSD
+            1   18 0.758351 0.6774432 0.002333414 0.003061667
+            Accuracy : 0.645
+        
+        #5  testing <<- impute_NA(testing, excludeCol = "y", imputeMethod = "medianImpute", imputeSetName = "testing")
+            training <<- impute_NA(training, excludeCol = "y", imputeMethod = "medianImpute", imputeSetName = "training")
+            
+             mtry  Accuracy     Kappa  AccuracySD     KappaSD
+            1   18 0.7518501 0.6683316 0.005097766 0.007147868
+            Accuracy : 0.7495
+
+        #6  impRes <- impute_NA(training, excludeCol = "y", imputeMethod = "medianImpute", imputeSetName = "training")
+            training <<- impRes$result
+            testing <<- data.frame(predict(impRes$preProc, testing[,-length(testing)]), y=testing$y)
+                
+              mtry  Accuracy     Kappa  AccuracySD     KappaSD
+            1   18 0.7518501 0.6683316 0.005097766 0.007147868
+            Accuracy : 0.7494
+
 3. Спробувати такий алгоритм:
    - в трейн сеті НЕ імпютити дані
    - протренувати модель на рандом форест
