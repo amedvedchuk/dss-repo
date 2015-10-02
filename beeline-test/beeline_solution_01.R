@@ -33,6 +33,11 @@ readData <- function(){
   d
 } 
 
+init <- function(){
+  beeData <<- readData()
+  
+}
+
 exploreData <- function(){
   
   unique(beeData$x7)
@@ -56,6 +61,13 @@ runParallel <- function(){
   registerDoParallel(cl)
   
   
+}
+
+delLargeFactors <- function(){
+  largeFactors <- c(11, 19, 22)
+  str(beeData[largeFactors])
+  beeNoLFactors <- beeData[-largeFactors]
+  beeNoLFactors
 }
 
 runSeq <- function(){
@@ -86,6 +98,7 @@ trainModel <- function(){
   # data <- beeNoLFactors
   # data <- beeNumsOnly
   data<- beeData
+  # data <- delLargeFactors()
   data <- preprocessColumns(beeData, delCol = c())  #"x7"
   #     data <- impute_NA(data, excludeCol = "y", imputeMethod = "medianImpute", imputeSetName = "data")
   # data <- na.omit(data)
@@ -103,7 +116,7 @@ trainModel <- function(){
   # for nb:
   #      data <- data[,-c(1,2)]
   
-  inTrain <- createDataPartition(y=data$y, p = 1, list=F)
+  inTrain <- createDataPartition(y=data$y, p = 0.8, list=F)
   training <<- data[ inTrain,]
   testing <<- data[-inTrain,]
   
@@ -130,8 +143,8 @@ trainModel <- function(){
   #     training <<- impRes$result
   #     testing <<- data.frame(predict(impRes$preProc, testing[,-length(testing)]), y=testing$y)
   
-  training <<- impute_NA(training, excludeCol = "y", imputeMethod = "na_omit", imputeSetName = "training")$result
-  testing <<- impute_NA(testing, excludeCol = "y", imputeMethod = "bagImpute", imputeSetName = "testing")$result
+#   training <<- impute_NA(training, excludeCol = "y", imputeMethod = "na_omit", imputeSetName = "training")$result
+#   testing <<- impute_NA(testing, excludeCol = "y", imputeMethod = "bagImpute", imputeSetName = "testing")$result
   
   
   
@@ -151,19 +164,19 @@ trainModel <- function(){
   #     training <- training[,-2]
   
   
-  modelFitAsIs <<- train(y ~ ., method = "rf", data = training, 
+  modelFitAsIs <<- train(y ~ ., method = "nnet", data = training, 
                          trControl = trainControl(method = "cv", verboseIter = T
-                                                  , number = 10
+                                                  , number = 5
                          )
                          # ,preProcess = c("center", "scale")
                          # ,preProcess = imputeMethod
                          # ,preProcess = "pca"
                          # ,tuneGrid = data.frame(fL = 1, usekernel = T)     # for nb
-                         #                           ,tuneGrid = data.frame(maxdepth = 20)            # for rpart2
-                         ,tuneGrid = data.frame(mtry=18)     # for rf
-                         # ,tuneGrid = data.frame(mtry=18)     # for rf
+                         # ,tuneGrid = data.frame(maxdepth = 5)            # for rpart2
+                         # ,tuneGrid = data.frame(mtry=18)     # for rf, Boruta
                          # ,prox = T
-                         #                           ,tuneGrid = data.frame(maxdepth=9, mfinal = 150)     # for adaBag
+                         # ,tuneGrid = data.frame(maxdepth=9, mfinal = 150)     # for adaBag
+                         ,tuneGrid = data.frame(size=1:10, decay = 0.17)     # for nnet
   )
   
   
@@ -173,14 +186,14 @@ trainModel <- function(){
   
   varImp(modelFitAsIs)
   
-  #     vi <- varImp(modelFitAsIs)
-  #     vi
+#       vi <- varImp(modelFitAsIs)
+#       vi
   #     
   #     vi$importance
   
   
   # idea 0.
-  #     training <- data.frame(training[, order(vi$importance$Overall, decreasing = T)[1:20]], y=training$y)
+      # training <- data.frame(training[, order(vi$importance$Overall, decreasing = T)[1:40]], y=training$y)
   
   
   
@@ -207,7 +220,7 @@ trainModel <- function(){
   
 } 
 
-test <- function(){
+test <- function(imputeMethod = "medianImpute"){
   
   print("start testing !!!")
   
@@ -215,7 +228,7 @@ test <- function(){
   
   final_test <- preprocessColumns(final_test, delCol = c()) #"x7"
   final_test <- impute_NA(final_test, excludeCol = "ID", 
-                          imputeMethod = "bagImpute", imputeSetName = "final_test")$result
+                          imputeMethod = imputeMethod, imputeSetName = "final_test")$result
   
   #     final_test <- final_test[!(final_test$x14 %in% c("94f7a0566f", "c82fb3b2f7")),]
   #     final_test <- final_test[!(final_test$x17 %in% c("ab6738e02f")),]
