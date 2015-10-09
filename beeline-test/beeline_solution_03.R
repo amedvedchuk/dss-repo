@@ -222,6 +222,13 @@ trainModel <- function(){
   combFit <- train(y~., data=predDF, method="rpart2",
                    trControl = trainControl(method = "cv", verboseIter = T, number = 5))
   combFit
+  res1 <- data.frame(
+    confusionMatrix(pred1, na.omit(testing)$y)$overall[1]
+    ,confusionMatrix(pred2, na.omit(testing)$y)$overall[1]
+    ,confusionMatrix(combPred, na.omit(testing)$y)$overall[1]
+  )
+  names(res1)<-c(modelFitAsIs$method, fit2$method,"combPredV")
+  res1
   
   
   
@@ -236,14 +243,7 @@ trainModel <- function(){
   
   
   
-  res1 <- data.frame(
-    confusionMatrix(pred1, na.omit(testing)$y)$overall[1]
-    ,confusionMatrix(pred2, na.omit(testing)$y)$overall[1]
-    ,confusionMatrix(combPred, na.omit(testing)$y)$overall[1]
-  )
-  names(res1)<-c(modelFitAsIs$method, fit2$method,"combPredV")
-  res1
-  
+
   res2 <- data.frame(
     confusionMatrix(pred1V, na.omit(validation)$y)$overall[1]
     ,confusionMatrix(pred2V, na.omit(validation)$y)$overall[1]

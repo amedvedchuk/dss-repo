@@ -96,6 +96,17 @@ MModel <- setRefClass("MModel",
                           #                             df
                           #                           })
                           
+                        },
+                        calcValidation = function(){
+                          
+                          
+                          
+                          pred1V <- predict(modelFitAsIs,validation); 
+                          pred2V <- predict(fit2,validation)
+                          predVDF <- data.frame(pred1=pred1V,pred2=pred2V)
+                          combPredV <- predict(combFit,predVDF)
+                          
+                          
                         }
                       )
 )
