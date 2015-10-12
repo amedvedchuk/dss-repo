@@ -91,9 +91,11 @@ splitData <- function(beeData,
   inTrain <- createDataPartition(y=data$y, p = ptrain, list=F)
   training <- data[inTrain,]
   
-  inTest <- createDataPartition(y=data[-inTrain,]$y, p = ptest, list=F)
-  testing <- testing[inTest,]
-  validation <- testing[-inTest,]
+  otherData <- data[-inTrain,]
+  
+  inTest <- createDataPartition(y=otherData$y, p = ptest, list=F)
+  testing <- otherData[inTest,]
+  validation <- otherData[-inTest,]
   
   training <- impute_NA(res, training, excludeCol = "y", imputeMethod = trainImpMethod, imputeSetName = "training")$result
   testing <- impute_NA(res, testing, excludeCol = "y", imputeMethod = testImpMethod, imputeSetName = "testing")$result
@@ -133,9 +135,46 @@ trainModel <- function(){
   
   mmod <- splitData(beeData, trainImpMethod="medianImpute")
   mmod$ensemble <- list(modelFitAsIs, fit2, fit3)
+  write(mmod$getDescription(), "test.desc")
+  
   pr1<- mmod$calcComb()
-  str(pr1)
   pr1
+  
+  mmod$result
+  
+  
+  lapply(pr1,rbind)
+  
+  str(pr1)
+  
+  val <- mmod$calcValidation()
+  str(val)
+  val
+  
+  d <- data.frame(x=1, y=2, z=3)
+  d <- stack(d, c(11, NA, 33))
+  d
+  
+  apply(mmod$result, 1, any)
+    
+  mmod$result[apply(mmod$result, 1, any),]
+  
+  any(unlist(mmod$result[]))
+  
+  complete.cases()
+  
+  class(unlist(mmod$result[1,]))
+  
+  
+  
+  lapply(val,length)
+  
+  dim(mmod$datasets$validation)
+  dim(na.omit(mmod$datasets$validation))
+  
+  
+  dval <- data.frame(val)
+  str(dval)
   
   data.frame(pr1[[1]])
   
@@ -169,7 +208,6 @@ trainModel <- function(){
   
   lapply(pr1, length)
   
-  write(mmod$getDescription(), "test.desc")
   
   
   modelFitAsIs <<- train(y ~ ., method = "nnet", data = training, 

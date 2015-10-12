@@ -11,7 +11,8 @@ MModel <- setRefClass("MModel",
                         datasets = "list",
                         imputingInfo = "data.frame",
                         result_df = "data.frame",
-                        combFits = "list"
+                        combFits = "list",
+                        result = "data.frame"
                       ),
                       methods=list(
                         #                         initialize = function(..., final=NULL, ensambled=NULL, datasets=NULL,imputingInfo=NULL, result_df=NULL){
@@ -35,22 +36,22 @@ MModel <- setRefClass("MModel",
                         },
                         calcComb = function(){
                           
-                          #TODO
-                          grid <- expand.grid(c(T,F), c(T,F), c(T,F))
+                          # Prepare grid
+                          ensemble_len <- length(ensemble) 
+                          grid <- expand.grid(data.frame(matrix(rep(c(T,F),ensemble_len),nrow = 2,ncol=ensemble_len)))
+                          grid <- grid[apply(grid, 1, any),]
+                          colnames(grid) <- sapply(ensemble, function(x){x$method})
                           
-                          grid
+                          result <<- grid
                           
-                          # mmod$ensemble[unlist(pr1[3,])]
-                          
-                          preds1 <- apply(grid, 1, function(x){
-                            # print(x[1])
-                            # sapply(x, function)
+                          # the result:
+                          preds1 <- apply(grid, 1, function(gridRow){
                             
                             df<-NULL
                             
-                            if(any(x)){
+                            if(any(gridRow)){
                               
-                              modcomb <- ensemble[unlist(x)]
+                              modcomb <- ensemble[unlist(gridRow)]
                               
                               print("ensemble combination:")
                               print(sapply(modcomb,function(x){x$method}))
@@ -58,53 +59,75 @@ MModel <- setRefClass("MModel",
                               pred <- lapply(modcomb, predict, newdata = na.omit(datasets$testing))
                               
                               df <- data.frame(pred, na.omit(datasets$testing)$y)
-                              colnames(df) <- c(paste("var", seq_along(pred), sep=""),"y")
-                              df
+                              
+                              colnames(df) <- c(names(gridRow[unlist(gridRow)]),"y")
                               
                               #                               combFit <- train(y~., data=df, method="rf",
                               #                                                trControl = trainControl(method = "cv", verboseIter = T, number = 5))
-                              combFit <- train(y~., data=df, method="rpart2",
-                                               trControl = trainControl(method = "cv", verboseIter = T, number = 5))
-                              df <- data.frame(df, combPred = predict(combFit,df))
                               
-                              combFits[length(combFits)+1] <<- list(combFit)
-                              df
+                              if(length(modcomb) > 1){
+                                combFit <- train(y~., data=df, method="rpart2",
+                                                 trControl = trainControl(method = "cv", verboseIter = T, number = 5))
+                                df <- data.frame(df, combPred = predict(combFit,df))
+                                combFits[length(combFits)+1] <<- list(fit=combFit, usePredv = TRUE)
+                              } else {
+                                # only one model, so do not need to combine. Just take accuracy from underlying assemple model
+                                combFit <- modcomb[1]
+                                combFits[length(combFits)+1] <<- list(fit=combFit, usePredv = FALSE)
+                                df <- data.frame(df, combPred = df[,1])
+                              }
                               
-                              # dd1[,-grep("y",names(dd1))]
                               
-                              res <- lapply(df[,-grep("y",names(df))], function(x){
-                                  confusionMatrix(x, na.omit(datasets$testing)$y)$overall[1]
-                                # )
-
-                              })
                               
-                              # names(res)<-c(sapply(modcomb,function(x){x$method}) ,"combPredV")
-                              data.frame(res)
-                              
-                             
-                              
+                              # prepare accuracy result
+                              res <- data.frame(lapply(names(gridRow), function(x){
+                                # df[,-grep("y",names(df))]
+                                if(gridRow[[x]]){
+                                  confusionMatrix(df[[x]], na.omit(datasets$testing)$y)$overall[1]
+                                } else {
+                                  NA
+                                }
+                              }))
+                              colnames(res)<-names(gridRow)
+                              res
                             }
                             
                           })
                           
-                          # data.frame(preds1)
+                          acc <- t(sapply(preds1, rbind))
                           
-                          # TODO
-                          #                           lapply(preds1[1:7], function(p){
-                          #                             df <- data.frame(p, na.omit(datasets$testing)$y)
-                          #                             colnames(df) <- c(seq_along(p),"y")
-                          #                             df
-                          #                           })
+                          result <<- cbind(result, acc)
+                          
+                          acc
                           
                         },
+                        # ++++++++++++++++++++++++++++++++
                         calcValidation = function(){
                           
+                          predVs <- data.frame(lapply(ensemble, predict, newdata = na.omit(datasets$validation)))
+                          #                           colnames(predVs) <- paste("var", seq_along(ensemble), sep="")
+                          colnames(predVs) <- sapply(ensemble, function(x){x$method})
+                          predVs
                           
+                          # combPredVs <- lapply(combFits,predict,predVs)
+                          combPredVs <- lapply(combFits, function(combFit){
+                            if(combFit$usePredv){
+                              predict(combFit, predVs)
+                            } else {
+                              predict(combFit, na.omit(datasets$validation))
+                            }
+                          })
                           
-                          pred1V <- predict(modelFitAsIs,validation); 
-                          pred2V <- predict(fit2,validation)
-                          predVDF <- data.frame(pred1=pred1V,pred2=pred2V)
-                          combPredV <- predict(combFit,predVDF)
+                          #                           res <- lapply(combPredVs, function(x){
+                          #                             print(length(x))
+                          #                             print(length(na.omit(datasets$validation)$y))
+                          #                             confusionMatrix(x, na.omit(datasets$validation)$y)$overall[1]
+                          #                           })
+                          
+                          #                           pred1V <- predict(modelFitAsIs,validation); 
+                          #                           pred2V <- predict(fit2,validation)
+                          #                           predVDF <- data.frame(pred1=pred1V,pred2=pred2V)
+                          #                           combPredV <- predict(combFit,predVDF)
                           
                           
                         }
