@@ -134,22 +134,20 @@ trainModel <- function(){
   
   
   mmod <- splitData(beeData, trainImpMethod="medianImpute")
-  mmod$ensemble <- list(modelFitAsIs, fit2, fit3)
+  mmod$ensemble <- list(modelFitAsIs, fit2)
   write(mmod$getDescription(), "test.desc")
   
   pr1<- mmod$calcComb()
   pr1
   
   mmod$result
-  
-  
-  lapply(pr1,rbind)
-  
   str(pr1)
   
   val <- mmod$calcValidation()
   str(val)
   val
+  data.frame(unlist(val))
+  head(val)
   
   d <- data.frame(x=1, y=2, z=3)
   d <- stack(d, c(11, NA, 33))
@@ -210,7 +208,7 @@ trainModel <- function(){
   
   
   
-  modelFitAsIs <<- train(y ~ ., method = "nnet", data = training, 
+  modelFitAsIs <<- train(y ~ ., method = "rpart", data = mmod$datasets$training, 
                          trControl = trainControl(method = "cv", verboseIter = T
                                                   , number = 5
                          )
@@ -222,18 +220,20 @@ trainModel <- function(){
                          # ,tuneGrid = data.frame(mtry=18)     # for rf, Boruta
                          # ,prox = T
                          # ,tuneGrid = data.frame(maxdepth=9, mfinal = 150)     # for adaBag
-                         # ,tuneGrid = data.frame(size=1:10, decay = 0.17)     # for nnet
+#                          ,tuneGrid = data.frame(size=1:10, decay = 0.17)     # for nnet
   )
   
   modelFitAsIs
   
   
-  fit2 <- train(y ~ ., method = "rf", data = training, 
-                trControl = trainControl(method = "cv", verboseIter = T, number = 5))
+  fit2 <- train(y ~ ., method = "rf", data = mmod$datasets$training, 
+                trControl = trainControl(method = "cv", verboseIter = T, number = 5)
+                ,tuneGrid = data.frame(mtry=18)     # for rf, Boruta
+                )
   
   fit2
   
-  fit3 <<- train(y ~ ., method = "rpart2", data = training, 
+  fit3 <<- train(y ~ ., method = "rpart2", data = mmod$datasets$training, 
                          trControl = trainControl(method = "cv", verboseIter = T
                                                   , number = 5
                          )
@@ -249,31 +249,30 @@ trainModel <- function(){
   
   mmod$ensemble[unlist(pr1[3,])]
   
-  if(any(c(F,F,F))){
-    print("da")
-  }
   
-  pred1 <- predict(modelFitAsIs, newdata = na.omit(testing))
-  pred2 <- predict(fit2, newdata = testing)
-  predDF <- data.frame(pred1, pred2, y=na.omit(testing)$y)
+  pred1 <- predict(modelFitAsIs, newdata = na.omit(mmod$datasets$testing))
+  pred2 <- predict(fit2, newdata = mmod$datasets$testing)
+  predDF <- data.frame(pred1, pred2, y=na.omit(mmod$datasets$testing)$y)
   
   combFit <- train(y~., data=predDF, method="rpart2",
                    trControl = trainControl(method = "cv", verboseIter = T, number = 5))
   combFit
+ 
+
+  combPred <- predict(combFit,predDF)
+
   res1 <- data.frame(
-    confusionMatrix(pred1, na.omit(testing)$y)$overall[1]
-    ,confusionMatrix(pred2, na.omit(testing)$y)$overall[1]
-    ,confusionMatrix(combPred, na.omit(testing)$y)$overall[1]
+    confusionMatrix(pred1, na.omit(mmod$datasets$testing)$y)$overall[1]
+    ,confusionMatrix(pred2, na.omit(mmod$datasets$testing)$y)$overall[1]
+    ,confusionMatrix(combPred, na.omit(mmod$datasets$testing)$y)$overall[1]
   )
   names(res1)<-c(modelFitAsIs$method, fit2$method,"combPredV")
   res1
   
   
   
-  combPred <- predict(combFit,predDF)
-  
-  pred1V <- predict(modelFitAsIs,validation); 
-  pred2V <- predict(fit2,validation)
+  pred1V <- predict(modelFitAsIs,mmod$datasets$validation); 
+  pred2V <- predict(fit2,mmod$datasets$validation)
   predVDF <- data.frame(pred1=pred1V,pred2=pred2V)
   combPredV <- predict(combFit,predVDF)
   
@@ -283,13 +282,13 @@ trainModel <- function(){
   
 
   res2 <- data.frame(
-    confusionMatrix(pred1V, na.omit(validation)$y)$overall[1]
-    ,confusionMatrix(pred2V, na.omit(validation)$y)$overall[1]
-    ,confusionMatrix(combPredV, na.omit(validation)$y)$overall[1], row.names = "AccuracyV"
+    confusionMatrix(pred1V, na.omit(mmod$datasets$validation)$y)$overall[1]
+    ,confusionMatrix(pred2V, na.omit(mmod$datasets$validation)$y)$overall[1]
+    ,confusionMatrix(combPredV, na.omit(mmod$datasets$validation)$y)$overall[1], row.names = "AccuracyV"
   )
   names(res2)<-c(modelFitAsIs$method, fit2$method,"combPredV")
   
-  rbind(res1, res2)
+  res <- rbind(res1, res2)
   
   
   
