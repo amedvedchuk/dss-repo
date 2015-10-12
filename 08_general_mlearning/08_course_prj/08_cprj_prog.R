@@ -1,4 +1,5 @@
-answers = rep("A", 20)
+answers = predict(fit2, newdata = pml_testing)
+answers
 
 pml_write_files = function(x){
     n = length(x)

@@ -137,7 +137,7 @@ missClass(values = trainSA$chd, predict(fit4, trainSA))
 
 
 
-#Quizz5 Q3 =====================================================
+#Quizz3 Q5 =====================================================
 
 library(ElemStatLearn)
 data(vowel.train)
@@ -152,3 +152,178 @@ fit5 <- train(y ~ ., method = "rf", data = vowel.train, trControl =
 
 varImp(fit5)
 fit5
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#Quizz4 Q1 =====================================================
+
+library(caret)
+library(ElemStatLearn)
+data(vowel.train)
+data(vowel.test) 
+
+set.seed(33833)
+vowel.train$y <- as.factor(vowel.train$y)
+vowel.test$y <- as.factor(vowel.test$y)
+
+fit1 <- train(y~., data = vowel.train, method = "rf")
+fit2 <- train(y~., data = vowel.train, method = "gbm")
+
+fit1
+fit2
+
+pred1 <- predict(fit1, vowel.test)
+pred2 <- predict(fit2, vowel.test)
+
+pred1
+
+qplot(pred1, pred2, color = y, data = vowel.test)
+
+predDF <- data.frame(pred1, pred2, y = vowel.test$y)
+acc1 = sum(pred1 == vowel.test$y) / length(pred1)
+acc2 = sum(pred2 == vowel.test$y) / length(pred2)
+
+acc1
+acc2
+
+confusionMatrix(pred1, vowel.test$y)
+confusionMatrix(pred2, vowel.test$y)
+
+
+agreeSub = vowel.test[pred1 == pred2,]
+pred_comb = predict(fit1, agreeSub)
+comb_accuracy = sum(pred_comb == agreeSub$y) / length(pred_comb)
+comb_accuracy
+
+
+
+comb1 <- train(y~., data = predDF, method = "gbm")
+comb1
+confusionMatrix(pred1, pred2)
+
+#Quizz4 Q2 =====================================================
+
+library(caret)
+# library(gbm)
+set.seed(3433)
+library(AppliedPredictiveModeling)
+data(AlzheimerDisease)
+adData = data.frame(diagnosis,predictors)
+inTrain = createDataPartition(adData$diagnosis, p = 3/4)[[1]]
+training = adData[ inTrain,]
+testing = adData[-inTrain,]
+
+
+set.seed(62433)
+
+
+fit1 <- train(diagnosis~., data = training, method = "rf", trControl = trainControl(number = 3, verboseIter = T))
+fit2 <- train(diagnosis~., data = training, method = "gbm", trControl = trainControl(number = 3, verboseIter = T))
+fit3 <- train(diagnosis~., data = training, method = "lda", trControl = trainControl(number = 3, verboseIter = T))
+
+pred1 <- predict(fit1, training)
+pred2 <- predict(fit2, training)
+pred3 <- predict(fit3, training)
+
+# confusionMatrix(pred1, training$diagnosis)$overall[1]
+# confusionMatrix(pred2, testing$diagnosis)$overall[1]
+# confusionMatrix(pred3, testing$diagnosis)$overall[1]
+
+combDF <- data.frame(pred1, pred2, pred3, diagnosis = training$diagnosis)
+
+combFit <- train(diagnosis~., data = combDF, method = "rf", trControl = trainControl(number = 3, verboseIter = T))
+combFit
+
+test_pred1 <- predict(fit1, testing)
+test_pred2 <- predict(fit2, testing)
+test_pred3 <- predict(fit3, testing)
+test_combDF <- data.frame(pred1=test_pred1, pred2=test_pred2, pred3=test_pred3, diagnosis = testing$diagnosis)
+
+
+predComb_test <- predict(combFit, test_combDF)
+length(predComb_test)
+confusionMatrix(predComb_test, test_combDF$diagnosis)$overall[1]
+
+
+confusionMatrix(test_pred1, testing$diagnosis)$overall[1]
+confusionMatrix(test_pred2, testing$diagnosis)$overall[1]
+confusionMatrix(test_pred3, testing$diagnosis)$overall[1]
+
+
+# WARN: is there overfitting??? may be we need validation set
+
+
+
+#Quizz4 Q3 =====================================================
+
+set.seed(3523)
+library(AppliedPredictiveModeling)
+data(concrete)
+inTrain = createDataPartition(concrete$CompressiveStrength, p = 3/4)[[1]]
+training = concrete[ inTrain,]
+testing = concrete[-inTrain,]
+
+set.seed(233)
+
+fit1 <- train(CompressiveStrength~., data = training, method = "lasso")
+fit1$finalModel
+plot.enet(fit1$finalModel, xvar='penalty')
+plot.enet(fit1$finalModel, xvar='fraction')
+plot.enet(fit1$finalModel, xvar='step')
+plot.enet(fit1$finalModel, xvar='L1norm')
+
+
+#Quizz4 Q4 =====================================================
+library(lubridate)  # For year() function below
+
+download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/gaData.csv", destfile = "gaData.csv")
+
+dat <- read.csv("gaData.csv")
+training = dat[year(dat$date) < 2012,]
+testing = dat[(year(dat$date)) > 2011,]
+tstrain = ts(training$visitsTumblr)
+tstest = ts(testing$visitsTumblr, start=366)
+
+
+library(forecast)
+?bats
+fit <- bats(tstrain)
+plot(forecast(fit, level = 95))
+fc <- forecast(fit, h=235, level = 95)
+plot(fc)
+lines(tstest,col="red")
+
+inConfint <- tstest[(tstest>=fc$lower & tstest<=fc$upper)]
+
+length(inConfint)
+length(tstest)
+
+#answer
+length(inConfint)/length(tstest)
+
+
+#Quizz4 Q5 =====================================================
+set.seed(3523)
+library(AppliedPredictiveModeling)
+data(concrete)
+inTrain = createDataPartition(concrete$CompressiveStrength, p = 3/4)[[1]]
+training = concrete[ inTrain,]
+testing = concrete[-inTrain,]
+
+set.seed(325)
+
+str(training)
+
+fit1 <- train(CompressiveStrength~., data=training, method = "svmLinear2")
+fit2 <- svm(CompressiveStrength~., data=training)
+fit2
+
+pred <- predict(fit2, testing)
+# Function that returns Root Mean Squared Error
+rmse <- function(error){
+    sqrt(mean(error^2))
+}
+
+error <- pred - testing$CompressiveStrength
+error
+
+rmse(error)

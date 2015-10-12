@@ -7,7 +7,7 @@ output: html_document
 
 # Ovewrview
 
-The goal of this report is practical machine learning algorithm experiene obtaining on Human Activity Recognision (HAR) dataset. This dataset contains data from on-body sensors during execution of some exercises by subjects.
+The goal of this report is practical machine learning algorithm experiecne obtaining on Human Activity Recognision (HAR) dataset. This dataset contains data from on-body sensors during execution of some exercises by subjects.
 
 The question: Predict the manner in which subjects did the exercise. This is the "classe" variable in the training set.
 
@@ -89,7 +89,7 @@ Learning process was divided into two prats:
 ## Use tree prediction to estimate variable importance
 
 It was decided to use Classification And Regression Tree (CART) algorithm for estimating most important variables.
-In `caret` package this algorithm implemented as `method = "rpart2"`. It was also explored that best acuracy acheived when `mtry = 24`. As a validation method 5-fold `cv` is used.
+In `caret` package this algorithm implemented as `method = "rpart2"`. It was also explored that best acuracy acheived when `maxdepth = 24`. As a validation method 5-fold `cv` is used.
 
 ```{r, echo=TRUE, cache=TRUE}
 set.seed(1221)
