@@ -162,15 +162,20 @@ test <- function(imputeMethod = "bagImpute", mmodel, combfitIndex = 1){
   
   print("start testing !!!")
   
-  final_test <- read.csv("unpacked/test.csv")
-  
-  final_test <- preprocessColumns(final_test, delCol = c()) #"x7"
-  final_test <- impute_NA(mmodel, final_test, excludeCol = "ID", 
-                          imputeMethod = imputeMethod, imputeSetName = "final_test")$result
-  
-  mmodel$addDataset("final_test", final_test)
+  if(length(mmodel$datasets$final_test) == 0){
+    final_test <- read.csv("unpacked/test.csv")
+    
+    final_test <- preprocessColumns(final_test, delCol = c()) #"x7"
+    final_test <- impute_NA(mmodel, final_test, excludeCol = "ID", 
+                            imputeMethod = imputeMethod, imputeSetName = "final_test")$result
+    
+    mmodel$addDataset("final_test", final_test)
+  } else {
+    final_test <- mmodel$datasets$final_test
+  }
+
   final_pred <- mmod$predictComb( combFitIndex = combfitIndex, newdata = final_test)
-  
+    
   str(final_pred)
   print(head(unlist(final_pred)))
   print(length(final_pred))
@@ -181,7 +186,7 @@ test <- function(imputeMethod = "bagImpute", mmodel, combfitIndex = 1){
   mmodel$result_df <- result_df
   
   #write predictions
-  file_prefix <- paste("result",format(Sys.time(), "%y%m%d_%H%M"),"_EA", round(max(mmod$combFits[[1]]$fit$results$Accuracy), 5), sep="")
+  file_prefix <- paste("result",format(Sys.time(), "%y%m%d_%H%M"),"_EA", round(max(mmod$combFits[[combfitIndex]]$fit$results$Accuracy), 5), sep="")
   print(paste("write result with file prefix:",file_prefix))
   
   write.table(result_df, 
