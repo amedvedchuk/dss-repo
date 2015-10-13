@@ -2,7 +2,7 @@
 
 library(gtools)    
 library(caret)
-
+source(file = "model_trainer.R")
 
 getRawData <- function(){
   
@@ -38,36 +38,12 @@ init <- function(){
   
 }
 
-exploreData <- function(){
-  
-  unique(beeData$x7)
-  
-  largeFactors <- c(11, 19, 22)
-  str(beeData[largeFactors])
-  beeNoLFactors <- beeData[-largeFactors]
-  
-  
-  numsOnly <- sapply(beeData, is.numeric)
-  beeNumsOnly <- beeData[,numsOnly]
-  
-  summary(beeData)
-  beeNA <- beeData[!complete.cases(beeData),]
-  
-}
-
 runParallel <- function(){
   library(doParallel)
   cl <- makeCluster(4, type='PSOCK')
   registerDoParallel(cl)
   
   
-}
-
-delLargeFactors <- function(){
-  largeFactors <- c(11, 19, 22)
-  str(beeData[largeFactors])
-  beeNoLFactors <- beeData[-largeFactors]
-  beeNoLFactors
 }
 
 runSeq <- function(){
@@ -131,183 +107,58 @@ trainModel <- function(){
   
   set.seed(21121)
   
+  init()
   
-  mmod <- splitData(beeData, trainImpMethod="none")
-  mmod$ensemble <- list(modelFitAsIs, fit2, fit3)
+  runParallel()
   
-  pr1<- mmod$calcComb()
-  val <- mmod$calcValidation()
+  mmod <<- splitData(beeData, trainImpMethod="bagImpute")
   
-  mmod$combFits[[1]]
+  fit0 <<- readRDS("model_Boruta_7579.mod")
   
-  test(imputeMethod = "medianImpute", mmodel = mmod, combfitIndex = 1)
-  
-  sapply(mmod$combFits,function(x){unlist(x)$call})
-  
-  data.frame(Accuracy = sapply(mmod$combFits, function(x){max(x$fit$result$Accuracy)}))
-  data.frame(t(lapply(mmod$combFits,function(x){list(Model = x$fit$method, Accuracy = max(x$fit$result$Accuracy))})))
-  data.frame(sapply(mmod$combFits,function(x){list(Model = x$fit$method, Accuracy = max(x$fit$result$Accuracy))}))
-  
-  pr <- mmod$calcFinal(1:2)
-  str(pr)
-  
-  lapply(mmod$combFits[1], function(x){x$fit})
-  
-  write(mmod$getDescription(), "test.desc")
-  
-  test(mmodel = mmod, combfitIndex = 1:2)
-  
-  
-  data.frame(t(sapply(mmod$ensemble,function(x){list(Model = x$method, Accuracy = max(x$result$Accuracy))})))
-  
-  sapply(mmod$combFits,function(x){str(x$fit)})
-  
-  data.frame(unlist(val))
-  head(val)
-  
-  d <- data.frame(x=1, y=2, z=3)
-  d <- stack(d, c(11, NA, 33))
-  d
-  
-  apply(mmod$result, 1, any)
-  
-  mmod$result[apply(mmod$result, 1, any),]
-  
-  any(unlist(mmod$result[]))
-  
-  complete.cases()
-  
-  class(unlist(mmod$result[1,]))
-  
-  
-  
-  lapply(val,length)
-  
-  dim(mmod$datasets$validation)
-  dim(na.omit(mmod$datasets$validation))
-  
-  
-  dval <- data.frame(val)
-  str(dval)
-  
-  data.frame(pr1[[1]])
-  
-  mmod$combFits[[1]]$method
-  
-  dd1 <- pr1[[1]]
-  str(dd1[,-grep("y",names(dd1))])
-  lapply(dd1[],length)
-  
-  
-  dd<-lapply(pr1, data.frame, y=data.frame(na.omit(mmod$datasets$testing)$y))
-  dd<-lapply(pr1, data.frame)
-  
-  cf <- list()
-  cf <- list(unlist(cf), "sds")
-  
-  cf <- c(cf, "aaaa")
-  cf <- c(cf, "bbbb")
-  cf <- c(cf, fit2)
-  cf[length(cf)+1] <- list(fit2)
-  
-  str(cf)
-  
-  cf
-  
-  
-  dd<-data.frame(pr1[[1]])
-  colnames(dd)<-seq_along(dd)
-  
-  str(pr1)
-  
-  lapply(pr1, length)
-  
-  
-  
-  modelFitAsIs <<- train(y ~ ., method = "rpart", data = mmod$datasets$training, 
-                         trControl = trainControl(method = "cv", verboseIter = T
-                                                  , number = 5
-                         )
-                         # ,preProcess = c("center", "scale")
-                         # ,preProcess = imputeMethod
-                         # ,preProcess = "pca"
-                         # ,tuneGrid = data.frame(fL = 1, usekernel = T)     # for nb
-                         # ,tuneGrid = data.frame(maxdepth = 5)            # for rpart2
-                         # ,tuneGrid = data.frame(mtry=18)     # for rf, Boruta
-                         # ,prox = T
-                         # ,tuneGrid = data.frame(maxdepth=9, mfinal = 150)     # for adaBag
-                         #                          ,tuneGrid = data.frame(size=1:10, decay = 0.17)     # for nnet
+  fit1 <<- train(y ~ ., method = "AdaBag", data = mmod$datasets$training, 
+                 trControl = trainControl(method = "cv", verboseIter = T
+                                          , number = 5
+                 )
+                 # ,preProcess = c("center", "scale")
+                 # ,preProcess = imputeMethod
+                 # ,preProcess = "pca"
+                 # ,tuneGrid = data.frame(fL = 1, usekernel = T)     # for nb
+                 # ,tuneGrid = data.frame(maxdepth = 5)            # for rpart2
+                 # ,tuneGrid = data.frame(mtry=18)     # for rf, Boruta
+                 # ,prox = T
+                 ,tuneGrid = data.frame(maxdepth=9, mfinal = 150)     # for adaBag
+                 #                          ,tuneGrid = data.frame(size=1:10, decay = 0.17)     # for nnet
   )
   
-  modelFitAsIs
   
-  
-  fit2 <- train(y ~ ., method = "rf", data = mmod$datasets$training, 
-                trControl = trainControl(method = "cv", verboseIter = T, number = 5)
-                ,tuneGrid = data.frame(mtry=18)     # for rf, Boruta
+  fit2 <<- train(y ~ ., method = "rf", data = mmod$datasets$training, 
+                 trControl = trainControl(method = "cv", verboseIter = T, number = 5)
+                 ,tuneGrid = data.frame(mtry=18)     # for rf, Boruta
   )
-  
-  fit2
   
   fit3 <<- train(y ~ ., method = "rpart2", data = mmod$datasets$training, 
                  trControl = trainControl(method = "cv", verboseIter = T
                                           , number = 5
                  )
-                 ,tuneGrid = data.frame(maxdepth = 5)            # for rpart2
+                 ,tuneGrid = data.frame(maxdepth = 3:8)            # for rpart2
   )
   
-  fit3
   
-  pr1<- mmod$calcComb()
-  pr1
+  mmod$ensemble <- list(fit0, fit1, fit2, fit3)
   
-  class(unlist(pr1[1,]))
+  mmod$calcComb()
   
-  mmod$ensemble[unlist(pr1[3,])]
+  mmod$calcValidation()
   
+  write(mmod$getDescription(), "test.desc")
   
-  pred1 <- predict(modelFitAsIs, newdata = na.omit(mmod$datasets$testing))
-  pred2 <- predict(fit2, newdata = mmod$datasets$testing)
-  predDF <- data.frame(pred1, pred2, y=na.omit(mmod$datasets$testing)$y)
+  runSeq()
   
-  combFit <- train(y~., data=predDF, method="rpart2",
-                   trControl = trainControl(method = "cv", verboseIter = T, number = 5))
-  combFit
-  
-  
-  combPred <- predict(combFit,predDF)
-  
-  res1 <- data.frame(
-    confusionMatrix(pred1, na.omit(mmod$datasets$testing)$y)$overall[1]
-    ,confusionMatrix(pred2, na.omit(mmod$datasets$testing)$y)$overall[1]
-    ,confusionMatrix(combPred, na.omit(mmod$datasets$testing)$y)$overall[1]
-  )
-  names(res1)<-c(modelFitAsIs$method, fit2$method,"combPredV")
-  res1
-  
-  
-  
-  pred1V <- predict(modelFitAsIs,mmod$datasets$validation); 
-  pred2V <- predict(fit2,mmod$datasets$validation)
-  predVDF <- data.frame(pred1=pred1V,pred2=pred2V)
-  combPredV <- predict(combFit,predVDF)
-  
-  
-  res2 <- data.frame(
-    confusionMatrix(pred1V, na.omit(mmod$datasets$validation)$y)$overall[1]
-    ,confusionMatrix(pred2V, na.omit(mmod$datasets$validation)$y)$overall[1]
-    ,confusionMatrix(combPredV, na.omit(mmod$datasets$validation)$y)$overall[1], row.names = "AccuracyV"
-  )
-  names(res2)<-c(modelFitAsIs$method, fit2$method,"combPredV")
-  
-  res <- rbind(res1, res2)
-  
-  
-  
+  mmod
 } 
 
 #dataTrain, modelData
-test <- function(imputeMethod = "medianImpute", mmodel, combfitIndex = 1){
+test <- function(imputeMethod = "bagImpute", mmodel, combfitIndex = 1){
   
   print("start testing !!!")
   
@@ -318,22 +169,7 @@ test <- function(imputeMethod = "medianImpute", mmodel, combfitIndex = 1){
                           imputeMethod = imputeMethod, imputeSetName = "final_test")$result
   
   mmodel$addDataset("final_test", final_test)
-  
-  #     final_test <- final_test[!(final_test$x14 %in% c("94f7a0566f", "c82fb3b2f7")),]
-  #     final_test <- final_test[!(final_test$x17 %in% c("ab6738e02f")),]
-  #     final_test <- final_test[!(final_test$x20 %in% c("d000d40d38")),]
-  
-  # cmbFit <- mmodel$combFits[[combfitIndex]]$fit
-  
-  # mmodel$final <- cmbFit
-  
-  #   print(sprintf("prediction on model [%s] with Estimated Accuracy = %f ..."
-  #                 , cmbFit$modelInfo$label
-  #                 , max(cmbFit$results$Accuracy)))
-  
   final_pred <- mmod$predictComb( combFitIndex = combfitIndex, newdata = final_test)
-  
-  
   
   str(final_pred)
   print(head(unlist(final_pred)))

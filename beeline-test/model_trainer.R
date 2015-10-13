@@ -19,7 +19,7 @@ MModel <- setRefClass("MModel",
                         # +++++++++++++++ getDescription +++++++++++++++++
                         getDescription = function(){
                           desc <- capture.output(cat(sep="\n", 
-                                                     "dim(datasets): ",         capture.output(t(data.frame(lapply(mmod$datasets, function(ds){c(dim(ds),dim(ds[!complete.cases(ds),])[1])}), row.names =c("nrow","ncol","NAsCnt")))), 
+                                                     "dim(datasets): ",         capture.output(t(data.frame(lapply(datasets, function(ds){c(dim(ds),dim(ds[!complete.cases(ds),])[1])}), row.names =c("nrow","ncol","NAsCnt")))), 
                                                      "\nimputingInfo: ",        capture.output(imputingInfo),
                                                      "\nTRAINING vars: ",       capture.output(names(datasets$training)),
                                                      "\nEnsemble accuracy on train: ",        capture.output(data.frame(t(sapply(ensemble,function(x){list(Model = x$method, Accuracy = max(x$result$Accuracy))})))),
@@ -45,10 +45,10 @@ MModel <- setRefClass("MModel",
                         # +++++++++++++++ trainCombined +++++++++++++++++
                         trainCombined = function(data=NULL){
                           print(str(data))
-                          train(y~., data=data, method="rpart2",
-                                trControl = trainControl(method = "cv", verboseIter = T, number = 5))
-                          # combFit <- train(y~., data=combinedDf, method="rf",
-                          #                  trControl = trainControl(method = "cv", verboseIter = T, number = 5))
+                          #                           train(y~., data=data, method="rpart2",
+                          #                                 trControl = trainControl(method = "cv", verboseIter = T, number = 5))
+                          train(y~., data=data, method="rf",
+                                           trControl = trainControl(method = "cv", verboseIter = T, number = 5))
                         },
                         # +++++++++++++++ calcComb +++++++++++++++++
                         calcComb = function(){
@@ -58,6 +58,9 @@ MModel <- setRefClass("MModel",
                           grid <- expand.grid(data.frame(matrix(rep(c(T,F),ensemble_len),nrow = 2,ncol=ensemble_len)))
                           grid <- grid[apply(grid, 1, any),]
                           colnames(grid) <- sapply(ensemble, function(x){x$method})
+                          
+                          print("grid dimensions: ")
+                          print(dim(grid))
                           
                           result <<- grid
                           
@@ -82,11 +85,11 @@ MModel <- setRefClass("MModel",
                               if(length(modcomb) > 1){
                                 combFit <- trainCombined(combinedDf)
                                 combinedDf <- data.frame(combinedDf, combPred = predict(combFit, combinedDf))
-                                combFits[length(combFits)+1] <<- list(list(fit=combFit, usePredv = TRUE))
+                                combFits[length(combFits)+1] <<- list(list(fit=combFit, usePredv = TRUE, predvCnames = colnames(combinedDf)))
                               } else {
                                 # only one model, so do not need to combine. Just take accuracy from underlying assemple model
                                 combFit <- modcomb[[1]]
-                                combFits[length(combFits)+1] <<- list(list(fit=combFit, usePredv = FALSE))
+                                combFits[length(combFits)+1] <<- list(list(fit=combFit, usePredv = FALSE, predvCnames = colnames(datasets$testing)))
                                 combinedDf <- data.frame(combinedDf, combPred = combinedDf[,1])
                               }
                               
