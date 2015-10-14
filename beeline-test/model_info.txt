@@ -1,0 +1,122 @@
+#!!! Random Forest  (mtry = 16, p=0.7, beeAlnum)   rf - 0.7553
+#!! AdaBag - .754
+#! rpart2 (maxdepth 6, data w/o large factors) - 0.7197
+
+
+#  lda - 0.51
+#  rpart - 0.66
+#  ada   ---- Currently this procedure can not directly handle > 2 class response
+#  SsvmLinear - 0.5207
+#  lssvmLinear
+# amdai - 0.5012
+# Naive Bayes    nb - 0.40
+#  bartMachine - Your response must be either numeric, an integer or a factor with two levels.
+#   bayesglm - session failed
+#   bayesian methods - ERRORS:  are_factors(dataset) is not TRUE
+
+# ------------------ http://topepo.github.io/caret/Ensemble_Model.html ------------------------
+#!! gbm - 0.7217600 (very fast), n.trees = 50, interaction.depth = 2, shrinkage = 0.1 and n.minobsinnode = 10.
+#!  bagFDA - 16      0.7184276 - quite fast
+#!  ranger - 0.71608
+#!  wsrf -  2    0.7031701
+#!  C5.0 - 0.6981150 (quite fast) - trials = 20, model = tree and winnow = FALSE - need to play with params
+#!  extraTrees - 0.6761802 - need to play with params
+
+#  xgbLinear - 0.6980256 (quite fast) - nrounds = 50, lambda = 0 and alpha = 0. 
+#  xgbTree - 0.6999187 (wery fast) - nrounds = 50, max_depth = 1 and eta = 0.3
+#  rfRules - 43, 4, - 0.6979549 need to play with params!
+#  RRF - 2    0.010    0.0  - 0.6761748  - need to play with params
+#  RRFglobal - 43    1.000    0.6980972 - need to play with params
+#  treebag - 0.694 - very fast!!!
+#  AdaBoost.M1 - Freund     3          50     0.6918156
+
+#  ORFlog - 0.059
+#  ORFpls - 0.05
+#  ORFridge - 0.01
+#  avNNet - 0.3819349 (fast)
+#  bstTree - 0.04
+#  bagEarth - 0.015
+#  bagEarthGCV - 0.01428503
+#  BstLm - 0.03
+
+#  logicBag - Some of the values of the predictors are not 0 or 1.
+#  bstSm - 'tol' must be strictly positive and finite
+#  blackboost -  response is not a factor at two levels but ‘family = Binomial()’
+#  bag -   Please specify 'bagControl' with the appropriate functions
+#  gamboost - response is not a factor at two levels but ‘family = Binomial()’
+#  glmboost - response is not a factor at two levels but ‘family = Binomial()’
+#  cforest - run too long, fail
+#  C5.0Cost - length of 'dimnames' [2] not equal to array extent
+#  rotationForest, rotationForestCp -   rotationForest is only implemented for binary classification
+#  ORFsvm - too long
+#  parRF - run error
+#  rFerns - cannot allocate vector of size 3.4 Gb#  nodeHarvest - Two Class problems only
+
+# -------------- http://topepo.github.io/caret/Discriminant_Analysis.html ----------------------
+#  amdai - 0.4162128
+#  RFlda - 0.4638968
+#  hda - 0.26989506
+#  hdda - 0.1880095
+#  lda2 - 0.4699990
+#  stepLDA - 0.4601945
+#  loclda - 0.3820071
+#  Mlda - 0.4480076
+#  mda -  2 0.4219874
+#  pda - 0.4320876
+#  pda2 - 0.3281061
+#  PenalizedLDA - 0.4660303
+#  stepQDA - 0.4160804
+#  rda - 0.4239954
+#  rrlda - 0.2819612
+#  sda - 0.4639516
+#  sparseLDA - 0.41767068
+#  slda - 0.318034
+#  qda - some group is too small for 'qda'
+#  dwdLinear - Two class problems only
+#  Linda - n <= p -- you can't be serious!
+#  rmda - 'x' must be an array of at least two dimensions
+#  QdaCov - n <= p -- you can't be serious!
+#  smda - go to debug (((
+#  dwdPoly - Two class problems only
+#  dwdRadial - Two class problems only
+#  sddaLDA - package ‘SDDA’ is not available (for R version 3.2.2)
+#  sddaQDA - package ‘SDDA’ is not available (for R version 3.2.2)
+#  ---------------------------- http://topepo.github.io/caret/Bagging.html
+#  ----------------------------http://topepo.github.io/caret/Distance_Weighted_Discrimination.html
+#  sdwd - 0.03998414
+#  ---------------------------- http://topepo.github.io/caret/Feature_Extraction.html
+#  pcaNNet - 0.4896586
+#  kernelpls - 0.3259986
+#  pls - 0.3220306
+#  simpls - 0.3280503
+#  widekernelpls - 0.3257303
+#  spls - 0.4821429
+#  gamLoess - 0.04000635
+#  gam -  Model has more coefficients than data
+#  gamSpline -   invalid model formula in ExtractVars
+#  ------------------------------- http://topepo.github.io/caret/Implicit_Feature_Selection.html
+#!!  gcvEarth - 0.7161025
+#!  earth - 0.7160576
+#!  fda - 0.7019094 (very fast)
+#  evtree - 0.6942431
+#  J48 - 0.6902371, C = 0.0000001
+#  OneR - 0.6901355
+#  JRip - 0.6839935
+#  LMT - 0.6559131
+#  C5.0Tree - 0.6138927
+#  C5.0Rules - 0.6139167
+#  ctree2 - 0.6057884 , maxdepth = 7
+#  ctree - 0.5738162
+#  pam - 0.3581947
+#  PART - 0.5599063
+#  svmRadialWeights - 0.4361037
+#  kernelpls - 0.3319987
+#  glmStepAIC - glm models can only use 2-class outcomes
+#  chaid - package ‘CHAID’ is not available (for R version 3.2.2)
+#  rpartCost - length of 'dimnames' [2] not equal to array extent
+#  svmBoundrangeString - 'x' should be a character matrix with a single column for string kernel methods
+#  ----------------------------- http://topepo.github.io/caret/L1_Regularization.html
+#  glmnet - 0.5101853
+#  plr - 0.04003196
+#  multinom - 0.4273401
+#  rbf - fail R session

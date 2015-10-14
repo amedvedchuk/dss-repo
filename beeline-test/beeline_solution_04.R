@@ -92,16 +92,6 @@ splitData <- function(beeData,
 }
 
 # analyzeData(beeNoLFactors)
-# Naive Bayes    nb - 0.40
-# Linear Discriminant Analysis lda - 0.51
-# CART    rpart - 0.66
-#         rpart2 (maxdepth 6, data w/o large factors) - 0.7197
-# Boosted Classification Trees    ada   ---- Currently this procedure can not directly handle > 2 class response
-# AdaBag - .754
-# Support Vector Machines with Linear Kernel    svmLinear
-# Least Squares Support Vector Machine    lssvmLinear
-# Random Forest  (mtry = 16, p=0.7, beeAlnum)   rf - 0.7553
-# amdai - 0.5012
 trainModel <- function(){
   
   
@@ -109,11 +99,11 @@ trainModel <- function(){
   
   init()
   
-  runParallel()
+#   runParallel()
   
   mmod <<- splitData(beeData, trainImpMethod="bagImpute")
   
-  fit0 <<- readRDS("model_Boruta_7579.mod")
+#   fit0 <<- readRDS("model_Boruta_7579.mod")
   
   fit1 <<- train(y ~ ., method = "AdaBag", data = mmod$datasets$training, 
                  trControl = trainControl(method = "cv", verboseIter = T
@@ -143,8 +133,32 @@ trainModel <- function(){
                  ,tuneGrid = data.frame(maxdepth = 3:8)            # for rpart2
   )
   
+fit4 <<- train(y ~ ., method = "svmLinear", data = mmod$datasets$training, 
+               trControl = trainControl(method = "cv", verboseIter = T
+                                        , number = 5
+               )
+#                ,tuneGrid = data.frame(maxdepth = 3:8)            # for rpart2
+)
+
+# Sys.setenv(JAVA_HOME='C:\\ProgramFiles\\Java\\jdk1.7.0_40\\jre')
+# Sys.getenv("JAVA_HOME")
+
+fit5 <<- train(y ~ ., method = "", data = mmod$datasets$training[1:500,], 
+               trControl = trainControl(method = "cv", verboseIter = T
+                                        , number = 3
+               )
+                              # ,tuneGrid = data.frame(alpha = 3:7)            # for rpart2
+               # ,tuneGrid = expand.grid(threshold = c(0.1,0.15, 0.2, 0.25, 0.30), pruned = c(T,F))
+               
+)
+
+fit5
+
+plot(fit5)
+
+# seq(from = 0.00001, to = 0.01, by = 0.001)
   
-  mmod$ensemble <- list(fit0, fit1, fit2, fit3)
+  mmod$ensemble <- list(fit1, fit2, fit3)
   
   mmod$calcComb()
   
@@ -152,7 +166,7 @@ trainModel <- function(){
   
   write(mmod$getDescription(), "test.desc")
   
-  runSeq()
+#   runSeq()
   
   mmod
 } 
