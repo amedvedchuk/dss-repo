@@ -1,0 +1,33 @@
+#*!!! Random Forest  (mtry = 16, p=0.7, beeAlnum)   rf - 0.7553
+#*!! AdaBag - .754
+#*! rpart2 (maxdepth 6, data w/o large factors) - 0.7197
+
+#!! gbm - 0.7217600 (very fast), n.trees = 50, interaction.depth = 2, shrinkage = 0.1 and n.minobsinnode = 10.
+        - 0.7564210  ,tuneGrid = expand.grid(interaction.depth = 2, n.trees = 150, shrinkage = 0.1, n.minobsinnode = 10)
+#!  bagFDA - 16      0.7184276 - quite fast
+#!  gcvEarth - 0.7161025
+#!  ranger - 0.71608
+#!  earth - 0.7160576
+#!  wsrf -  2    0.7031701
+#!  fda - 0.7019094 (very fast)
+
+#  xgbTree - 0.6999187 (wery fast) - nrounds = 50, max_depth = 1 and eta = 0.3
+#  xgbLinear - 0.6980256 (quite fast) - nrounds = 50, lambda = 0 and alpha = 0. 
+#  C5.0 - 0.6981150 (quite fast) - trials = 20, model = tree and winnow = FALSE - need to play with params
+#  RRFglobal - 43    1.000    0.6980972 - need to play with params
+#  rfRules - 43, 4, - 0.6979549 need to play with params!
+#  treebag - 0.694 - very fast!!!
+#  evtree - 0.6942431
+#  AdaBoost.M1 - Freund     3          50     0.6918156
+#  J48 - 0.6902371, C = 0.0000001
+#  OneR - 0.6901355
+
+#  JRip - 0.6839935
+
+#  extraTrees - 0.6761802 - need to play with params
+#  RRF - 2    0.010    0.0  - 0.6761748  - need to play with params
+
+#  LMT - 0.6559131
+#  C5.0Tree - 0.6138927
+#  C5.0Rules - 0.6139167
+#  ctree2 - 0.6057884 , maxdepth = 7

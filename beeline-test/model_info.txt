@@ -21,14 +21,13 @@
 #!  wsrf -  2    0.7031701
 #!  C5.0 - 0.6981150 (quite fast) - trials = 20, model = tree and winnow = FALSE - need to play with params
 #!  extraTrees - 0.6761802 - need to play with params
-
 #  xgbLinear - 0.6980256 (quite fast) - nrounds = 50, lambda = 0 and alpha = 0. 
 #  xgbTree - 0.6999187 (wery fast) - nrounds = 50, max_depth = 1 and eta = 0.3
 #  rfRules - 43, 4, - 0.6979549 need to play with params!
-#  RRF - 2    0.010    0.0  - 0.6761748  - need to play with params
 #  RRFglobal - 43    1.000    0.6980972 - need to play with params
 #  treebag - 0.694 - very fast!!!
 #  AdaBoost.M1 - Freund     3          50     0.6918156
+#  RRF - 2    0.010    0.0  - 0.6761748  - need to play with params
 
 #  ORFlog - 0.059
 #  ORFpls - 0.05
@@ -120,3 +119,14 @@
 #  plr - 0.04003196
 #  multinom - 0.4273401
 #  rbf - fail R session
+
+elm - 'a' must be a complex matrix
+mlp - 0.2980254
+mlpWeightDecay - 0.3
+rbfDDA - 0.2639430
+dnn - 0.29
+
+-------------------------------- http://topepo.github.io/caret/Self_Organising_Maps.html
+bdk - 0.2920544
+xyf - 0.3242351
+rocc - 0.03998216

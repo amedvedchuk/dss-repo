@@ -143,18 +143,25 @@ fit4 <<- train(y ~ ., method = "svmLinear", data = mmod$datasets$training,
 # Sys.setenv(JAVA_HOME='C:\\ProgramFiles\\Java\\jdk1.7.0_40\\jre')
 # Sys.getenv("JAVA_HOME")
 
-fit5 <<- train(y ~ ., method = "", data = mmod$datasets$training[1:500,], 
+fit5 <<- train(y ~ ., method = "gbm", data = mmod$datasets$training, 
                trControl = trainControl(method = "cv", verboseIter = T
                                         , number = 3
                )
-                              # ,tuneGrid = data.frame(alpha = 3:7)            # for rpart2
-               # ,tuneGrid = expand.grid(threshold = c(0.1,0.15, 0.2, 0.25, 0.30), pruned = c(T,F))
+               ,tuneGrid = expand.grid(interaction.depth = 2, n.trees = 150, shrinkage = 0.1, n.minobsinnode = 10)
                
 )
 
-fit5
+saveRDS(fit5, "model_gbm_0756.mod")
 
-plot(fit5)
+fit6 <<- train(y ~ ., method = "bagFDA", data = mmod$datasets$training[1:5000,], 
+               trControl = trainControl(method = "cv", verboseIter = T
+                                        , number = 3
+               )
+               ,tuneGrid = expand.grid(nprune = c(35,45,25), degree = 1:3)
+               
+)
+
+plot(fit6)
 
 # seq(from = 0.00001, to = 0.01, by = 0.001)
   
