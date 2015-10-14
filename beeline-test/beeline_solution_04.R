@@ -152,12 +152,31 @@ fit5 <<- train(y ~ ., method = "gbm", data = mmod$datasets$training,
 )
 
 saveRDS(fit5, "model_gbm_0756.mod")
+saveRDS(fit6, "model_bagFDA_07423563.mod")
+
 
 fit6 <<- train(y ~ ., method = "bagFDA", data = mmod$datasets$training[1:5000,], 
                trControl = trainControl(method = "cv", verboseIter = T
                                         , number = 3
                )
-               ,tuneGrid = expand.grid(nprune = c(35,45,25), degree = 1:3)
+               ,tuneGrid = expand.grid(nprune = c(45,55), degree = 2:3)
+               
+)
+
+fit7 <<- train(y ~ ., method = "gcvEarth", data = mmod$datasets$training, 
+               trControl = trainControl(method = "cv", verboseIter = T
+                                        , number = 3
+               )
+               ,tuneGrid = expand.grid(degree = 1:3)
+               
+)
+fit7
+
+fit8 <<- train(y ~ ., method = "ranger", data = mmod$datasets$training, 
+               trControl = trainControl(method = "cv", verboseIter = T
+                                        , number = 3
+               )
+               # ,tuneGrid = expand.grid(degree = 1:3)
                
 )
 

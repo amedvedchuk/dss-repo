@@ -4,14 +4,15 @@
 
 #!! gbm - 0.7217600 (very fast), n.trees = 50, interaction.depth = 2, shrinkage = 0.1 and n.minobsinnode = 10.
         - 0.7564210  ,tuneGrid = expand.grid(interaction.depth = 2, n.trees = 150, shrinkage = 0.1, n.minobsinnode = 10)
-#!  bagFDA - 16      0.7184276 - quite fast
+#!  bagFDA - 16      0.7184276 - quite fast (on 500 rows) - but take long on 5000 rows
+        - 45      2       0.7423563
 #!  gcvEarth - 0.7161025
 #!  ranger - 0.71608
 #!  earth - 0.7160576
 #!  wsrf -  2    0.7031701
 #!  fda - 0.7019094 (very fast)
 
-#  xgbTree - 0.6999187 (wery fast) - nrounds = 50, max_depth = 1 and eta = 0.3
+#  xgbTree - 0.6999187 (very fast) - nrounds = 50, max_depth = 1 and eta = 0.3
 #  xgbLinear - 0.6980256 (quite fast) - nrounds = 50, lambda = 0 and alpha = 0. 
 #  C5.0 - 0.6981150 (quite fast) - trials = 20, model = tree and winnow = FALSE - need to play with params
 #  RRFglobal - 43    1.000    0.6980972 - need to play with params
