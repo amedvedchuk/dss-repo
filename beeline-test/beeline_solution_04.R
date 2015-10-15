@@ -153,32 +153,90 @@ fit5 <<- train(y ~ ., method = "gbm", data = mmod$datasets$training,
 
 saveRDS(fit5, "model_gbm_0756.mod")
 saveRDS(fit6, "model_bagFDA_07423563.mod")
+saveRDS(fit7, "model_bagFDA_07488500.mod")
 
 
-fit6 <<- train(y ~ ., method = "bagFDA", data = mmod$datasets$training[1:5000,], 
+fit6 <<- train(y ~ ., method = "bagFDA", data = mmod$datasets$training, 
                trControl = trainControl(method = "cv", verboseIter = T
-                                        , number = 3
+                                        , number = 5
                )
                ,tuneGrid = expand.grid(nprune = c(45,55), degree = 2:3)
                
 )
 
+saveRDS(fit6, "model_bagFDA_fit6.mod")
+
+
 fit7 <<- train(y ~ ., method = "gcvEarth", data = mmod$datasets$training, 
                trControl = trainControl(method = "cv", verboseIter = T
-                                        , number = 3
+                                        , number = 5
                )
                ,tuneGrid = expand.grid(degree = 1:3)
                
 )
-fit7
+saveRDS(fit7, "model_gcvEarth_fit7.mod")
+
 
 fit8 <<- train(y ~ ., method = "ranger", data = mmod$datasets$training, 
                trControl = trainControl(method = "cv", verboseIter = T
-                                        , number = 3
+                                        , number = 5
                )
-               # ,tuneGrid = expand.grid(degree = 1:3)
+               # ,tuneGrid = expand.grid(mtry = c(22,30,43))
                
 )
+saveRDS(fit8, "model_ranger_fit8.mod")
+
+
+fit9 <<- train(y ~ ., method = "earth", data = mmod$datasets$training, 
+               trControl = trainControl(method = "cv", verboseIter = T
+                                        , number = 5
+               )
+               ,tuneGrid = expand.grid(degree = 1:3, nprune = c(2, 26,51))
+               
+)
+saveRDS(fit9, "model_earth_fit9.mod")
+
+
+
+fit10 <<- train(y ~ ., method = "fda", data = mmod$datasets$training, 
+               trControl = trainControl(method = "cv", verboseIter = T
+                                        , number = 5
+               )
+               ,tuneGrid = expand.grid(degree = 1:3, nprune = c(2, 26,51))
+               
+)
+saveRDS(fit10, "model_fda_fit10.mod")
+
+
+fit11 <<- train(y ~ ., method = "wsrf", data = mmod$datasets$training, 
+               trControl = trainControl(method = "cv", verboseIter = T
+                                        , number = 5
+               )
+               ,tuneGrid = expand.grid(mtry = c(2,22,18,43))
+               
+)
+
+saveRDS(fit11, "model_wsrf_fit11.mod")
+
+
+fit12 <<- train(y ~ ., method = "rf", data = mmod$datasets$training, 
+                trControl = trainControl(method = "cv", verboseIter = T
+                                         , number = 5
+                )
+                ,tuneGrid = expand.grid(mtry = c(22,18,43))
+                
+)
+saveRDS(fit12, "model_rf_fit12.mod")
+
+fit13 <<- train(y ~ ., method = "AdaBag", data = mmod$datasets$training, 
+               trControl = trainControl(method = "cv", verboseIter = T
+                                        , number = 5
+               )
+)
+saveRDS(fit13, "model_rf_fit13.mod")
+
+
+
 
 plot(fit6)
 
