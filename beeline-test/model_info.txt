@@ -6,7 +6,7 @@
 #  lda - 0.51
 #  rpart - 0.66
 #  ada   ---- Currently this procedure can not directly handle > 2 class response
-#  SsvmLinear - 0.5207
+#  svmLinear - 0.5207
 #  lssvmLinear
 # amdai - 0.5012
 # Naive Bayes    nb - 0.40

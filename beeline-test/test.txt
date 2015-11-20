@@ -1,0 +1,40 @@
+dim(datasets): 
+            nrow ncol
+beeData    50000   63
+training   35003   44
+testing    10502   44
+validation  3177   44
+
+imputingInfo: 
+               ds        imMetod
+1 imputeSetName11 imputeMethod11
+
+======= Ensamble FIT calls: ========
+[[1]]
+train.formula(form = y ~ ., data = training, method = "nnet", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5), tuneGrid = data.frame(size = 1:10, decay = 0.17))
+
+[[2]]
+train.formula(form = y ~ ., data = training, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[3]]
+train.formula(form = y ~ ., data = training, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+====================================
+
+Final FIT call: 
+train.formula(form = y ~ ., data = training, method = "rf", trControl = trainControl(method = "cv", 
+
+TRAINING vars: 
+NULL
+
+
+MODEL SETTINGS: 
+Random Forest 
+
+
+predicted df head: 
+data frame with 0 columns and 0 rows
