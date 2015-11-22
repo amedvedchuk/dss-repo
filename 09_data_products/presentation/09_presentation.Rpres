@@ -1,0 +1,49 @@
+Species prediction with Classification and Regtression Trees
+========================================================
+author: Anatoliy Medvedchuk
+date: 22.11.2015
+
+
+Summary
+========================================================
+The target of this work is building shiny application that implement model for `Species` prediction trained on `iris` dataset.
+Classification and regression trees are choosed for building prediction model.
+Application will receives PetalWidth and Petal.Length from user (using sliders input) and make prediction what Species it can be. 
+Model training implemented with `caret` pachage (used method `rpart2`).
+
+Training model
+========================================================
+Model training was performed as follows:
+```{r cache=T}
+library(caret)
+data(iris)
+fit <- train(Species ~ .,
+             method = "rpart2", data = iris, 
+             tuneGrid = data.frame(maxdepth=4))
+```
+There is variable importance:
+```{r echo=FALSE}
+library(caret)
+varImp(fit)
+```
+
+Model summary
+=======================================================
+There is model summary:
+```{r echo=FALSE}
+fit
+```
+
+Resulting classification tree
+=======================================================
+Final classification tree is below:
+```{r echo=FALSE}
+library(rattle)
+fancyRpartPlot(fit$finalModel)
+```
+
+***
+As only two variables will affect the prediction: `Petal.Length` and `Petal.Width` then we will hold other two variables (`Sepal.Length` and `Sepal.Width`) as constant in shiny application.
+
+
+Shiny application can be found [here](https://medved.shinyapps.io/irisPrediction) 
