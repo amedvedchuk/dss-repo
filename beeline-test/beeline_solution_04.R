@@ -91,6 +91,96 @@ splitData <- function(beeData,
   
 }
 
+runEnsemble <- function(){
+  
+  mmod <<- readRDS("mmod_v01.env")
+  
+  m_gbm <<- readRDS("model_gbm_fit5_7554782.mod")
+  m_boruta <<- readRDS("model_Boruta_750907.mod")
+  m_rf <<- readRDS("model_rf_fit12_7505931.mod")
+  m_ranger <<- readRDS("model_ranger_fit8_7504503.mod")
+  m_wsrf <<- readRDS("model_wsrf_fit11_7495070.mod")
+  m_gcvEarth <<- readRDS("model_gcvEarth_fit7_7484227.mod")
+  m_bagFDA <<- readRDS("model_bagFDA_fit6_73818.mod")
+  
+#   m_earth <<- readRDS("model_earth_fit9_7483647.mod")
+#   m_AdaBag <<- readRDS("model_AdaBag_7480217.mod")
+  # m_fda <<- readRDS("model_fda_fit10_7359654.mod")
+#   m_rpart2 <<- readRDS("model_rpart2_7104534.mod")
+  
+  dim(expand.grid(data.frame(matrix(rep(c(T,F),length(mmod$ensemble)),nrow = 2,ncol=length(mmod$ensemble)))))
+  
+  saveRDS(mmod, "mmod_v02.mod")
+  
+  mmod$ensemble <- list(m_gbm, m_boruta, m_rf, m_ranger, m_wsrf, m_gcvEarth, m_bagFDA)
+  mmod$calcComb()
+  mmod$calcValidation()
+  
+  write(mmod$getDescription(), "test.desc")
+  
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 1)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 2)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 3)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 4)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 5)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 6)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 7)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 8)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 9)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 10)
+  
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 11)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 12)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 13)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 14)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 15)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 16)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 17)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 18)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 19)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 20)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 21)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 22)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 23)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 24)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 25)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 26)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 27)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 28)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 29)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 30)
+  
+  
+  
+  
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 31)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 32)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 33)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 34)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 35)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 36)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 37)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 38)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 39)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 40)
+  
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 51)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 52)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 53)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 54)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 55)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 56)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 57)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 58)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 59)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 60)
+  
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 61)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 62)
+  test(imputeMethod = "bagImpute", mmodel = mmod, combfitIndex = 63)
+    
+}
+
 # analyzeData(beeNoLFactors)
 trainModel <- function(){
   
@@ -99,11 +189,10 @@ trainModel <- function(){
   
   init()
   
-#   runParallel()
+  #   runParallel()
   
   mmod <<- splitData(beeData, trainImpMethod="bagImpute")
   
-#   fit0 <<- readRDS("model_Boruta_7579.mod")
   
   fit1 <<- train(y ~ ., method = "AdaBag", data = mmod$datasets$training, 
                  trControl = trainControl(method = "cv", verboseIter = T
@@ -133,124 +222,109 @@ trainModel <- function(){
                  ,tuneGrid = data.frame(maxdepth = 3:8)            # for rpart2
   )
   
-fit4 <<- train(y ~ ., method = "svmLinear", data = mmod$datasets$training, 
-               trControl = trainControl(method = "cv", verboseIter = T
-                                        , number = 5
-               )
-#                ,tuneGrid = data.frame(maxdepth = 3:8)            # for rpart2
-)
-
-# Sys.setenv(JAVA_HOME='C:\\ProgramFiles\\Java\\jdk1.7.0_40\\jre')
-# Sys.getenv("JAVA_HOME")
-
-fit5 <<- train(y ~ ., method = "gbm", data = mmod$datasets$training, 
-               trControl = trainControl(method = "cv", verboseIter = T
-                                        , number = 3
-               )
-               ,tuneGrid = expand.grid(interaction.depth = 2, n.trees = 150, shrinkage = 0.1, n.minobsinnode = 10)
-               
-)
-
-saveRDS(fit5, "model_gbm_0756.mod")
-saveRDS(fit6, "model_bagFDA_07423563.mod")
-saveRDS(fit7, "model_bagFDA_07488500.mod")
-
-
-fit6 <<- train(y ~ ., method = "bagFDA", data = mmod$datasets$training, 
-               trControl = trainControl(method = "cv", verboseIter = T
-                                        , number = 5
-               )
-               ,tuneGrid = expand.grid(nprune = c(45,55), degree = 2:3)
-               
-)
-
-saveRDS(fit6, "model_bagFDA_fit6.mod")
-
-
-fit7 <<- train(y ~ ., method = "gcvEarth", data = mmod$datasets$training, 
-               trControl = trainControl(method = "cv", verboseIter = T
-                                        , number = 5
-               )
-               ,tuneGrid = expand.grid(degree = 1:3)
-               
-)
-saveRDS(fit7, "model_gcvEarth_fit7.mod")
-
-
-fit8 <<- train(y ~ ., method = "ranger", data = mmod$datasets$training, 
-               trControl = trainControl(method = "cv", verboseIter = T
-                                        , number = 5
-               )
-               # ,tuneGrid = expand.grid(mtry = c(22,30,43))
-               
-)
-saveRDS(fit8, "model_ranger_fit8.mod")
-
-
-fit9 <<- train(y ~ ., method = "earth", data = mmod$datasets$training, 
-               trControl = trainControl(method = "cv", verboseIter = T
-                                        , number = 5
-               )
-               ,tuneGrid = expand.grid(degree = 1:3, nprune = c(2, 26,51))
-               
-)
-saveRDS(fit9, "model_earth_fit9.mod")
-
-
-
-fit10 <<- train(y ~ ., method = "fda", data = mmod$datasets$training, 
-               trControl = trainControl(method = "cv", verboseIter = T
-                                        , number = 5
-               )
-               ,tuneGrid = expand.grid(degree = 1:3, nprune = c(2, 26,51))
-               
-)
-saveRDS(fit10, "model_fda_fit10.mod")
-
-
-fit11 <<- train(y ~ ., method = "wsrf", data = mmod$datasets$training, 
-               trControl = trainControl(method = "cv", verboseIter = T
-                                        , number = 5
-               )
-               ,tuneGrid = expand.grid(mtry = c(2,22,18,43))
-               
-)
-
-saveRDS(fit11, "model_wsrf_fit11.mod")
-
-
-fit12 <<- train(y ~ ., method = "rf", data = mmod$datasets$training, 
-                trControl = trainControl(method = "cv", verboseIter = T
-                                         , number = 5
-                )
-                ,tuneGrid = expand.grid(mtry = c(22,18,43))
-                
-)
-saveRDS(fit12, "model_rf_fit12.mod")
-
-fit13 <<- train(y ~ ., method = "AdaBag", data = mmod$datasets$training, 
-               trControl = trainControl(method = "cv", verboseIter = T
-                                        , number = 5
-               )
-)
-saveRDS(fit13, "model_rf_fit13.mod")
-
-
-
-
-plot(fit6)
-
-# seq(from = 0.00001, to = 0.01, by = 0.001)
   
-  mmod$ensemble <- list(fit1, fit2, fit3)
+  # Sys.setenv(JAVA_HOME='C:\\ProgramFiles\\Java\\jdk1.7.0_40\\jre')
+  # Sys.getenv("JAVA_HOME")
   
-  mmod$calcComb()
+  fit6 <<- train(y ~ ., method = "bagFDA", data = mmod$datasets$training, 
+                 trControl = trainControl(method = "cv", verboseIter = T
+                                          , number = 5
+                 )
+                 ,tuneGrid = expand.grid(nprune = c(45,55), degree = 1:3)
+                 
+  )
   
-  mmod$calcValidation()
+  saveRDS(fit6, "model_bagFDA_fit6.mod")
   
-  write(mmod$getDescription(), "test.desc")
   
-#   runSeq()
+  
+  fit5 <<- train(y ~ ., method = "gbm", data = mmod$datasets$training, 
+                 trControl = trainControl(method = "cv", verboseIter = T
+                                          , number = 3
+                 )
+                 ,tuneGrid = expand.grid(interaction.depth = 2, n.trees = 150, shrinkage = 0.1, n.minobsinnode = 10)
+                 
+  )
+  
+  saveRDS(fit5, "model_gbm_fit5.mod")
+  
+  
+  fit7 <<- train(y ~ ., method = "gcvEarth", data = mmod$datasets$training, 
+                 trControl = trainControl(method = "cv", verboseIter = T
+                                          , number = 5
+                 )
+                 ,tuneGrid = expand.grid(degree = 1:3)
+                 
+  )
+  saveRDS(fit7, "model_gcvEarth_fit7.mod")
+  
+  
+  fit8 <<- train(y ~ ., method = "ranger", data = mmod$datasets$training, 
+                 trControl = trainControl(method = "cv", verboseIter = T
+                                          , number = 5
+                 )
+                 # ,tuneGrid = expand.grid(mtry = c(22,30,43))
+                 
+  )
+  saveRDS(fit8, "model_ranger_fit8.mod")
+  
+  
+  fit9 <<- train(y ~ ., method = "earth", data = mmod$datasets$training, 
+                 trControl = trainControl(method = "cv", verboseIter = T
+                                          , number = 5
+                 )
+                 ,tuneGrid = expand.grid(degree = 1:3, nprune = c(2, 26,51))
+                 
+  )
+  saveRDS(fit9, "model_earth_fit9.mod")
+  
+  
+  
+  fit10 <<- train(y ~ ., method = "fda", data = mmod$datasets$training, 
+                  trControl = trainControl(method = "cv", verboseIter = T
+                                           , number = 5
+                  )
+                  ,tuneGrid = expand.grid(degree = 1:3, nprune = c(2, 26,51))
+                  
+  )
+  saveRDS(fit10, "model_fda_fit10.mod")
+  
+  
+  fit11 <<- train(y ~ ., method = "wsrf", data = mmod$datasets$training, 
+                  trControl = trainControl(method = "cv", verboseIter = T
+                                           , number = 5
+                  )
+                  ,tuneGrid = expand.grid(mtry = c(2,22,18,43))
+                  
+  )
+  
+  saveRDS(fit11, "model_wsrf_fit11.mod")
+  
+  
+  fit12 <<- train(y ~ ., method = "rf", data = mmod$datasets$training, 
+                  trControl = trainControl(method = "cv", verboseIter = T
+                                           , number = 5
+                  )
+                  ,tuneGrid = expand.grid(mtry = c(22,18,43))
+                  
+  )
+  saveRDS(fit12, "model_rf_fit12.mod")
+  
+  fit13 <<- train(y ~ ., method = "AdaBag", data = mmod$datasets$training, 
+                  trControl = trainControl(method = "cv", verboseIter = T
+                                           , number = 5
+                                           ,tuneGrid = data.frame(maxdepth=2:11, mfinal = 150)     # for adaBag
+                  )
+  )
+  saveRDS(fit13, "model_AdaBag_fit13.mod")
+  
+  
+  
+  
+  plot(fit6)
+  
+  # seq(from = 0.00001, to = 0.01, by = 0.001)
+  #   runSeq()
   
   mmod
 } 
@@ -271,9 +345,10 @@ test <- function(imputeMethod = "bagImpute", mmodel, combfitIndex = 1){
   } else {
     final_test <- mmodel$datasets$final_test
   }
-
+  
+  print("start prediction...")
   final_pred <- mmod$predictComb( combFitIndex = combfitIndex, newdata = final_test)
-    
+  
   str(final_pred)
   print(head(unlist(final_pred)))
   print(length(final_pred))
