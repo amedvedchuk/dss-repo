@@ -1,10 +1,8 @@
 
-library(e1071)
 library(shiny)
+library(e1071)
 library(caret)
 library(ggplot2)
-
-
 
 # fit the model
 fit <- train(Species ~ .,
@@ -19,10 +17,7 @@ shinyServer(function(input, output) {
     output$plPlot <- renderPlot({
         ggplot(data = iris, aes(Species, Petal.Length)) + geom_boxplot() + geom_hline(y = input$Petal.Length, color="red")
     })
-#     output$slPlot <- renderPlot({
-#         ggplot(data = iris, aes(Species, Sepal.Length)) + geom_boxplot() + geom_hline(y = input$Sepal.Length, color="red")
-#     })
-    
+
     # keep Sepal.Length and Sepal.Width constant as they do not affect the result
     newdata <- reactive({data.frame(Petal.Width = input$Petal.Width, 
                                     Petal.Length = input$Petal.Length,

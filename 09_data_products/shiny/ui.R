@@ -3,7 +3,7 @@ library(shiny)
 shinyUI(fluidPage(
     
     headerPanel("Species prediction with CART"),
-    p("Application uses caret package to predict Species as output by Petal.Width and Petal Length based on iris dataset."),
+    p("Application uses caret package to predict Species as output by Petal.Width and Petal.Length based on iris dataset."),
     p("Model fited using rpart2 method as follows:"),
     code("fit <- train(Species ~ ., 
          method = 'rpart2', data = iris, tuneGrid = data.frame(maxdepth=4))"),
@@ -34,21 +34,8 @@ shinyUI(fluidPage(
                 plotOutput("plPlot", height = 220)
         )
     ),
-#     fluidRow(
-#         column( 4,
-#                 sliderInput("Sepal.Length", 
-#                             "Sepal Length:", 
-#                             min = 4,
-#                             max = 8, 
-#                             step = 0.1,
-#                             value = 6)
-#         ),
-#         column( 8, 
-#                 plotOutput("slPlot", height = 220)
-#         )
-#     ),
     hr(),
-    p("Press 'Predict!' button to make prediction by the model from your parameters. Prediction result will be in left bottom corner of page."),
+    p("Press 'Predict!' button to make prediction by the model from your parameters. Prediction result will be in right bottom corner of page."),
     h3('Results of prediction'),
     fluidRow(
         column( 1,
@@ -64,7 +51,5 @@ shinyUI(fluidPage(
         )
     ),
     p("Note: Sepal.Width and Sepal.Length hold constantly = 0 as they do not affect the model.")
-    
-    
 ))
 
