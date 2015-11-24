@@ -1,6 +1,11 @@
 library(caret)
 # library(dplyr)
 library(plyr)
+library(R.utils)
+
+if(Sys.getenv("JAVA_HOME")==""){
+  Sys.setenv(JAVA_HOME="C:\\Program Files\\Java\\jdk1.8.0_65")
+}
 
 readData <- function(){
   print("readData: start")
@@ -88,7 +93,7 @@ testMethods <- function(dsets, methods){
   print(file_name)
   
   laply(methods, function(mt){
-    start <- Sys.time()
+    start <- currentTimeMillis.System()
     fit <- train(SEX ~ ., method = mt, data = dsets$training, 
                  trControl = trainControl(method = "cv", verboseIter = T
                                           , number = 3
@@ -102,7 +107,7 @@ testMethods <- function(dsets, methods){
                        stringsAsFactors = F, row.names = NULL)
     predictions <- predict(fit, newdata = dsets$validation)
     cfres$validation <- confusionMatrix(predictions, dsets$validation$SEX)$overall[1]
-    cfres$runTime <- round(as.numeric(Sys.time()-start), 1)
+    cfres$runTime <- round(as.numeric((currentTimeMillis.System()-start)/1000), 1)
     cfres$train_cols <- ncol(dsets$training)
     cfres$train_rows <- nrow(dsets$training)
     cfres$test_rows <- nrow(dsets$testing)
