@@ -94,24 +94,46 @@ testMethods <- function(dsets, methods){
   
   laply(methods, function(mt){
     start <- currentTimeMillis.System()
-    fit <- train(SEX ~ ., method = mt, data = dsets$training, 
-                 trControl = trainControl(method = "cv", verboseIter = T
-                                          , number = 3
-                 )
-    )
-    predictions <- predict(fit, newdata = dsets$testing)
-    cfres<- data.frame(time = format(Sys.time(), "%Y-%m-%d %H:%M:%S"),
-                       method = mt, 
-                       train = max(fit$results$Accuracy), 
-                       testing = confusionMatrix(predictions, dsets$testing$SEX)$overall[1], 
-                       stringsAsFactors = F, row.names = NULL)
-    predictions <- predict(fit, newdata = dsets$validation)
-    cfres$validation <- confusionMatrix(predictions, dsets$validation$SEX)$overall[1]
-    cfres$runTime <- round(as.numeric((currentTimeMillis.System()-start)/1000), 1)
-    cfres$train_cols <- ncol(dsets$training)
-    cfres$train_rows <- nrow(dsets$training)
-    cfres$test_rows <- nrow(dsets$testing)
-    cfres$val_rows <- nrow(dsets$validation)
+    
+    cfres <- tryCatch({
+      
+      fit <- train(SEX ~ ., method = mt, data = dsets$training, 
+                   trControl = trainControl(method = "cv", verboseIter = T
+                                            , number = 3
+                   )
+      )
+      predictions <- predict(fit, newdata = dsets$testing)
+      cfres<- data.frame(time = format(Sys.time(), "%Y-%m-%d %H:%M:%S"),
+                         method = mt, 
+                         train = max(fit$results$Accuracy), 
+                         testing = confusionMatrix(predictions, dsets$testing$SEX)$overall[1], 
+                         stringsAsFactors = F, row.names = NULL)
+      predictions <- predict(fit, newdata = dsets$validation)
+      cfres$validation <- confusionMatrix(predictions, dsets$validation$SEX)$overall[1]
+      cfres$runTime <- round(as.numeric((currentTimeMillis.System()-start)/1000), 1)
+      cfres$train_cols <- ncol(dsets$training)
+      cfres$train_rows <- nrow(dsets$training)
+      cfres$test_rows <- nrow(dsets$testing)
+      cfres$val_rows <- nrow(dsets$validation)
+      cfres$result <- "SUCCESS"
+      cfres
+    }, error = function(err){
+      print(paste("ERROR occurred in cycle: ",err))
+      cfres<- data.frame(time = format(Sys.time(), "%Y-%m-%d %H:%M:%S"),
+                         method = mt, 
+                         train = NA, 
+                         testing = NA, 
+                         stringsAsFactors = F, row.names = NULL)
+      cfres$validation <- NA
+      cfres$runTime <- round(as.numeric((currentTimeMillis.System()-start)/1000), 1)
+      cfres$train_cols <- ncol(dsets$training)
+      cfres$train_rows <- nrow(dsets$training)
+      cfres$test_rows <- nrow(dsets$testing)
+      cfres$val_rows <- nrow(dsets$validation)
+      cfres$result <- gsub("\n", "|", as.character(err))
+      cfres
+    })
+    
     print(cfres)
     write.table(cfres, file_name, append = T, row.names = F, col.names = first, sep = "\t")
     if(first){
@@ -120,5 +142,7 @@ testMethods <- function(dsets, methods){
     print("------------------------------------------------")
     res <- rbind(res, cfres)
     res
+    
+    
   })
 }
