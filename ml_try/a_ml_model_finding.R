@@ -4,11 +4,12 @@ source("a_ml_functions.R")
 # dt <- preProcess(readData, preBasic, preLog, makeParts_006, reduceTrain_rf006_log_20)
 # dt <- preProcess(readData, preBasic, makeParts_006, reduceTrain_rf006_log_20)
 
-dt <- preProcess(readData, preBasic, makeParts_006)
+# dt <- preProcess(readData, preBasic, makeParts_006)
+
+dt <- runScenario(readData, preBasic_noImpute, imputeNA_as0_DIFF, reduce_corrPredictors, makeParts_006, imputeNA_Bag_after_DIFF)
 
 
-testMethods(dt, c("glm","rpart", "enet"))
-testMethods(dt, c("enet"))
+testMethods(dt, c("glm","rpart", "rf"))
 
 # FAILED: "wsrf" bartMachine polr svmLinear lssvmLinear amdai "bag" "awnb","awtan","brnn" "chaid","enet",
   # binda, logicBag, LogitBoost logreg - Some of the values of the predictors are not 0 or 1
