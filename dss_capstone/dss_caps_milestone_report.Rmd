@@ -1,0 +1,56 @@
+---
+title: "DSS Capstone milestone report"
+author: "Anatoliy Medvedchuk"
+date: "December 29, 2015"
+output: html_document
+---
+
+#Owerview
+
+This report contains basic exploratory analysis for textual data from HC Corpora (www.corpora.heliohost.org) in context of natural language processing. Basic data features will be counted and highlighted such as count of lines and words in text documents. 
+Note: data downloaded from coursera capstone site.
+
+#Exploratory analysis
+
+##Files used
+In capstone projects only english files from archive will be used for analysis and model building. 
+There are exact file names used:
+
+```{r echo=F}
+library(knitr)
+library(quanteda)
+data.frame(size_bytes = sapply(list.files("final/en_US", full.names = T), file.size))
+```
+  
+##Basic files information
+
+Let's look inside files and cout lines words and maximum line length.
+```{r echo=TRUE, cache=TRUE}
+system("wc -wlL final/en_US/* > counts.txt")
+tbl <- read.table("counts.txt")
+colnames(tbl) <- c("LinesCount", "WordCount", "MaxLine", "Description")
+kable(tbl, caption = "Files summary")
+```
+
+##Word frequencies
+Quanteda package was used to calculte document-feature matrix. 
+There is word count frequencies histogram for en_US.blogs.txt file.
+
+
+```{r echo=TRUE, cache=TRUE}
+dssCorp <- corpus(textfile("final/en_US/en_US.blogs.txt"))
+```
+
+
+```{r echo=TRUE, cache=TRUE}
+dssDfm <- dfm(dssCorp)
+```
+
+```{r echo=TRUE, cache=TRUE}
+hist(topfeatures(dssDfm, 100), breaks = 50, xlab = "word count", main = "Frequency of top 100 words")
+```
+
+
+#Result
+
+Word count in text corpus is large so we need to reduce amount of data to process and store in memory. May be random sampling from original data will be good choice but additional analysis is needed.

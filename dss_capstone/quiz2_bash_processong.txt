@@ -1,0 +1,122 @@
+
+#Q1: The guy in front of me just bought a pound of bacon, a bouquet, and a case of
+cat en_US.* | egrep -i 'cases? ([a-zA-Z]{1,} ){4}' -o | sort | uniq -ci | sort -n | egrep  -i 'soda|beer|cheese|pretzels'
+cat en_US.* | egrep -i 'cases? of ([a-zA-Z]{1,} ){1}' -o | sort | uniq -ci | sort -n | egrep  -i 'soda|beer|cheese|pretzels'
+cat en_US.* | egrep -i 'cases?([[:punct:][:space:]][a-zA-Z]{1,}){5}' -o | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'cases?([[:punct:][:space:]][a-zA-Z]{1,}){5}' -o | sort | uniq -ci | sort -n | egrep  -i 'soda|beer|cheese|pretzels'
+cat en_US.* | egrep -i 'cases? of([[:punct:][:space:]][a-zA-Z]{1,}){5}' -o | sort | uniq -ci | sort -n | egrep  -i 'soda|beer|cheese|pretzels'
+cat en_US.* | egrep -i 'cases? of([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | sort | uniq -ci | sort -n | egrep  -i 'soda|beer|cheese|pretzels'
+      1 case of soda
+     16 cases of beer
+     28 case of beer
+#ans - beer
+# try more: 
+cat en_US.* | egrep -i 'bouquet ([a-zA-Z]{1,5} ){1}cases? of ([a-zA-Z]{1,} ){1}' -o | sort | uniq -ci | sort -n
+cat en_US.* | egrep -i 'bouquet([[:punct:][:space:]][a-zA-Z]{1,})' -o | sort | uniq -ci | sort -n
+cat en_US.* | egrep -i 'bouquet([[:punct:][:space:]][a-zA-Z]{1,}){5}' -o | sort | uniq -ci | sort -n | grep -i case
+
+
+#Q2: You're the reason why I smile everyday. Can you follow me please? It would mean the
+cat en_US.* | egrep -i 'would mean the([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | sort | uniq -ci | sort -n
+cat en_US.* | egrep -i 'would mean the([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | sort | uniq -ci | sort -n | egrep -i 'best|most|world|universe'
+      1 would mean the most
+      1 would mean the worldd
+    203 would mean the world
+#ans - world
+
+# try more: 
+cat en_US.* | egrep -i 'mean the([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | sort | uniq -ci | sort -n
+cat en_US.* | egrep -i 'mean (the)?([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | sort | uniq -ci | sort -n
+cat en_US.* | egrep -i 'mean([[:punct:][:space:]][a-zA-Z]{1,}){3}' -o | sort | uniq -ci | sort -n | egrep -i 'best|most|world|universe'
+
+#Q3: Hey sunshine, can you follow me and make me the
+cat en_US.* | egrep -i 'make me the([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | sort | uniq -ci | sort -n
+cat en_US.* | egrep -i 'make me the([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | sort | uniq -ci | sort -n | egrep -i 'smelliest|saddest|bluest|happiest'
+     30 make me the happiest
+#ans - happiest
+cat en_US.* | egrep -i 'make me([[:punct:][:space:]][a-zA-Z]{1,}){3}' -o | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'make me([[:punct:][:space:]][a-zA-Z]{1,}){3}' -o | sort | uniq -ci | sort -n | egrep -i 'smelliest|saddest|bluest|happiest'
+
+
+#Q4: Very early observations on the Bills game: Offense still struggling but the
+cat en_US.* | egrep -i 'but([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | sort | uniq -ci | sort -n
+cat en_US.* | egrep -i 'but([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n
+cat en_US.* | egrep -i 'but the([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n
+cat en_US.* | egrep -i 'struggling but the([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n
+cat en_US.* | egrep -i 'but the([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n | egrep -i 'crowd|defense|players|referees'
+      1 but the crowded
+      1 but the defenseman
+      9 but the crowds
+     17 but the defense
+     22 but the players
+     33 but the crowd
+#ans - crowd - NOK
+cat en_US.* | egrep -i 'struggling([[:punct:][:space:]][a-zA-Z]{1,}){3}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n | egrep -i 'crowd|defense|players|referees'
+# ans - try "players"
+
+#Q5: Go on a romantic date at the
+cat en_US.* | egrep -i 'date at the([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'romantic date at the([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'romantic date([[:punct:][:space:]][a-zA-Z]{1,}){5}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'date at([[:punct:][:space:]][a-zA-Z]{1,}){5}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+
+# ans - no predicted (( try beach - OK
+
+
+#Q6: Well I'm pretty sure my granny has some old bagpipes in her garage I'll dust them off and be on my
+cat en_US.* | egrep -i 'and be on my([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'be on my([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'be on my([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n | egrep -i 'phone|motorcycle|horse|way'
+      1 be on my ways
+      2 be on my phone
+     36 be on my way
+#ans - way
+     
+#Q7: Ohhhhh #PointBreak is on tomorrow. Love that film and haven't seen it in quite some
+cat en_US.* | egrep -i 'in quite some([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'quite some([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n
+cat en_US.* | egrep -i 'quite some([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n | egrep -i 'time|weeks|years|thing'
+      1 quite some things
+      2 quite some years
+    378 quite some time
+#ans - time
+    
+#Q8: After the ice bucket challenge Louis will push his long wet hair out of his eyes with his little
+cat en_US.* | egrep -i 'with his little([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'his little([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n | egrep -i 'ears|fingers|eyes|toes'
+      1 his little ears
+      3 his little eyes
+      4 his little fingers
+#ans - fingers
+      
+#Q9: Be grateful for the good times and keep the faith during the
+cat en_US.* | egrep -i 'faith during the([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'during the([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'faith during([[:punct:][:space:]][a-zA-Z]{1,}){3}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'keep the faith([[:punct:][:space:]][a-zA-Z]{1,}){3}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'during the([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n | egrep -i 'bad|sad|worse|hard'
+      1 during the badgers
+      1 during the badwater
+      1 during the chardon
+      1 during the hardest
+      1 during the posadas
+      3 during the hard
+      4 during the bad
+      5 during the crusades
+      
+# ans - bad
+
+#Q10 - If this isn't the cutest thing you've ever seen, then you must be
+cat en_US.* | egrep -i 'you must be([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'you must be([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n | egrep -n 'asleep|insensitive|callous|insane'
+cat en_US.* | egrep -i 'must be([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n | egrep -i 'asleep|insensitive|callous|insane'
+      2 must be asleep
+      8 must be insane
+
+#ans - insane
+
+
+
+
+
+

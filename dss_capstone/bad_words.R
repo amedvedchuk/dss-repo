@@ -2,4 +2,3 @@ download.file("http://www.cs.cmu.edu/~biglou/resources/bad-words.txt", destfile 
 
 badWords <- readLines("bad_words.txt",  )
 badWords
-
