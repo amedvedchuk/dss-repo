@@ -5,6 +5,11 @@ total <- c(readLines("final/en_US/en_US.blogs.txt"),
 total2 <- total[round(runif(n = length(total)*0.3, min=1, max=length(total)))]
 rm(total2)
 
+lines <- readLines("tags.txt")
+stri_replace_all(lines[1:10], "", regex = "[›—’‘“]+|(&?amp;)+|(&?lt;?)+|(&?gt;)+|class=\"[^\"]*\"|style=\"[^\"]*\"|background:[^\"]*\"|[/;]*span|goog.{1,64}-spellcheck-word")
+lines[9]
+replaced
+
 total <- total2
 
 length(total2)/length(total)
@@ -12,6 +17,8 @@ length(total2)/length(total)
 ngrams <- make_ngrams(total, 3)
 dt2 <- make_table(ngrams, 3)
 dt2
+
+saveRDS(ngrams, "ngrams_2016_01_03.rds")
 
 lines <- readLines("final/en_US/en_US.blogs.txt", n = 1000)
 
@@ -38,6 +45,8 @@ stri_match_all(lines[1:3], regex="[a-zA-Z]*([^A-Za-z \\d\\.!,\\(\\)\\?\\-']+[a-z
 unlist(stri_match_all(lines[1:1000], regex="[[:space:]]+[a-zA-Z]*([^A-Za-z \\d\"\\.!,\\(\\)\\?\\-']+[a-zA-Z]*)+"))
 unlist(stri_match_all(lines[1:1000], regex="[[:space:]]+[a-zA-Z]*([^A-Za-z \\d[:punct:]]+[a-zA-Z]*)+"))
 unlist(stri_match_all(lines[1:1000], regex="[[:punct:]]+"))
+unlist(stri_match_all(total[300:500], regex="(&?amp;)+|(&?lt;)+|(&?gt;)+|class=\"[^\"]*\"|style=\"[^\"]*\""))
+
 
 
 
