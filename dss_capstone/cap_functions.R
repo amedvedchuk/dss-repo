@@ -145,3 +145,12 @@ make_table <- function(ngrams, nlength = 2, is_hash = FALSE){
     final_dt
 }
 
+read_file <- function(file){
+    con <- file(file, open="rb")
+    res <- readLines(con, encoding="UTF-8", skipNul = T)
+    close(con)
+    res
+}
+
+
+
