@@ -7,9 +7,9 @@ total <- c(read_file("final/en_US/en_US.blogs.txt"),
            read_file("final/en_US/en_US.news.txt"),
            read_file("final/en_US/en_US.twitter.txt"))
 
-make_ngrams_batch(nbatches = 5, total, ngram = 3)
+make_ngrams_batch(nbatches = 10, total, ngram = 3)
 
-ng <- read_batched_wfm("wfm_2016-01-05_00_04")
+ng <- read_batched_wfm("wfm_2016-01-05_00_52")
 
 
 make_table_batch(nbatches = 5, ng, nlength = 3)
