@@ -26,6 +26,13 @@ dtl <- list(
 
 # -------------------------------------------------
 saveRDS(dtl, "dtl_first_working_030.rds")
+
+dtl$dt1$prefix <- sapply(dtl$dt1$prefix, hash)
+dtl$dt2$prefix <- sapply(dtl$dt2$prefix, hash)
+dtl$dt3$prefix <- sapply(dtl$dt3$prefix, hash)
+dtl$dt4$prefix <- sapply(dtl$dt4$prefix, hash)
+
+
 predict_backoff(dtl, "Go on a romantic date at the")
 # Quiz 3:
 # Q1
