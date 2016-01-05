@@ -1,0 +1,137 @@
+
+#Q1: When you breathe, I want to be the air for you. I'll be there for you, I'd live and I'd
+cat en_US.* | egrep -i 'live and I'"'"'d([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'live and i([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+### nothing predicted...
+#ans try - give
+
+
+
+#Q2: Guy at my table's wife got up to go to the bathroom and I asked about dessert and he started telling me about his
+cat en_US.* | egrep -i 'telling me about his([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'me about his([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' |  sort | uniq -ci | sort -n | egrep -i 'marital|horticultural|spiritual|financial'
+cat en_US.* | egrep -i 'about his([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' |  sort | uniq -ci | sort -n | egrep -i 'marital|horticultural|spiritual|financial'
+      1 about his financial
+      2 about his spiritual
+      3 about his extramarital
+
+#ans - spiritual
+
+
+#Q3: I'd give anything to see arctic monkeys this
+cat en_US.* | egrep -i 'see arctic monkeys this([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' |  sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'arctic monkeys this([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' |  sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'monkeys this([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' |  sort | uniq -ci | sort -n 
+    117 this decade
+   5234 this month
+  10979 this weekend
+  12294 this morning
+
+#ans - morning
+
+
+
+#Q4: Talking to your mom has the same effect as a hug and helps reduce your
+cat en_US.* | egrep -i 'and helps reduce your([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n
+cat en_US.* | egrep -i 'helps reduce your([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n
+cat en_US.* | egrep -i 'reduce your([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n
+      4 reduce your costs
+      5 reduce your exposure
+      5 reduce your stress
+     21 reduce your risk
+#ans - stress
+
+
+#Q5: When you were in Holland you were like 1 inch away from me but you hadn't time to take a
+cat en_US.* | egrep -i 'time to take a([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'time to take a([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n |  egrep -i 'picture|walk|minute|look'
+      1 time to take a walk
+      3 time to take a picture
+     12 time to take a look
+
+# ans - look
+
+
+#Q6: I'd just like all of these questions answered, a presentation of evidence, and a jury to settle the
+cat en_US.* | egrep -i 'jury to settle the([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'to settle the([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+      4 to settle the score
+      5 to settle the matter
+      6 to settle the issue
+     19 to settle the case
+
+#ans - case
+     
+#Q7: I can't deal with unsymetrical things. I can't even hold an uneven number of bags of groceries in each
+cat en_US.* | egrep -i 'of groceries in each([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+      1 of groceries in each hand
+cat en_US.* | egrep -i 'groceries in each([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'in each([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n | egrep -i 'arm|finger|toe|hand'
+      3 in each arm
+     21 in each hand
+
+#ans - hand
+    
+#Q8: Every inch of you is perfect from the bottom to the
+cat en_US.* | egrep -i 'from the bottom to the([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+      9 from the bottom to the top
+cat en_US.* | egrep -i 'bottom to the([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+      1 bottom to the beginning
+      1 bottom to the st
+     12 bottom to the top
+
+#ans - top
+      
+#Q9: I’m thankful my childhood was filled with imagination and bruises from playing
+cat en_US.* | egrep -i 'and bruises from playing([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'from playing([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+      3 from playing games
+      3 from playing outside
+      3 from playing so
+      4 from playing a
+      5 from playing on
+      7 from playing at
+      7 from playing basketball
+      7 from playing for
+     13 from playing with
+     17 from playing in
+     18 from playing the
+
+      
+# ans - outside
+
+#Q10 - I like how the same people are in almost all of Adam Sandler's
+cat en_US.* | egrep -i 'all of Adam Sandler'"'"'s([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+cat en_US.* | egrep -i 'Adam Sandler.s?([[:punct:][:space:]][a-zA-Z]{1,}){1}' -o | tr '[:upper:]' '[:lower:]' | sort | uniq -ci | sort -n 
+      1 adam sandler, chelsea
+      1 adam sandler, colin
+      1 adam sandler, deepak
+      1 adam sandler, doesn
+      1 adam sandler hanukkah
+      1 adam sandler. i
+      1 adam sandler. im
+      1 adam sandler) is
+      1 adam sandler. it
+      1 adam sandler, kevin
+      1 adam sandler, mike
+      1 adam sandler, paul
+      1 adam sandler. punch
+      1 adam sandler's body
+      1 adam sandler’s films
+      1 adam sandler's grandma
+      1 adam sandler’s his
+      1 adam sandler's recent
+      1 adam sandler's résumé
+      1 adam sandler's thoughts
+      1 adam sandler, turns
+      1 adam sandler. ugh
+      2 adam sandler, andy
+
+
+#ans - movies
+
+
+
+
+
+
