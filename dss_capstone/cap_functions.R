@@ -6,33 +6,73 @@ library(data.table)
 library(hashr)
 library(dplyr)
 
-predict_backoff <- function(dt, phrase, is_hash = FALSE){
+predict_backoff <- function(dl, phrase, 
+                            show_last = 3, 
+                            non_stop = F, 
+                            is_hash = FALSE, 
+                            candidates = c()){
     # tokens <- unlist(tokenize(tolower("After years of work Semmi was vey tired"), removeNumbers = TRUE, removeTwitter = TRUE, ngrams = 3))
     
-    
-    
-    tokens <- unlist(tokenize(tolower(phrase), removeNumbers = TRUE, removeTwitter = TRUE, removePunct = T,  ngrams = 2))
-    last_bigram <- tokens[length(tokens)]
-    print(last_bigram)
-    print(cat("last bigram:", last_bigram))
-    
-    if(is_hash){
-        last_bigram <- hash(last_bigram)
+    getLastNgram <- function(nlength){
+        tokens <- unlist(tokenize(tolower(phrase), 
+                                  removeNumbers = TRUE, 
+                                  removeTwitter = TRUE, 
+                                  removePunct = T,  
+                                  ngrams = nlength))
+        last_ngram <- tokens[length(tokens)]
+        # print(last_ngram)
+        cat("last ngram:", last_ngram, "\n")
+        
+        if(is_hash){
+            last_ngram <- hash(last_ngram)
+            cat("last bigram:", last_ngram, "\n")
+        }
+        last_ngram
     }
-    print(cat("last bigram:", last_bigram))
-    variants <- dt[prefix == last_bigram]
-    variants <- variants[order(variants$freq, decreasing = T),]
-    print(cat("found variants:", length(variants)))
-    variants
     
-    #     getNgram <- function(tokens, ngram_len){
-    #         tlen <- length(tokens)
-    #         if(tlen > ngram_len){
-    #             tokens[tlen-ngram_len:ngram_len]
-    #         } else {
-    #             tokens
-    #         }
-    #     }
+    getAllVariants <- function(dt, last_ngram){
+        variants <- dt[prefix == last_ngram]
+        variants <- variants[order(variants$freq, decreasing = T),]
+        cat("found variants:", nrow(variants), "\n")
+        if(length(candidates)>0) {
+            variants <- variants[lastw %in% candidates]
+        }
+        if(nrow(variants) > show_last){
+            variants <- variants[1:show_last,]
+        }
+        # print(variants)
+        variants
+    }
+    
+    # to_print <- system.time({
+    cat("start to predict, showlast = ", show_last, "\n", sep= "")
+    
+    last_ngram <- getLastNgram(3)
+    
+    variants <- getAllVariants(dl$dt4, last_ngram)
+    
+    if(nrow(variants)>0 && !non_stop){
+        return(variants)
+    }
+    
+    last_ngram <- getLastNgram(2)
+    
+    variants <- rbind(variants, getAllVariants(dl$dt3, last_ngram))
+    
+    if(nrow(variants)>0 && !non_stop){
+        return(variants)
+    }
+    
+    last_ngram <- getLastNgram(1)
+    
+    variants <- rbind(variants, getAllVariants(dl$dt2, last_ngram))
+    
+    if(nrow(variants)>0){
+        return(variants)
+    } else {
+        return("the")
+    }
+    
 }
 
 predict_next <- function(dt, phrase, is_hash = FALSE){
@@ -233,8 +273,11 @@ read_batched_table <- function(prefix){
     files <- grep(prefix, list.files("."), value = T)
     dt <- data.table()
     sapply(files, function(file){
+        cat("read dt file:", file, "\n")
         dt <<- rbind(dt, readRDS(file))
     })
+    cat("readed table row size: ", nrow(dt), "\n", sep="")
+    cat("set key for data.table = prefix\n")
     setkey(dt, prefix)
     dt
 }
