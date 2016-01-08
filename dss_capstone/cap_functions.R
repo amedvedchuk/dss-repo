@@ -9,9 +9,15 @@ library(dplyr)
 predict_backoff <- function(dl, phrase, 
                             show_last = 3, 
                             non_stop = F, 
-                            is_hash = FALSE, 
+                            is_hash = FALSE,
+                            verbose = T,
+                            simple_out = T,
                             candidates = c()){
     # tokens <- unlist(tokenize(tolower("After years of work Semmi was vey tired"), removeNumbers = TRUE, removeTwitter = TRUE, ngrams = 3))
+    
+    m_cat <- create_cat(verbose)
+    
+    # cat("phrase = ", phrase, "\n", sep="")
     
     getLastNgram <- function(nlength){
         tokens <- unlist(tokenize(tolower(phrase), 
@@ -21,11 +27,11 @@ predict_backoff <- function(dl, phrase,
                                   ngrams = nlength))
         last_ngram <- tokens[length(tokens)]
         # print(last_ngram)
-        cat("last ngram:", last_ngram, "\n")
+        m_cat("last ngram:", last_ngram, "\n")
         
         if(is_hash){
             last_ngram <- hash(last_ngram)
-            cat("last bigram:", last_ngram, "\n")
+            m_cat("last bigram:", last_ngram, "\n")
         }
         last_ngram
     }
@@ -33,7 +39,7 @@ predict_backoff <- function(dl, phrase,
     getAllVariants <- function(dt, last_ngram){
         variants <- dt[prefix == last_ngram]
         variants <- variants[order(variants$freq, decreasing = T),]
-        cat("found variants:", nrow(variants), "\n")
+        m_cat("found variants:", nrow(variants), "\n")
         if(length(candidates)>0) {
             variants <- variants[lastw %in% candidates]
         }
@@ -44,15 +50,27 @@ predict_backoff <- function(dl, phrase,
         variants
     }
     
+    make_out <- function(res){
+        if(simple_out){
+            if(ncol(res)==2){
+                unlist(res$prefix)
+            }else(
+                unlist(res$lastw)
+            )
+        } else {
+            res
+        }
+    }
+    
     # to_print <- system.time({
-    cat("start to predict, showlast = ", show_last, "\n", sep= "")
+    m_cat("start to predict, showlast = ", show_last, "\n", sep= "")
     
     last_ngram <- getLastNgram(3)
     
     variants <- getAllVariants(dl$dt4, last_ngram)
     
     if(nrow(variants)>0 && !non_stop){
-        return(variants)
+        return(make_out(variants))
     }
     
     last_ngram <- getLastNgram(2)
@@ -60,7 +78,7 @@ predict_backoff <- function(dl, phrase,
     variants <- rbind(variants, getAllVariants(dl$dt3, last_ngram))
     
     if(nrow(variants)>0 && !non_stop){
-        return(variants)
+        return(make_out(variants))
     }
     
     last_ngram <- getLastNgram(1)
@@ -68,11 +86,20 @@ predict_backoff <- function(dl, phrase,
     variants <- rbind(variants, getAllVariants(dl$dt2, last_ngram))
     
     if(nrow(variants)>0){
-        return(variants)
+        return(make_out(variants))
     } else {
-        return("the")
+        # return("the")
+        return(make_out(dtl$dt1[order(dtl$dt1$freq, decreasing = T)][1:show_last]))
     }
     
+}
+
+create_cat <- function(verbose=T){
+    function(...){
+        if(verbose){
+            cat(...)
+        }
+    }
 }
 
 predict_next <- function(dt, phrase, is_hash = FALSE){
