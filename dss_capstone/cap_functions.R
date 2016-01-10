@@ -184,13 +184,13 @@ preproces_data <- function(lines){
     to_print <- system.time({
         # remove non ASCII
         print(Sys.time())
-        print("remove non ASCII: [›—’‘“]+")
-        # replaced <- stri_replace_all(lines, "", regex = "[›—’‘“]+|(&?amp;)+|(&?lt;)+|(&?gt;)+|class=\"[^\"]*\"|style=\"[^\"]*\"")
-        replaced <- stri_replace_all(lines, "", regex = "[›—’‘“]+|(&?amp;)+|(&?lt;?)+|(&?gt;)+|class=\"[^\"]*\"|style=\"[^\"]*\"|background:[^\"]*\"|[/;]*span|goog.{1,64}-spellcheck-word")
+        print("remove non ASCII: [â€ºâ€”â€™â€˜â€œ]+")
+        # replaced <- stri_replace_all(lines, "", regex = "[â€ºâ€”â€™â€˜â€œ]+|(&?amp;)+|(&?lt;)+|(&?gt;)+|class=\"[^\"]*\"|style=\"[^\"]*\"")
+        replaced <- stri_replace_all(lines, "", regex = "(&?amp;)+|(&?lt;?)+|(&?gt;)+|class=\"[^\"]*\"|style=\"[^\"]*\"|background:[^\"]*\"|[/;]*span|goog.{1,64}-spellcheck-word")
         
-        print(Sys.time())
-        print("remove non ASCII: [[:space:]]+[a-zA-Z]*([^A-Za-z \\d[:punct:]]+[a-zA-Z]*)+")
-        replaced <- stri_replace_all(replaced, "", regex = "[[:space:]]+[a-zA-Z]*([^A-Za-z \\d[:punct:]]+[a-zA-Z]*)+")
+        #         print(Sys.time())
+        #         print("remove non ASCII: [[:space:]]+[a-zA-Z]*([^A-Za-z \\d[:punct:]]+[a-zA-Z]*)+")
+        #         replaced <- stri_replace_all(replaced, "", regex = "[[:space:]]+[a-zA-Z]*([^A-Za-z \\d[:punct:]]+[a-zA-Z]*)+")
         # replaced <- stri_replace_all(replaced, "", regex = "[[:space:]]+[a-zA-Z]*([^A-Za-z \\d\"\\.!,\\(\\)\\?\\-']+[a-zA-Z]*)+")
         
         print(Sys.time())
@@ -198,12 +198,12 @@ preproces_data <- function(lines){
         # tokenise to sentences
         replaced <- unlist(tokenize(replaced, what = "sentence"))
         print(Sys.time())
-        #         print("replace punctuation")
-        #         replaced <- stri_replace_all(replaced, "", regex = "[[:punct:]]+")
-        #         print(Sys.time())
+        print("replace non word\\space\\punct with space")
+        replaced <- stri_replace_all(replaced, " ", regex = "[_[^a-zA-Z\\s']]+")
+        print(Sys.time())
         #         print("replace non ASCII again")
         #         replaced <- stri_replace_all(replaced, "", regex = "[[:space:]]+[a-zA-Z]*([^A-Za-z \\d[:punct:]]+[a-zA-Z]*)+")
-        #         print(Sys.time())
+        # print(Sys.time())
         print(cat("sentences length: ", length(replaced)))
         print("head for sentences:")
         print(head(replaced, 10))
@@ -284,9 +284,10 @@ read_batched_wfm <- function(prefix){
             dt <- list()
             sapply(ng_bloks, function(block){
                 files_in_block <- grep(block, files, value = T)
+                print(paste("readfile:", files_in_block[1], "to block:", block))
                 dt_in_blok <- readRDS(files_in_block[1])
                 sapply(files_in_block[2:length(files_in_block)], function(file){
-                    print(paste("readfile: ", file))
+                    print(paste("readfile:", file, "to block:", block))
                     dt_in_blok <<- merge_word_fm(dt_in_blok, readRDS(file))
                 })
                 dt[[block]] <<- dt_in_blok
@@ -358,6 +359,3 @@ read_file <- function(file){
     close(con)
     res
 }
-
-
-

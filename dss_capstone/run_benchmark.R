@@ -1,4 +1,7 @@
 
+setwd("../dsci-benchmark/")
+
+source("../dsci-benchmark/benchmark.R")
 
 m_predict <- function(phrase){
     res <- predict_backoff(dtl, phrase
