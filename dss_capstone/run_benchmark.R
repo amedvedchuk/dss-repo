@@ -4,7 +4,7 @@ setwd("../dsci-benchmark/")
 source("../dsci-benchmark/benchmark.R")
 
 m_predict <- function(phrase){
-    res <- predict_backoff(dtl, phrase
+    res <- predict_backoff(dtl2, phrase
                     ,non_stop = F
                     ,show_last = 3
                     ,verbose = F

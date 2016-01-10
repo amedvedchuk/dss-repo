@@ -11,7 +11,7 @@ predict_backoff <- function(dl, phrase,
                             non_stop = F, 
                             is_hash = FALSE,
                             verbose = T,
-                            simple_out = T,
+                            simple_out = F,
                             candidates = c()){
     # tokens <- unlist(tokenize(tolower("After years of work Semmi was vey tired"), removeNumbers = TRUE, removeTwitter = TRUE, ngrams = 3))
     
