@@ -6,7 +6,7 @@ total2 <- total[round(runif(n = length(total)*0.3, min=1, max=length(total)))]
 rm(total2)
 
 lines <- readLines("tags.txt")
-stri_replace_all(lines[1:10], "", regex = "[›—’‘“]+|(&?amp;)+|(&?lt;?)+|(&?gt;)+|class=\"[^\"]*\"|style=\"[^\"]*\"|background:[^\"]*\"|[/;]*span|goog.{1,64}-spellcheck-word")
+stri_replace_all(lines[1:10], "", regex = "[?????]+|(&?amp;)+|(&?lt;?)+|(&?gt;)+|class=\"[^\"]*\"|style=\"[^\"]*\"|background:[^\"]*\"|[/;]*span|goog.{1,64}-spellcheck-word")
 lines[9]
 replaced
 
@@ -43,7 +43,13 @@ lines[1]
 
 stri_match_all(lines[1:3], regex="[a-zA-Z]*([^A-Za-z \\d\\.!,\\(\\)\\?\\-']+[a-zA-Z]*)+")
 unlist(stri_match_all(lines[1:1000], regex="[[:space:]]+[a-zA-Z]*([^A-Za-z \\d\"\\.!,\\(\\)\\?\\-']+[a-zA-Z]*)+"))
-unlist(stri_match_all(lines[1:1000], regex="[[:space:]]+[a-zA-Z]*([^A-Za-z \\d[:punct:]]+[a-zA-Z]*)+"))
+
+unlist(stri_match_all(total[1:1000], regex="[[:space:]]+[a-zA-Z]*([^A-Za-z \\d[:punct:]]+[a-zA-Z]*)+"))
+x <- unlist(stri_match_first(total[1:1000], regex="[_[^\\w\\s[:punct:]]]+")); x[!is.na(x)]
+x <- unlist(stri_match_first(dtl$dt2[5638500:5638517]$prefix, regex="[^a-zA-Z0-9\\s']+")); x[!is.na(x)]
+
+
+
 unlist(stri_match_all(lines[1:1000], regex="[[:punct:]]+"))
 unlist(stri_match_all(total[300:500], regex="(&?amp;)+|(&?lt;)+|(&?gt;)+|class=\"[^\"]*\"|style=\"[^\"]*\""))
 

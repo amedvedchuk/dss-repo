@@ -7,25 +7,43 @@ total <- c(read_file("final/en_US/en_US.blogs.txt"),
            read_file("final/en_US/en_US.news.txt"),
            read_file("final/en_US/en_US.twitter.txt"))
 
+total <- sample(total, length(total)*0.3)
+
 make_ngrams_batch(nbatches = 5, total, ngram = c(1:4))
 
 
-ngb <- read_batched_wfm("wfm_ng._2016-01-05_22")
+# ngb <- read_batched_wfm("wfm_ng._2016-01-10")
+# # is_hash = FALSE 
+# make_table_batch(nbatches = 5, ngb$ng1, nlength = 1)
+# make_table_batch(nbatches = 5, ngb$ng2, nlength = 2)
+# make_table_batch(nbatches = 5, ngb$ng3, nlength = 3)
+# make_table_batch(nbatches = 5, ngb$ng4, nlength = 4)
+
+# ngb <- 
 # is_hash = FALSE 
-make_table_batch(nbatches = 5, ngb$ng1, nlength = 1)
-make_table_batch(nbatches = 5, ngb$ng2, nlength = 2)
-make_table_batch(nbatches = 5, ngb$ng3, nlength = 3)
-make_table_batch(nbatches = 5, ngb$ng4, nlength = 4)
+make_table_batch(nbatches = 5, read_batched_wfm("wfm_ng1_2016-01-10"), nlength = 1)
+make_table_batch(nbatches = 5, read_batched_wfm("wfm_ng2_2016-01-10"), nlength = 2)
+make_table_batch(nbatches = 5, read_batched_wfm("wfm_ng3_2016-01-10"), nlength = 3)
+make_table_batch(nbatches = 5, read_batched_wfm("wfm_ng4_2016-01-10"), nlength = 4)
+
 
 dtl <- list(
-    dt1 = read_batched_table("dt_nl1_2016-01-05"),
-    dt2 = read_batched_table("dt_nl2_2016-01-05"),
-    dt3 = read_batched_table("dt_nl3_2016-01-05"),
-    dt4 = read_batched_table("dt_nl4_2016-01-05")
+    dt1 = read_batched_table("dt_nl1_2016-01-10"),
+    dt2 = read_batched_table("dt_nl2_2016-01-10"),
+    dt3 = read_batched_table("dt_nl3_2016-01-10"),
+    dt4 = read_batched_table("dt_nl4_2016-01-10")
 )
 
+dtl2 <- list(
+    dt1 = dtl$dt1,
+    dt2 = dtl$dt2[freq>1],
+    dt3 = dtl$dt3[freq>1],
+    dt4 = dtl$dt4[freq>1]
+)
+
+
 # -------------------------------------------------
-saveRDS(dtl, "dtl_first_working_030.rds")
+saveRDS(dtl, "dtl_prepd_030.rds")
 
 dtl$dt1$prefix <- sapply(dtl$dt1$prefix, hash)
 dtl$dt2$prefix <- sapply(dtl$dt2$prefix, hash)
