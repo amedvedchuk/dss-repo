@@ -287,23 +287,24 @@ make_table <- function(ngrams, nlength = 2, is_hash = FALSE){
     to_print <- system.time({
         print("start table preparation...")
         
-        if(nlength > 2){
+        if(nlength > 1){
             splitted <- stri_split_fixed(names(ngrams), pattern = "_", simplify = T)
             ulen <- dim(splitted)[2] 
             print(paste(c("rows", "cols"), dim(splitted), collapse = " "))
-            final_dt <- data.table(prefix = apply(splitted[,1:nlength-1], 1, stri_c, collapse="_"),
-                                   lastw = splitted[,nlength],
-                                   freq = ngrams
-            )
-        } else if (nlength == 2) {
-            splitted <- stri_split_fixed(names(ngrams), pattern = "_", simplify = T)
-            ulen <- dim(splitted)[2] 
-            print(paste(c("rows", "cols"), dim(splitted), collapse = " "))
-            final_dt <- data.table(prefix = splitted[,1],
-                                   lastw = splitted[,nlength],
-                                   freq = ngrams
-            )
-        } else if (nlength == 1) {
+            
+            if(nlength == 2){
+                final_dt <- data.table(prefix = splitted[,1],
+                                       lastw = splitted[,2],
+                                       freq = ngrams
+                )
+            } else {
+                final_dt <- data.table(prefix = apply(splitted[,1:nlength-1], 1, stri_c, collapse="_"),
+                                       lastw = splitted[,nlength],
+                                       freq = ngrams
+                )
+            }
+            
+        } else {
             final_dt <- data.table(prefix = names(ngrams),
                                    freq = ngrams
             )
