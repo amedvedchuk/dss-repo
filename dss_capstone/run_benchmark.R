@@ -1,10 +1,13 @@
 
 setwd("../dsci-benchmark/")
+setwd("../../dsci-benchmark/")
+
 
 source("../dsci-benchmark/benchmark.R")
+source("benchmark.R")
 
 m_predict <- function(phrase){
-    res <- predict_backoff(dtl2, phrase
+    res <- predict_backoff(dtl3, phrase
                     ,non_stop = F
                     ,show_last = 3
                     ,verbose = F

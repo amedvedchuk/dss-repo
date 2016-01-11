@@ -21,17 +21,17 @@ make_ngrams_batch(nbatches = 5, total, ngram = c(1:4))
 
 # ngb <- 
 # is_hash = FALSE 
-make_table_batch(nbatches = 5, read_batched_wfm("wfm_ng1_2016-01-10"), nlength = 1)
-make_table_batch(nbatches = 5, read_batched_wfm("wfm_ng2_2016-01-10"), nlength = 2)
-make_table_batch(nbatches = 5, read_batched_wfm("wfm_ng3_2016-01-10"), nlength = 3)
-make_table_batch(nbatches = 5, read_batched_wfm("wfm_ng4_2016-01-10"), nlength = 4)
+make_table_batch(nbatches = 5, read_batched_wfm("wfm_ng1_2016-01-11"), nlength = 1)
+make_table_batch(nbatches = 5, read_batched_wfm("wfm_ng2_2016-01-11"), nlength = 2)
+make_table_batch(nbatches = 5, read_batched_wfm("wfm_ng3_2016-01-11"), nlength = 3)
+make_table_batch(nbatches = 5, read_batched_wfm("wfm_ng4_2016-01-11"), nlength = 4)
 
 
 dtl <- list(
-    dt1 = read_batched_table("dt_nl1_2016-01-10"),
-    dt2 = read_batched_table("dt_nl2_2016-01-10"),
-    dt3 = read_batched_table("dt_nl3_2016-01-10"),
-    dt4 = read_batched_table("dt_nl4_2016-01-10")
+    dt1 = read_batched_table("dt_nl1_2016-01-11"),
+    dt2 = read_batched_table("dt_nl2_2016-01-11"),
+    dt3 = read_batched_table("dt_nl3_2016-01-11"),
+    dt4 = read_batched_table("dt_nl4_2016-01-11")
 )
 
 dtl2 <- list(
@@ -41,15 +41,22 @@ dtl2 <- list(
     dt4 = dtl$dt4[freq>1]
 )
 
+dtl3 <- list(
+    dt1 = dtl$dt1,
+    dt2 = dtl$dt2[freq>2],
+    dt3 = dtl$dt3[freq>3],
+    dt4 = dtl$dt4[freq>4]
+)
 
 # -------------------------------------------------
 saveRDS(dtl, "dtl_prepd_030.rds")
 
-dtl$dt1$prefix <- sapply(dtl$dt1$prefix, hash)
-dtl$dt2$prefix <- sapply(dtl$dt2$prefix, hash)
-dtl$dt3$prefix <- sapply(dtl$dt3$prefix, hash)
-dtl$dt4$prefix <- sapply(dtl$dt4$prefix, hash)
-
+dtlh2 <- list(
+    dt1 <- sapply(dtl2$dt1$prefix, hash),
+    dt2 <- sapply(dtl2$dt2$prefix, hash),
+    dt3 <- sapply(dtl2$dt3$prefix, hash),
+    dt4 <- sapply(dtl2$dt4$prefix, hash)
+)
 
 predict_backoff(dtl, "Go on a romantic date at the")
 # Quiz 3:
