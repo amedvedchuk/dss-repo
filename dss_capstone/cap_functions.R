@@ -36,9 +36,13 @@ predict_backoff <- function(dl, phrase,
         last_ngram
     }
     
-    getAllVariants <- function(dt, last_ngram){
+    getAllVariants <- function(dt, last_ngram, dt_cnt = 1){
         variants <- dt[prefix == last_ngram]
-        variants <- variants[order(variants$freq, decreasing = T),]
+        
+        variants$l_freq <- dl$dt1[variants$lastw]$freq
+        variants$prob <- variants$l_freq*100/dt_cnt
+        
+        variants <- variants[order(variants$freq, variants$l_freq, decreasing = T),]
         m_cat("found variants:", nrow(variants), "\n")
         if(length(candidates)>0) {
             variants <- variants[lastw %in% candidates]
@@ -89,7 +93,7 @@ predict_backoff <- function(dl, phrase,
         return(make_out(variants))
     } else {
         # return("the")
-        return(make_out(dtl$dt1[order(dtl$dt1$freq, decreasing = T)][1:show_last]))
+        return(make_out(dl$dt1[order(dl$dt1$freq, decreasing = T)][1:show_last]))
     }
     
 }

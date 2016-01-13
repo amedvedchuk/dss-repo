@@ -34,6 +34,9 @@ dtl <- list(
     dt4 = read_batched_table("dt_nl4_2016-01-11")
 )
 
+saveRDS(dtl, "dtl_from_2016-01-11.rds")
+dtl <- readRDS("dtl_from_2016-01-11.rds")
+
 dtl2 <- list(
     dt1 = dtl$dt1,
     dt2 = dtl$dt2[freq>1],
@@ -48,15 +51,41 @@ dtl3 <- list(
     dt4 = dtl$dt4[freq>4]
 )
 
+dtl4 <- list(
+    dt1 = dtl$dt1[freq>1],
+    dt2 = dtl$dt2[freq>2],
+    dt3 = dtl$dt3[freq>3],
+    dt4 = dtl$dt4[freq>4]
+)
+
+dtl4$dt1_cnt = sum(dtl4$dt1$freq)
+dtl4$dt2_cnt = sum(dtl4$dt2$freq)
+dtl4$dt3_cnt = sum(dtl4$dt3$freq)
+dtl4$dt4_cnt = sum(dtl4$dt4$freq)
+
+
+saveRDS(dtl4, "dtl4_from_2016-01-11.rds")
+dtl4 <- readRDS("dtl4_from_2016-01-11.rds")
+
+
+dtl5 <- list(
+    dt1 = dtl$dt1[freq>2],
+    dt2 = dtl$dt2[freq>3],
+    dt3 = dtl$dt3[freq>4],
+    dt4 = dtl$dt4[freq>5]
+)
+
 # -------------------------------------------------
 saveRDS(dtl, "dtl_prepd_030.rds")
 
-dtlh2 <- list(
-    dt1 <- sapply(dtl2$dt1$prefix, hash),
-    dt2 <- sapply(dtl2$dt2$prefix, hash),
-    dt3 <- sapply(dtl2$dt3$prefix, hash),
-    dt4 <- sapply(dtl2$dt4$prefix, hash)
-)
+dtlh4 <- dtl4
+# dtlh4$dt1$prefix <- sapply(dtl4$dt1$prefix, hash),
+dtlh4$dt2$prefix <- sapply(dtl4$dt2$prefix, hash)
+dtlh4$dt3$prefix <- sapply(dtl4$dt3$prefix, hash)
+dtlh4$dt4$prefix <- sapply(dtl4$dt4$prefix, hash)
+
+saveRDS(dtl, "dtlh4_from_2016-01-11.rds")
+
 
 predict_backoff(dtl, "Go on a romantic date at the")
 # Quiz 3:
