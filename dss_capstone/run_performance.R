@@ -33,6 +33,10 @@ dtl <- list(
     dt3 = read_batched_table("dt_nl3_2016-01-11"),
     dt4 = read_batched_table("dt_nl4_2016-01-11")
 )
+dtl$dt1_cnt = sum(dtl$dt1$freq)
+dtl$dt2_cnt = sum(dtl$dt2$freq)
+dtl$dt3_cnt = sum(dtl$dt3$freq)
+dtl$dt4_cnt = sum(dtl$dt4$freq)
 
 saveRDS(dtl, "dtl_from_2016-01-11.rds")
 dtl <- readRDS("dtl_from_2016-01-11.rds")
@@ -63,6 +67,11 @@ dtl4$dt2_cnt = sum(dtl4$dt2$freq)
 dtl4$dt3_cnt = sum(dtl4$dt3$freq)
 dtl4$dt4_cnt = sum(dtl4$dt4$freq)
 
+# may be we need to calculate probability on basic full data
+dtl4$dt1_cnt = sum(dtl$dt1$freq)
+dtl4$dt2_cnt = sum(dtl$dt2$freq)
+dtl4$dt3_cnt = sum(dtl$dt3$freq)
+dtl4$dt4_cnt = sum(dtl$dt4$freq)
 
 saveRDS(dtl4, "dtl4_from_2016-01-11.rds")
 dtl4 <- readRDS("dtl4_from_2016-01-11.rds")

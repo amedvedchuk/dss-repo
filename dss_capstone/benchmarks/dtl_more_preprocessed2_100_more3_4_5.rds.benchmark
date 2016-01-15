@@ -1,0 +1,17 @@
+Overall top-3 score:     19.36 %
+Overall top-1 precision: 15.13 %
+Overall top-3 precision: 22.98 %
+Average runtime:         20.30 msec
+Number of predictions:   28464
+Total memory used:       7814.05 MB
+
+Dataset details
+ Dataset "blogs" (599 lines, 14587 words, hash 14b3c593e543eb8b2932cf00b646ed653e336897a03c82098b725e6e1f9b7aa2)
+  Score: 17.84 %, Top-1 precision: 13.47 %, Top-3 precision: 21.63 %
+ Dataset "tweets" (793 lines, 14071 words, hash 7fa3bf921c393fe7009bc60971b2bb8396414e7602bb4f409bed78c7192c30f4)
+  Score: 20.87 %, Top-1 precision: 16.78 %, Top-3 precision: 24.32 %
+
+
+R version 3.2.2 (2015-08-14), platform x86_64-w64-mingw32/x64 (64-bit)
+Attached non-base packages:   digest (v0.6.8), dplyr (v0.4.3), hashr (v0.1.0), data.table (v1.9.6), stringi (v1.0-1), quanteda (v0.9.0-1)
+Unattached non-base packages: Rcpp (v0.12.2), lattice (v0.20-33), assertthat (v0.1), chron (v2.3-47), grid (v3.2.2), R6 (v2.1.1), DBI (v0.3.1), magrittr (v1.5), ca (v0.58), Matrix (v1.2-2), tools (v3.2.2), compiler (v3.2.2), parallel (v3.2.2)

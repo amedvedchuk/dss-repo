@@ -12,7 +12,10 @@ predict_backoff <- function(dl, phrase,
                             is_hash = FALSE,
                             verbose = T,
                             simple_out = F,
-                            candidates = c()){
+                            candidates = c(),
+                            prob_weights = c(0.4, 0.4, 1),
+                            order_res  = c("nlength", "freq", "l_freq")
+){
     # tokens <- unlist(tokenize(tolower("After years of work Semmi was vey tired"), removeNumbers = TRUE, removeTwitter = TRUE, ngrams = 3))
     
     m_cat <- create_cat(verbose)
@@ -36,31 +39,59 @@ predict_backoff <- function(dl, phrase,
         last_ngram
     }
     
-    getAllVariants <- function(dt, last_ngram, dt_cnt = 1){
+    getAllVariants <- function(dt, nlength, dt_cnt = 1){
+        
+        last_ngram <- getLastNgram(nlength)
+        
         variants <- dt[prefix == last_ngram]
         
         variants$l_freq <- dl$dt1[variants$lastw]$freq
-        variants$prob <- variants$l_freq*100/dt_cnt
+        variants$prob <- variants$freq*100/dt_cnt
+        variants$prob_w <- prod(prob_weights[length(prob_weights):nlength]) * variants$prob
+        variants$weight <- variants$prob_w/variants$prob
+        variants$nlength <- nlength
         
-        variants <- variants[order(variants$freq, variants$l_freq, decreasing = T),]
+        # variants <- variants[order(variants$freq, variants$l_freq, decreasing = T),]
+        # setorderv(variants, order_res, order = -1)
+        # setorderv(res, order_res, rep(-1, length(order_res)))
+        
+        
         m_cat("found variants:", nrow(variants), "\n")
         if(length(candidates)>0) {
             variants <- variants[lastw %in% candidates]
         }
-        if(nrow(variants) > show_last){
-            variants <- variants[1:show_last,]
-        }
+#         if(nrow(variants) > show_last){
+#             variants <- variants[1:show_last,]
+#         }
         # print(variants)
         variants
     }
     
     make_out <- function(res){
+        
+        # print(res)
+#         
+#         print("ncol res: ")
+#         print(ncol(res))
+        
+        if(ncol(res)>2){
+            # setorderv(res, order_res, rep(-1, length(order_res)))
+            setorderv(res, order_res, order = -1)
+            
+        }
+
+        if(nrow(res) > show_last){
+            res <- res[1:show_last,]
+        }
+        
+        # print(res)
+        
         if(simple_out){
             if(ncol(res)==2){
                 unlist(res$prefix)
-            }else(
+            }else{
                 unlist(res$lastw)
-            )
+            }
         } else {
             res
         }
@@ -69,25 +100,25 @@ predict_backoff <- function(dl, phrase,
     # to_print <- system.time({
     m_cat("start to predict, showlast = ", show_last, "\n", sep= "")
     
-    last_ngram <- getLastNgram(3)
     
-    variants <- getAllVariants(dl$dt4, last_ngram)
     
-    if(nrow(variants)>0 && !non_stop){
-        return(make_out(variants))
-    }
-    
-    last_ngram <- getLastNgram(2)
-    
-    variants <- rbind(variants, getAllVariants(dl$dt3, last_ngram))
+    variants <- getAllVariants(dl$dt4, 3, dt_cnt = dl$dt4_cnt)
     
     if(nrow(variants)>0 && !non_stop){
         return(make_out(variants))
     }
     
-    last_ngram <- getLastNgram(1)
+    # last_ngram <- getLastNgram(2)
     
-    variants <- rbind(variants, getAllVariants(dl$dt2, last_ngram))
+    variants <- rbind(variants, getAllVariants(dl$dt3, 2, dt_cnt = dl$dt3_cnt))
+    
+    if(nrow(variants)>0 && !non_stop){
+        return(make_out(variants))
+    }
+    
+    # last_ngram <- getLastNgram(1)
+    
+    variants <- rbind(variants, getAllVariants(dl$dt2, 1, dt_cnt = dl$dt2_cnt))
     
     if(nrow(variants)>0){
         return(make_out(variants))
