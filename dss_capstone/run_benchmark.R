@@ -20,6 +20,9 @@ m_predict <- function(phrase){
     res
 }
 
+# for l_freq test case:
+# "this is your chance to"
+
 m_predict("When you breathe, I want to be the air for you. I'll be there for you, I'd live and I'd")
 predict_backoff(dtl4, "When you breathe, I want to be the air for you. I'll be there for you, I'd live and I'd", non_stop = T)
 

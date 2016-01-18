@@ -20,6 +20,8 @@ shinyServer(function(input, output, session) {
     
     predicted <- reactive({predict_backoff(dtl4, input$phrase, simple_out = F, show_last = input$show_last)})   
     
+    output$nrows <- reactive(nrow(predicted()))
+    
     output$details <- renderDataTable({
         # predict_backoff(dtl4, newdata(),simple_out = F, show_last = 3)
         predicted()

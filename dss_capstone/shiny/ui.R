@@ -4,8 +4,7 @@ shinyUI(fluidPage(
     
     tags$head(tags$style("#wordLinks{color: orange;
                                  font-size: 30px;
-                                font-style: bold;}"
-    )
+                                font-style: bold;}")
     ),
     
     headerPanel("Natural language prediction tool"),
@@ -41,38 +40,25 @@ shinyUI(fluidPage(
     ),
     
     fluidRow(
-        column(6,
-               hr(), 
+        
         # dataTableOutput("details")
         # uiOutput("advanced")
         conditionalPanel("input.isAdvanced == true", 
-
-                                dataTableOutput("details"))
-                         # ,
-#                          column(6, 
-#                                 # conditionalPanel("output.predict_nrows",
-#                                     p("Advanced mode. In table below you can find additional information about prediction result. ")
-#                                 # )
-#                          )
-                                
+                         column(6,
+                                hr(), 
+                                dataTableOutput("details")),
+                         column(6, 
+                                p("Advanced mode. In table below you can find additional information about prediction result."),
+                                p("Table cintains searching result by last n-gram where n is from 4 to 1."),
+                                p(strong("Feild description:")),
+                                p(strong("prefix")," - ngram prefix from language model. Word count in prefix is between 3 and 1"),
+                                p(strong("lastw"), " - last word of ngram"),
+                                p(strong("freq"), " - frequancy of ngram including last word"),
+                                p(strong("l_freq"), " - last word own frequency"),
+                                p(strong("nlength"), " - count of word in prefix")
+                         )
+                         
         )
     )
-    #     hr(),
-    #     p("Press 'Predict!' button to make prediction by the model from your parameters. Prediction result will be in right bottom corner of page."),
-    #     h3('Results of prediction'),
-    #     fluidRow(
-    #         column( 1,
-    #                 actionButton('predict','Predict!')
-    #         ),
-    #         column( 6, 
-    #                 h4('You entered'),
-    #                 verbatimTextOutput("inputValue")
-    #         ),
-    #         column( 5, 
-    #                 h4('Which resulted in a prediction of '),
-    #                 verbatimTextOutput("prediction")
-    #         )
-    #     ),
-    #     p("Note: Sepal.Width and Sepal.Length hold constantly = 0 as they do not affect the model.")
 ))
 
