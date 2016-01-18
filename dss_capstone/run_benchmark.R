@@ -8,14 +8,14 @@ source("benchmark.R")
 
 m_predict <- function(phrase){
     res <- predict_backoff(dtl4, phrase
-                    ,non_stop = T
+                    ,non_stop = F
                     ,show_last = 3
                     ,verbose = F
                     ,is_hash = F
                     ,simple_out = T
                     # ,order_res = c("prob_w", "l_freq")
                     # ,order_res = c("freq", "l_freq")
-                    # ,prob_weights = c(0.1, 0.1, 1)
+                    # ,prob_weights = c(0.005, 0.005, 1)
                     )                  
     res
 }
@@ -24,8 +24,10 @@ m_predict("When you breathe, I want to be the air for you. I'll be there for you
 predict_backoff(dtl4, "When you breathe, I want to be the air for you. I'll be there for you, I'd live and I'd", non_stop = T)
 
 predict_backoff(dtl4, "I'd live and I'd", non_stop = F, order_res = c("prob_w", "l_freq"))
-predict_backoff(dtl4, "Go on a romantic date at the", non_stop = F, order_res = c("freq", "l_freq"))
-predict_backoff(dtl4, "might exists in", non_stop = T, order_res = c("freq", "l_freq"), simple_out = F)
+predict_backoff(dtl4, "Go on a romantic date at the", non_stop = T, order_res = c("prob_w", "l_freq"), prob_weights = c(0.01, 0.01, 1))
+predict_backoff(dtl4, "might exists in", non_stop = T, order_res = c("prob_w", "l_freq"), simple_out = F, show_last = 10)
+predict_backoff(dtl4, "", non_stop = T, order_res = c("prob_w", "l_freq"), simple_out = F, show_last = 10)$lastw[2]
+
 
 m_predict("Go on a romantic date at the")
 

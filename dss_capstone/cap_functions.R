@@ -46,9 +46,9 @@ predict_backoff <- function(dl, phrase,
         variants <- dt[prefix == last_ngram]
         
         variants$l_freq <- dl$dt1[variants$lastw]$freq
-        variants$prob <- variants$freq*100/dt_cnt
-        variants$prob_w <- prod(prob_weights[length(prob_weights):nlength]) * variants$prob
-        variants$weight <- variants$prob_w/variants$prob
+        #         variants$prob <- variants$freq*100/dt_cnt
+        #         variants$prob_w <- prod(prob_weights[length(prob_weights):nlength]) * variants$prob
+        #         variants$weight <- variants$prob_w/variants$prob
         variants$nlength <- nlength
         
         # variants <- variants[order(variants$freq, variants$l_freq, decreasing = T),]
@@ -60,9 +60,9 @@ predict_backoff <- function(dl, phrase,
         if(length(candidates)>0) {
             variants <- variants[lastw %in% candidates]
         }
-#         if(nrow(variants) > show_last){
-#             variants <- variants[1:show_last,]
-#         }
+        #         if(nrow(variants) > show_last){
+        #             variants <- variants[1:show_last,]
+        #         }
         # print(variants)
         variants
     }
@@ -70,16 +70,16 @@ predict_backoff <- function(dl, phrase,
     make_out <- function(res){
         
         # print(res)
-#         
-#         print("ncol res: ")
-#         print(ncol(res))
+        #         
+        #         print("ncol res: ")
+        #         print(ncol(res))
         
         if(ncol(res)>2){
             # setorderv(res, order_res, rep(-1, length(order_res)))
             setorderv(res, order_res, order = -1)
             
         }
-
+        
         if(nrow(res) > show_last){
             res <- res[1:show_last,]
         }
@@ -87,11 +87,11 @@ predict_backoff <- function(dl, phrase,
         # print(res)
         
         if(simple_out){
-            if(ncol(res)==2){
-                unlist(res$prefix)
-            }else{
-                unlist(res$lastw)
-            }
+            #             if(ncol(res)==2){
+            #                 unlist(res$prefix)
+            #             }else{
+            unlist(res$lastw)
+            # }
         } else {
             res
         }
@@ -368,7 +368,7 @@ make_table <- function(ngrams, nlength = 2, is_hash = FALSE){
             }
             
         } else {
-            final_dt <- data.table(prefix = names(ngrams),
+            final_dt <- data.table(lastw = names(ngrams),
                                    freq = ngrams
             )
         }
