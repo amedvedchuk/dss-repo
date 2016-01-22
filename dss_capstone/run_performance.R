@@ -27,6 +27,18 @@ make_table_batch(nbatches = 5, read_batched_wfm("wfm_ng3_2016-01-11"), nlength =
 make_table_batch(nbatches = 5, read_batched_wfm("wfm_ng4_2016-01-11"), nlength = 4)
 
 
+make_ngrams_batch(nbatches = 5, total, ngram = 5)
+make_table_batch(nbatches = 5, read_batched_wfm("wfm_ng5_2016-01-20"), nlength = 5)
+dt5 = read_batched_table("dt_nl5_2016-01-20")
+dt5_ <- dt5[freq>5]
+
+object.size(dt5[freq>5])/1024/1024
+
+dtl4 <- readRDS("shiny/dtl4_from_2016-01-11_ng1_with_lastw.rds")
+dtl4$dt5 <- dt5[freq>1]
+dtl4$dt5_cnt = sum(dt5$freq)
+
+
 dtl <- list(
     dt1 = read_batched_table("dt_nl1_2016-01-11"),
     dt2 = read_batched_table("dt_nl2_2016-01-11"),

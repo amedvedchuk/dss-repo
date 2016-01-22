@@ -14,8 +14,7 @@ predict_backoff <- function(dl, phrase,
                             simple_out = F,
                             candidates = c(),
                             prob_weights = c(0.4, 0.4, 1),
-                            order_res  = c("nlength", "freq", "l_freq"),
-                            max_ng = 5
+                            order_res  = c("nlength", "freq", "l_freq")
 ){
     # tokens <- unlist(tokenize(tolower("After years of work Semmi was vey tired"), removeNumbers = TRUE, removeTwitter = TRUE, ngrams = 3))
     
@@ -70,18 +69,29 @@ predict_backoff <- function(dl, phrase,
     
     make_out <- function(res){
         
+        # print(res)
+        #         
+        #         print("ncol res: ")
+        #         print(ncol(res))
         
         if(ncol(res)>2){
             # setorderv(res, order_res, rep(-1, length(order_res)))
             setorderv(res, order_res, order = -1)
+            
         }
         
         if(nrow(res) > show_last){
             res <- res[1:show_last,]
         }
         
+        # print(res)
+        
         if(simple_out){
+            #             if(ncol(res)==2){
+            #                 unlist(res$prefix)
+            #             }else{
             unlist(res$lastw)
+            # }
         } else {
             res
         }
@@ -90,41 +100,25 @@ predict_backoff <- function(dl, phrase,
     # to_print <- system.time({
     m_cat("start to predict, showlast = ", show_last, "\n", sep= "")
     
-    variants <- data.table()
     
-    for(idx in max_ng:2){
-        v <- getAllVariants(
-            dl[[paste("dt", idx, sep="")]], 
-            idx-1, 
-            dt_cnt = dl[[paste("dt", idx, "_cnt", sep="")]]
-        )
-        variants <- rbind(variants, v)
-        
-        if(nrow(variants)>0 && !non_stop){
-            return(make_out(variants))
-        } 
+    
+    variants <- getAllVariants(dl$dt4, 3, dt_cnt = dl$dt4_cnt)
+    
+    if(nrow(variants)>0 && !non_stop){
+        return(make_out(variants))
     }
-        
     
-#     variants <- rbind(variants, getAllVariants(dl$dt5, 4, dt_cnt = dl$dt5_cnt))
-#     
-#     if(nrow(variants)>0 && !non_stop){
-#         return(make_out(variants))
-#     }
-#     
-#     variants <- rbind(variants, getAllVariants(dl$dt4, 3, dt_cnt = dl$dt4_cnt))
-#     
-#     if(nrow(variants)>0 && !non_stop){
-#         return(make_out(variants))
-#     }
-#     
-#     variants <- rbind(variants, getAllVariants(dl$dt3, 2, dt_cnt = dl$dt3_cnt))
-#     
-#     if(nrow(variants)>0 && !non_stop){
-#         return(make_out(variants))
-#     }
-#     
-#     variants <- rbind(variants, getAllVariants(dl$dt2, 1, dt_cnt = dl$dt2_cnt))
+    # last_ngram <- getLastNgram(2)
+    
+    variants <- rbind(variants, getAllVariants(dl$dt3, 2, dt_cnt = dl$dt3_cnt))
+    
+    if(nrow(variants)>0 && !non_stop){
+        return(make_out(variants))
+    }
+    
+    # last_ngram <- getLastNgram(1)
+    
+    variants <- rbind(variants, getAllVariants(dl$dt2, 1, dt_cnt = dl$dt2_cnt))
     
     if(nrow(variants)>0){
         return(make_out(variants))

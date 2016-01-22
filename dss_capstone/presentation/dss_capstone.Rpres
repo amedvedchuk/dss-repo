@@ -1,0 +1,83 @@
+<style>
+.reveal h1, .reveal h2, .reveal h3 {
+  word-wrap: normal;
+  -moz-hyphens: none;
+}
+.small-code pre code {
+  font-size: 1em;
+}
+.footer {
+    color: black; 
+    position: 
+    fixed; 
+    top: 65%;
+    text-align:left; 
+    width:100%;
+}
+</style>
+
+Next word prediction application
+========================================================
+author: Anatolii Medvedchuk
+date: 21.01.2016
+width: 1280
+height: 800
+font-family: 'Helvetica'
+
+
+
+
+DSS Capstone Project
+
+<small>[more detail about DSS](https://www.coursera.org/specializations/jhu-data-science)</small>
+
+
+Owerview
+========================================================
+The goal of this project is to build application for next word prediction by user input prhase using Natural Language Processing techniques.
+Data used for model training is from [HC corpora](http://www.corpora.heliohost.org). Only english files was used (blogs, news and tweets) with total size 800 MB.
+
+```{r, echo=FALSE}
+kable(read.table("counts.txt", col.names = c("lines_cnt", "words_cnt", "max_len", "file_name")), 
+      caption = "Basic information about data files", 
+      format = "html")
+```
+Ngram model with N from 4 to 1 is trained on full data set and after that shrinked to resonable size.
+
+[Quanteda](https://github.com/kbenoit/quanteda) package was used for tokenisation and Document Frequancy Matrix (DFM) calculation.
+
+Model training
+========================================================
+<small><div class="footer"><b>Note!</b> Due to data size it was not possible to make memory and CPU expencive operations on whole data (on regular laptop with 8GB of RAM). So data was divided in <b>n</b> pieces and then each step of training was performed for each data piece and result was written as file. Practice go as expected that calculation itself (for DFM, tokenisation, etc.) need more memory than resulting dataset. In such case it was possible to read from file all pieces of result into one data.table object. Size of final object containing 4 data tables was about 6 GB. After applying filtering for ngrams with low frequency size was reduced to 250MB. <br/><b>Interestingly:</b> after size reduction model accuracy becomes even better.</div></small>
+
+<small>The goal of model training is to get 4 tables for nrgam lengths from 4 to 1 contains colmns:
+
+- **prefix** - ngram prefix (length = N-1)
+- **lastw** - last (N-th) word of ngram
+- **freq** - ngram frequency
+
+For N=1 result table does not contains **lastw**.</small>
+
+***
+**Training alghorithm**
+<small>
+- Read data and tokenize to sentences (to be shure that ngramn will not overlap between sentences)
+- Clean result by regexp
+- Make DFM for ngrams from 4 to 1
+- Prepare 4 data tables (size near 6 GB)
+- Shrink data where **freq** is < N (size become 250MB)</small>
+
+Prediction alghorithm
+========================================================
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+
+Application description
+========================================================
+
+```{r, echo=FALSE}
+plot(cars)
+```
