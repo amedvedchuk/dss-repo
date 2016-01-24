@@ -48,7 +48,7 @@ Ngram model with N from 4 to 1 is trained on full data set and after that shrink
 
 Model training
 ========================================================
-<small><div class="footer"><b>Note!</b> Due to data size it was not possible to make memory and CPU expencive operations on whole data (on regular laptop with 8GB of RAM). So data was divided in <b>n</b> pieces and then each step of training was performed for each data piece and result was written as file. Practice go as expected that calculation itself (for DFM, tokenisation, etc.) need more memory than resulting dataset. In such case it was possible to read from file all pieces of result into one data.table object. Size of final object containing 4 data tables was about 6 GB. After applying filtering for ngrams with low frequency size was reduced to 250MB. <br/><b>Interestingly:</b> after size reduction model accuracy becomes even better.</div></small>
+<small><div class="footer"><b>Note!</b> Due to data size it was not possible to make memory and CPU expencive operations on whole data (on regular laptop with 8GB of RAM). So data was divided in <b>n</b> pieces and then each step of training was performed for each data piece and result was written as file. Practice go as expected that calculation itself (for DFM, tokenisation, etc.) need more memory than resulting dataset. In such case it was possible to read from file all pieces of result into one data.table object. Size of final object containing 4 data tables was about 6 GB. After applying filtering for ngrams with low frequency size was reduced to 250MB. <br/><b>Interestingly:</b> after size reduction model accuracy by [Foffani](https://github.com/hfoffani/dsci-benchmark) benchmark becomes even better.</div></small>
 
 <small>The goal of model training is to get 4 tables for nrgam lengths from 4 to 1 contains colmns:
 
@@ -69,15 +69,35 @@ For N=1 result table does not contains **lastw**.</small>
 
 Prediction alghorithm
 ========================================================
+left: 75%
 
-```{r, echo=FALSE}
-plot(cars)
-```
+Prediction function flow (takes trained model and user phrase):
+
+- <small>1. Preprocess user input (remove numbers, twitter, punctuation, garbage)</small>
+- <small>2. Loop **i** from 4 to 2 over ngram tables (it was analysed that nore than 4gram does not significantly improve accuracy, but affect model size)</small>
+- <small>3. Get last **(i-1)-gram** from input phrase (tokenize to ngram with quanteda package and take last one) </small>
+- <small>4. Search in **i-gram** table by **prefix** (**(i-1)-gram**). I.e. search in 4-gram table by 3-gram prefix</small>
+- <small>5. If results found then order by **freq** and return. Othervise decrement **i** and proceed from step 3.</small>
+- <small>6. Return top unigrams (reaching this piont means we did not found variants in 4,3,2-grams so just return N most frequent words)</small>
+
+<small>Prediction accuracy by [Hernán Martínez Foffani](https://class.coursera.org/dsscapstone-006/forum/thread?thread_id=54) benchmark:
+top-3 score:     **19.44%**; 
+top-1 precision: **15.26%**; 
+top-3 precision: **23.02%**</small>
+
+***
+
+<img src="dss_capstone_diagram.png" alt="sdfsdfsdf" style="background-color:transparent; border:0px; box-shadow:none;"></img>
+
 
 
 Application description
 ========================================================
 
-```{r, echo=FALSE}
-plot(cars)
-```
+Developed [application](https://medved.shinyapps.io/typePredictor/) trying to predict next word by entered english phrase (phrase can be empty as well). Controls are next:
+- **Predict word count** - word count to predict. Default is 3. In red prediction bar not more than 10 results will be displayed due to usability reasons. If you specifies word count more than 10 all other results can be observed in Advanced table.
+- **Input phrase** - type your text here. Predicted words will appears below.
+- **Prediction** - predicted words. It implemented as links, so you can click on word your prefer and it will be appended to your text.
+- **Advdnced** - checkbox for advanced mode activation. If applied then full table with predicted result will be shown.
+
+**Note:** Please wait near 20 seconds during application first loading. It should initialise data from file to memory. After loading prediction will work fast. 

@@ -1,6 +1,6 @@
 
 library(shiny)
-# source("cap_functions.R")
+source("cap_functions.R")
 
 MAX_LINKS = 10
 
@@ -16,7 +16,7 @@ getMaxLinks <- function(len, show_last){
     min(MAX_LINKS, len, show_last)
 }
 
-# dtl4 <- readRDS("dtl4_from_2016-01-11_ng1_with_lastw.rds")
+dtl4 <- readRDS("dtl4_from_2016-01-11_ng1_with_lastw.rds")
 
 shinyServer(function(input, output, session) {
     
