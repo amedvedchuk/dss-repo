@@ -1,0 +1,2 @@
+"time"	"method"	"train"	"testing"	"validation"	"runTime"	"train_cols"	"train_rows"	"test_rows"	"val_rows"	"result"
+"2015-12-04 15:40:39"	"rf"	0.6566774208975	0.659700553032687	0.663337459871168	416.7	93	10142	111205	47659	"SUCCESS"

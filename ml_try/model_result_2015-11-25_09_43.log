@@ -1,0 +1,2 @@
+"time"	"method"	"train"	"testing"	"validation"	"runTime"	"train_cols"	"train_rows"	"test_rows"	"val_rows"
+"2015-11-25 09:48:42"	"AdaBag"	0.613587707615419	0.606276696191718	0.604607734111081	310.9	21	10142	111205	47659

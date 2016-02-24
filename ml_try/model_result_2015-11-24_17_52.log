@@ -1,0 +1,2 @@
+"time"	"method"	"train"	"testing"	"validation"	"runTime"	"train_cols"	"train_rows"	"test_rows"	"val_rows"
+"2015-11-24 17:52:32"	"LogitBoost"	0.591993924745955	0.589694707971764	0.589668268322877	15.7	21	10142	111205	47659

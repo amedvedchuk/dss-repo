@@ -1,0 +1,87 @@
+              
+> filter(nz, nzv == T)
+  freqRatio percentUnique zeroVar  nzv                       colName
+1  22.91820    0.00118339   FALSE TRUE                 TARIFF_CHANGE
+2 224.84759    0.00355017   FALSE TRUE                    COMPLAINTS
+3  70.36243    0.00236678   FALSE TRUE        CREDIT_TRANSFER_STATUS
+4  21.70306    7.20033608   FALSE TRUE OMO_OUT_CALLS_COUNT_SLOPE_NAT
+5  69.81680    1.11948688   FALSE TRUE                     DATA_ARMU
+6 328.54419    1.61296049   FALSE TRUE              ONNET_VOICE_ARMU
+7  31.40761    2.39991480   FALSE TRUE               PSTN_VOICE_ARMU              
+
+[1] "reduce correlated variables:"
+ [1] "MOBILITY_CITY"               "REF_SPEND_SPEED_75_3M"       "AVG_DAYS_ACT_ALL_6"          "AVG_DAYS_ACT_SUCC_6"         "CHURNERS_ALL"               
+ [6] "DAYS_ACT_SUCC_1"             "DAYS_INACT_ALL_1"            "TOP_CONTACTS_ALL"            "TOP_CONTACTS_MOC"            "KYIVSTAR_DIFF_A_INC_1M"     
+[11] "MTS_DIFF_A_INC_1M"           "ONNET_DIFF_A_INC_1M"         "RUS_PSTN_DIFF_B_OUT_1M"      "AVG_OMO_INC_MOU_6M"          "INT_CALLS_FLAG"             
+[16] "OMO_INC_MOU_SLOPE_NATIONAL"  "ONNET_COUNT_CALLS_OUT_RATIO" "OMO_OUT_MOU_SLOPE_NATIONAL"  "ONNET_COUNT_CALLS_INC_RATIO" "ONNET_MOU_OUT_RATIO"        
+[21] "MAIN_CHARGE_6M_CFVAR"        "NTL_PSTN_DIFF_B_OUT_6M"     
+
+
+varImp(readRDS("rf_0.06_log.rds"))
+                             Overall
+AVG_ONNET_INC_MOU_6M          100.00
+AVG_ONNET_INC_COUNT_CALLS_6M   53.88
+DAYS_SINCE_LAST_REF            46.54
+ONNET_DIFF_B_OUT_6M            45.23
+TENURE                         43.43
+DAYS_INACT_MAX                 37.21
+AVG_ONNET_OUT_MOU_6M           35.47
+LAC_CI_COUNT                   34.10
+REF_SPEND_SPEED_75_12M         32.54
+REF_SPEND_SPEED_95_12M         31.73
+ONNET_DIFF_A_INC_6M            24.61
+AVG_ONNET_OUT_COUNT_CALLS_6M   23.38
+AVG_SMS_3M                     22.70
+AVG_OMO_INC_MOU_6M             22.62
+MAIN_CHARGE_6M_CFVAR           22.34
+AVG_REFILL_AMOUNT_6M           21.02
+AVG_BALANCE_BEFORE_REF_6M      19.68
+REFILL_RATIO                   19.62
+AVG_OMO_INC_COUNT_CALLS_6M     18.60
+ONNET_INC_MOU_SLOPE            17.39
+
+ only 20 most important variables shown (out of 92)
+
+                             Overall
+AVG_ONNET_INC_MOU_6M          100.00
+AVG_ONNET_INC_COUNT_CALLS_6M   63.43
+TENURE                         49.05
+DAYS_SINCE_LAST_REF            48.01
+DAYS_INACT_MAX                 38.75
+ONNET_DIFF_B_OUT_6M            37.59
+AVG_ONNET_OUT_MOU_6M           37.27
+LAC_CI_COUNT                   35.27
+REF_SPEND_SPEED_75_12M         32.67
+REF_SPEND_SPEED_95_12M         29.73
+AVG_BALANCE_BEFORE_REF_6M      25.10
+AVG_ONNET_OUT_COUNT_CALLS_6M   24.97
+REFILL_RATIO                   24.51
+ONNET_DIFF_A_INC_6M            24.35
+AVG_DAYS_BETW_REF_6M           23.90
+ONNET_DIFF_B_OUT_1M            22.08
+AVG_REFILL_AMOUNT_6M           21.96
+AVG_OMO_INC_COUNT_CALLS_6M     21.84
+AVG_SMS_3M                     20.79
+ONNET_INC_MOU_SLOPE            20.60
+
+ missed
+                        cols missed
+1  AVG_BALANCE_BEFORE_REF_1M  65334 - to knn 
+2       AVG_REFILL_AMOUNT_1M  65284 - to knn
+3             REFILL_FREQ_1M  65284
+4      REF_SHARE_SPEND_75_3M  41855
+5      REF_SHARE_SPEND_95_3M  41855
+6  AVG_BALANCE_BEFORE_REF_6M  26331
+7       AVG_DAYS_BETW_REF_6M  26310
+8       AVG_REFILL_AMOUNT_6M  26310
+9             REFILL_FREQ_6M  26310
+10              REFILL_RATIO  26310
+11     REF_SPEND_SPEED_95_3M   9036
+12    REF_SHARE_SPEND_75_12M   7236
+13    REF_SHARE_SPEND_95_12M   7236
+14    REF_SPEND_SPEED_95_12M   4602
+15       DAYS_SINCE_LAST_REF   3938
+16     REF_SPEND_SPEED_75_3M   3142
+17    REF_SPEND_SPEED_75_12M   1498
+18            DAYS_INACT_MAX   1071
+19     AVG_DAYS_INACT_SUCC_6     35

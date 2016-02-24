@@ -1,0 +1,2 @@
+"time"	"method"	"train"	"testing"	"validation"	"runTime"	"train_cols"	"train_rows"	"test_rows"	"val_rows"
+"2015-11-24 17:59:56"	"plr"	0.6569712577596	0.655698934400432	0.65828070249061	38.2	21	10142	111205	47659

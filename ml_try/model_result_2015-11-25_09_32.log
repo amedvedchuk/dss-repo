@@ -1,0 +1,2 @@
+"time"	"method"	"train"	"testing"	"validation"	"runTime"	"train_cols"	"train_rows"	"test_rows"	"val_rows"
+"2015-11-25 09:42:08"	"nodeHarvest"	0.62295467711139	0.61821860527854	0.619484252711975	553.4	21	10142	111205	47659

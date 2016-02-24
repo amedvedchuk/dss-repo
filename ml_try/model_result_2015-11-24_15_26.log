@@ -1,0 +1,2 @@
+"time"	"method"	"train"	"testing"	"validation"	"runTime"	"train_cols"	"train_rows"	"test_rows"	"val_rows"
+"2015-11-24 15:44:06"	"AdaBoost.M1"	0.651844548876346	0.653891461714851	0.652825279590424	1077.6	21	10142	111205	47659
