@@ -119,6 +119,15 @@ preLog <- function(data){
   data
 }
 
+preLog_dset <- function(dsets){
+  print("preLog_dset: start")
+  dsets$training <- preLog(dsets$training)
+  dsets$training <- preLog(dsets$testing)
+  dsets$training <- preLog(dsets$validation)
+  print("preLog_dset: stop")
+  dsets
+}
+
 makeParts_006 <- function(data) {
   print("makeParts_006: start")
   inTrain <- createDataPartition(y=data$SEX, p = 0.06, list=F)
@@ -168,15 +177,16 @@ runScenario <- function(...){
   # lapply(list(...), function(FUN){FUN(data)})
 }
 
-testMethods <- function(dsets, saveModels=F, methods){
+testMethods <- function(dsets, saveModels = F, methods){
   
-  res <- data.frame(stringsAsFactors = F)
+  # res <- data.frame(stringsAsFactors = F)
+  # res <- list()
   
   file_name <- paste("model_result_",format(Sys.time(), "%Y-%m-%d_%H_%M"), ".log", sep = "")
   first <- TRUE
   print(file_name)
   
-  laply(methods, function(mt){
+  finalRes <- laply(methods, function(mt){
     start <- currentTimeMillis.System()
     
     fit <- NULL
@@ -227,11 +237,17 @@ testMethods <- function(dsets, saveModels=F, methods){
     }
     print("------------------------------------------------")
     if(saveModels){
-      cfres$models[[mt]] <- fit
+      cfres$model$fit <- fit
     }
-    res <- rbind(res, cfres)
+    # res <- rbind(res, cfres)
+    # res[[mt]] <- cfres
+    cfres
     
-    res
+    # res
     
   })
+  
+  dimnames(finalRes)[[1]] <- methods
+  finalRes  
+  # res
 }
