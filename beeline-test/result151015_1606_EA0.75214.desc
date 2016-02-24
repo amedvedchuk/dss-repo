@@ -1,0 +1,446 @@
+dim(datasets): 
+            nrow ncol NAsCnt
+beeData    50000   63  10407
+training   35003   44      0
+testing    10502   44      0
+validation  4495   44      0
+final_test 50000   44      0
+
+imputingInfo: 
+          ds   imMetod
+1   training bagImpute
+2    testing bagImpute
+3 validation bagImpute
+4 final_test bagImpute
+
+TRAINING vars: 
+ [1] "x6"  "x7"  "x8"  "x13" "x23" "x24" "x25" "x26" "x27" "x28" "x29" "x30" "x31" "x32" "x33" "x34" "x35" "x36" "x37" "x38" "x39" "x40" "x41" "x42" "x43" "x44"
+[27] "x45" "x46" "x47" "x48" "x49" "x50" "x51" "x52" "x53" "x54" "x55" "x56" "x57" "x58" "x59" "x60" "x61" "y"  
+
+Ensemble accuracy on train: 
+     Model  Accuracy
+1      gbm 0.7554782
+2   Boruta  0.750907
+3       rf 0.7505931
+4   ranger 0.7504503
+5     wsrf  0.749507
+6 gcvEarth 0.7484227
+
+Ensembling result: 
+     gbm Boruta    rf ranger  wsrf gcvEarth       gbm    Boruta        rf    ranger      wsrf  gcvEarth combOwnAcc   testAcc    valAcc
+55  TRUE  FALSE FALSE   TRUE FALSE    FALSE 0.7520472        NA        NA 0.7493811        NA        NA  0.7507148 0.7546182 0.7523915
+7   TRUE  FALSE FALSE   TRUE  TRUE     TRUE 0.7520472        NA        NA 0.7493811 0.7456675 0.7474767  0.7514744 0.7553799 0.7519466
+47  TRUE  FALSE FALSE  FALSE  TRUE    FALSE 0.7520472        NA        NA        NA 0.7456675        NA  0.7493847 0.7531899 0.7517241
+51  TRUE  FALSE  TRUE   TRUE FALSE    FALSE 0.7520472        NA 0.7490002 0.7493811        NA        NA  0.7516667  0.753666 0.7517241
+36 FALSE  FALSE  TRUE   TRUE  TRUE    FALSE        NA        NA 0.7488098 0.7493811 0.7456675        NA  0.7505239 0.7521424 0.7515017
+35  TRUE  FALSE  TRUE   TRUE  TRUE    FALSE 0.7520472        NA 0.7488098 0.7493811 0.7456675        NA  0.7504314 0.7541421 0.7512792
+40 FALSE  FALSE FALSE   TRUE  TRUE    FALSE        NA        NA        NA 0.7493811 0.7456675        NA  0.7493794 0.7523329 0.7512792
+56 FALSE  FALSE FALSE   TRUE FALSE    FALSE        NA        NA        NA 0.7493811        NA        NA  0.7504503 0.7493811 0.7512792
+23  TRUE  FALSE FALSE   TRUE FALSE     TRUE 0.7520472        NA        NA 0.7493811        NA 0.7474767  0.7511911 0.7557608 0.7510567
+39  TRUE  FALSE FALSE   TRUE  TRUE    FALSE 0.7520472        NA        NA 0.7493811 0.7456675        NA  0.7517621 0.7545229 0.7510567
+34 FALSE   TRUE  TRUE   TRUE  TRUE    FALSE        NA  0.748905 0.7486193 0.7493811 0.7456675        NA  0.7510982 0.7537612 0.7508343
+37  TRUE   TRUE FALSE   TRUE  TRUE    FALSE 0.7520472 0.7490002        NA 0.7493811 0.7456675        NA  0.7521415 0.7545229 0.7508343
+53  TRUE   TRUE FALSE   TRUE FALSE    FALSE 0.7520472  0.748905        NA 0.7493811        NA        NA  0.7517612 0.7553799 0.7508343
+63  TRUE  FALSE FALSE  FALSE FALSE    FALSE 0.7520472        NA        NA        NA        NA        NA  0.7554782 0.7520472 0.7508343
+21  TRUE   TRUE FALSE   TRUE FALSE     TRUE 0.7520472  0.748905        NA 0.7493811        NA 0.7474767   0.752147 0.7555704 0.7506118
+33  TRUE   TRUE  TRUE   TRUE  TRUE    FALSE 0.7520472  0.748905 0.7487145 0.7493811 0.7456675        NA   0.751287 0.7552847 0.7506118
+61  TRUE   TRUE FALSE  FALSE FALSE    FALSE 0.7520472 0.7490954        NA        NA        NA        NA  0.7499487 0.7544277 0.7506118
+38 FALSE   TRUE FALSE   TRUE  TRUE    FALSE        NA  0.748905        NA 0.7493811 0.7456675        NA  0.7513834 0.7527138 0.7503893
+19  TRUE  FALSE  TRUE   TRUE FALSE     TRUE 0.7520472        NA 0.7488098 0.7493811        NA 0.7474767  0.7501445 0.7546182 0.7501669
+1   TRUE   TRUE  TRUE   TRUE  TRUE     TRUE 0.7520472 0.7490002 0.7487145 0.7493811 0.7456675 0.7474767  0.7509076 0.7562369 0.7499444
+3   TRUE  FALSE  TRUE   TRUE  TRUE     TRUE 0.7520472        NA 0.7487145 0.7493811 0.7456675 0.7474767  0.7510957  0.754999 0.7499444
+5   TRUE   TRUE FALSE   TRUE  TRUE     TRUE 0.7520472  0.748905        NA 0.7493811 0.7456675 0.7474767  0.7520529 0.7564273 0.7499444
+13  TRUE   TRUE FALSE  FALSE  TRUE     TRUE 0.7520472 0.7490002        NA        NA 0.7456675 0.7474767  0.7514744 0.7545229 0.7499444
+49  TRUE   TRUE  TRUE   TRUE FALSE    FALSE 0.7520472 0.7490954  0.748905 0.7493811        NA        NA  0.7512865 0.7541421 0.7499444
+54 FALSE   TRUE FALSE   TRUE FALSE    FALSE        NA  0.748905        NA 0.7493811        NA        NA  0.7518571 0.7524281 0.7499444
+2  FALSE   TRUE  TRUE   TRUE  TRUE     TRUE        NA 0.7487145 0.7487145 0.7493811 0.7456675 0.7474767  0.7509084 0.7547134 0.7497219
+11  TRUE  FALSE  TRUE  FALSE  TRUE     TRUE 0.7520472        NA  0.748905        NA 0.7456675 0.7474767  0.7513812 0.7556656 0.7497219
+46 FALSE   TRUE FALSE  FALSE  TRUE    FALSE        NA 0.7491906        NA        NA 0.7456675        NA  0.7490938 0.7511902 0.7497219
+52 FALSE  FALSE  TRUE   TRUE FALSE    FALSE        NA        NA  0.748905 0.7493811        NA        NA  0.7479475 0.7509046 0.7497219
+17  TRUE   TRUE  TRUE   TRUE FALSE     TRUE 0.7520472 0.7488098 0.7488098 0.7493811        NA 0.7474767  0.7510014 0.7559512 0.7494994
+29  TRUE   TRUE FALSE  FALSE FALSE     TRUE 0.7520472 0.7490002        NA        NA        NA 0.7474767  0.7487126 0.7549038 0.7494994
+31  TRUE  FALSE FALSE  FALSE FALSE     TRUE 0.7520472        NA        NA        NA        NA 0.7474767  0.7496642 0.7541421 0.7494994
+41  TRUE   TRUE  TRUE  FALSE  TRUE    FALSE 0.7520472 0.7488098 0.7488098        NA 0.7456675        NA  0.7505193 0.7546182 0.7494994
+42 FALSE   TRUE  TRUE  FALSE  TRUE    FALSE        NA 0.7487145 0.7488098        NA 0.7456675        NA  0.7506198 0.7555704 0.7492770
+43  TRUE  FALSE  TRUE  FALSE  TRUE    FALSE 0.7520472        NA 0.7488098        NA 0.7456675        NA  0.7512868 0.7537612 0.7492770
+50 FALSE   TRUE  TRUE   TRUE FALSE    FALSE        NA 0.7490954 0.7486193 0.7493811        NA        NA  0.7511914 0.7565226 0.7492770
+15  TRUE  FALSE FALSE  FALSE  TRUE     TRUE 0.7520472        NA        NA        NA 0.7456675 0.7474767  0.7510958 0.7532851 0.7490545
+57  TRUE   TRUE  TRUE  FALSE FALSE    FALSE 0.7520472 0.7490954 0.7488098        NA        NA        NA  0.7525248 0.7544277 0.7490545
+62 FALSE   TRUE FALSE  FALSE FALSE    FALSE        NA 0.7490954        NA        NA        NA        NA   0.750907 0.7490954 0.7490545
+9   TRUE   TRUE  TRUE  FALSE  TRUE     TRUE 0.7520472 0.7488098 0.7487145        NA 0.7456675 0.7474767  0.7512841 0.7563321 0.7488320
+48 FALSE  FALSE FALSE  FALSE  TRUE    FALSE        NA        NA        NA        NA 0.7456675        NA   0.749507 0.7456675 0.7488320
+44 FALSE  FALSE  TRUE  FALSE  TRUE    FALSE        NA        NA 0.7487145        NA 0.7456675        NA  0.7478607 0.7513807 0.7486096
+45  TRUE   TRUE FALSE  FALSE  TRUE    FALSE 0.7520472 0.7490002        NA        NA 0.7456675        NA  0.7507156  0.753666 0.7486096
+4  FALSE  FALSE  TRUE   TRUE  TRUE     TRUE        NA        NA 0.7490002 0.7493811 0.7456675 0.7474767  0.7509003 0.7549038 0.7483871
+6  FALSE   TRUE FALSE   TRUE  TRUE     TRUE        NA 0.7490002        NA 0.7493811 0.7456675 0.7474767  0.7508067 0.7544277 0.7483871
+20 FALSE  FALSE  TRUE   TRUE FALSE     TRUE        NA        NA 0.7490002 0.7493811        NA 0.7474767  0.7510018 0.7530946 0.7481646
+27  TRUE  FALSE  TRUE  FALSE FALSE     TRUE 0.7520472        NA 0.7485241        NA        NA 0.7474767    0.75062  0.754999 0.7481646
+59  TRUE  FALSE  TRUE  FALSE FALSE    FALSE 0.7520472        NA 0.7485241        NA        NA        NA  0.7524252 0.7546182 0.7479422
+60 FALSE  FALSE  TRUE  FALSE FALSE    FALSE        NA        NA  0.748905        NA        NA        NA  0.7505931  0.748905 0.7479422
+8  FALSE  FALSE FALSE   TRUE  TRUE     TRUE        NA        NA        NA 0.7493811 0.7456675 0.7474767  0.7515722 0.7538564 0.7474972
+14 FALSE   TRUE FALSE  FALSE  TRUE     TRUE        NA 0.7488098        NA        NA 0.7456675 0.7474767  0.7496682 0.7530946 0.7474972
+22 FALSE   TRUE FALSE   TRUE FALSE     TRUE        NA 0.7490954        NA 0.7493811        NA 0.7474767  0.7515722 0.7538564 0.7474972
+25  TRUE   TRUE  TRUE  FALSE FALSE     TRUE 0.7520472 0.7488098 0.7488098        NA        NA 0.7474767   0.751095 0.7548086 0.7474972
+58 FALSE   TRUE  TRUE  FALSE FALSE    FALSE        NA 0.7488098 0.7490002        NA        NA        NA  0.7512823 0.7529994 0.7474972
+16 FALSE  FALSE FALSE  FALSE  TRUE     TRUE        NA        NA        NA        NA 0.7456675 0.7474767  0.7487132 0.7515711 0.7468298
+18 FALSE   TRUE  TRUE   TRUE FALSE     TRUE        NA 0.7488098 0.7485241 0.7493811        NA 0.7474767  0.7510907 0.7541421 0.7468298
+10 FALSE   TRUE  TRUE  FALSE  TRUE     TRUE        NA 0.7490002 0.7488098        NA 0.7456675 0.7474767  0.7508085 0.7538564 0.7463849
+26 FALSE   TRUE  TRUE  FALSE FALSE     TRUE        NA 0.7488098 0.7486193        NA        NA 0.7474767  0.7515715 0.7530946 0.7452725
+12 FALSE  FALSE  TRUE  FALSE  TRUE     TRUE        NA        NA 0.7485241        NA 0.7456675 0.7474767  0.7501454 0.7539516 0.7448276
+24 FALSE  FALSE FALSE   TRUE FALSE     TRUE        NA        NA        NA 0.7493811        NA 0.7474767  0.7503286 0.7532851 0.7448276
+28 FALSE  FALSE  TRUE  FALSE FALSE     TRUE        NA        NA 0.7486193        NA        NA 0.7474767  0.7487146 0.7535707 0.7439377
+30 FALSE   TRUE FALSE  FALSE FALSE     TRUE        NA 0.7490954        NA        NA        NA 0.7474767  0.7510012 0.7523329 0.7423804
+32 FALSE  FALSE FALSE  FALSE FALSE     TRUE        NA        NA        NA        NA        NA 0.7474767  0.7484227 0.7474767 0.7417130
+
+======= Ensamble FIT calls: ========
+[[1]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "gbm", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 3), tuneGrid = expand.grid(interaction.depth = 2, 
+        n.trees = 150, shrinkage = 0.1, n.minobsinnode = 10))
+
+[[2]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "Boruta", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5), tuneGrid = data.frame(mtry = 18))
+
+[[3]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "rf", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5), tuneGrid = expand.grid(mtry = c(22, 18, 
+        43)))
+
+[[4]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "ranger", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5))
+
+[[5]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "wsrf", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5), tuneGrid = expand.grid(mtry = c(2, 22, 18, 
+        43)))
+
+[[6]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "gcvEarth", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5), tuneGrid = expand.grid(degree = 1:3))
+
+
+======= Combined FIT calls: ========
+[[1]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[2]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[3]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[4]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[5]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[6]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[7]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[8]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "ranger", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5))
+
+[[9]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[10]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[11]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[12]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[13]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[14]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "gbm", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 3), tuneGrid = expand.grid(interaction.depth = 2, 
+        n.trees = 150, shrinkage = 0.1, n.minobsinnode = 10))
+
+[[15]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[16]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[17]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[18]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[19]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[20]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[21]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[22]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[23]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[24]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[25]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[26]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[27]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[28]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[29]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[30]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[31]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[32]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[33]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[34]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[35]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[36]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[37]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[38]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[39]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "Boruta", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5), tuneGrid = data.frame(mtry = 18))
+
+[[40]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[41]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "wsrf", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5), tuneGrid = expand.grid(mtry = c(2, 22, 18, 
+        43)))
+
+[[42]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[43]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[44]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[45]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[46]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[47]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[48]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[49]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "rf", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5), tuneGrid = expand.grid(mtry = c(22, 18, 
+        43)))
+
+[[50]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[51]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[52]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[53]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[54]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[55]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[56]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[57]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[58]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[59]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[60]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[61]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[62]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[63]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "gcvEarth", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5), tuneGrid = expand.grid(degree = 1:3))
+
+======================================
+
+combFitIndex: 
+[1] 12
+
+Predict FIT calls: 
+[[1]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+
+
+ FINAL PREDICTION MODEL SETTINGS: 
+[[1]]
+[[1]]$fit
+Random Forest 
+
+10502 samples
+    4 predictor
+    7 classes: '0', '1', '2', '3', '4', '5', '6' 
+
+No pre-processing
+Resampling: Cross-Validated (5 fold) 
+Summary of sample sizes: 8401, 8401, 8401, 8402, 8403 
+Resampling results across tuning parameters:
+
+  mtry  Accuracy   Kappa      Accuracy SD  Kappa SD   
+   2    0.7521415  0.6687440  0.005231967  0.007082707
+  13    0.7512849  0.6681667  0.004306796  0.005922393
+  24    0.7496659  0.6660633  0.004973307  0.006844357
+
+Accuracy was used to select the optimal model using  the largest value.
+The final value used for the model was mtry = 2. 
+
+[[1]]$usePredv
+[1] TRUE
+
+[[1]]$predvCnames
+[1] "gbm"      "Boruta"   "ranger"   "wsrf"     "y"        "combPred"
+
+
+
+
+predicted df head: 
+   ID y
+1   0 6
+2   1 4
+3   2 2
+4   3 2
+5   4 2
+6   5 3
+7   6 3
+8   7 2
+9   8 4
+10  9 5

@@ -1,0 +1,58 @@
+dim(training): 
+[1] 50000    44
+dim(testing): 
+[1]  0 44
+dim(final_test): 
+[1] 50000    44
+
+imputingInfo: 
+          ds   imMetod
+1   training   na_omit
+2    testing bagImpute
+3   training bagImpute
+4    testing bagImpute
+5   training bagImpute
+6    testing bagImpute
+7 final_test bagImpute
+
+FIT call: 
+train.formula(form = y ~ ., data = training, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 10), tuneGrid = data.frame(mtry = 18))
+
+TRAINING vars: 
+ [1] "x6"  "x7"  "x8"  "x13" "x23" "x24" "x25" "x26" "x27" "x28" "x29" "x30" "x31" "x32" "x33" "x34" "x35" "x36" "x37" "x38"
+[21] "x39" "x40" "x41" "x42" "x43" "x44" "x45" "x46" "x47" "x48" "x49" "x50" "x51" "x52" "x53" "x54" "x55" "x56" "x57" "x58"
+[41] "x59" "x60" "x61" "y"  
+
+
+MODEL SETTINGS: 
+Random Forest 
+
+50000 samples
+   43 predictor
+    7 classes: '0', '1', '2', '3', '4', '5', '6' 
+
+No pre-processing
+Resampling: Cross-Validated (10 fold) 
+Summary of sample sizes: 45001, 45000, 44999, 45000, 44999, 44999, ... 
+Resampling results
+
+  Accuracy   Kappa      Accuracy SD  Kappa SD   
+  0.7523201  0.6691878  0.005217273  0.007007754
+
+Tuning parameter 'mtry' was held constant at a value of 18
+ 
+
+
+predicted df head: 
+   ID y
+1   0 6
+2   1 4
+3   2 2
+4   3 2
+5   4 2
+6   5 3
+7   6 3
+8   7 2
+9   8 4
+10  9 5

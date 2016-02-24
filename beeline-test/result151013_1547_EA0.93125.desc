@@ -1,0 +1,186 @@
+dim(datasets): 
+            nrow ncol NAsCnt
+beeData    50000   63  10407
+training   35003   44      0
+testing    10502   44      0
+validation  4495   44      0
+final_test 50000   44      0
+
+imputingInfo: 
+          ds   imMetod
+1   training bagImpute
+2    testing bagImpute
+3 validation bagImpute
+4 final_test bagImpute
+
+TRAINING vars: 
+ [1] "x6"  "x7"  "x8"  "x13" "x23" "x24" "x25" "x26" "x27" "x28" "x29" "x30" "x31" "x32" "x33" "x34" "x35" "x36" "x37" "x38" "x39" "x40" "x41" "x42" "x43" "x44"
+[27] "x45" "x46" "x47" "x48" "x49" "x50" "x51" "x52" "x53" "x54" "x55" "x56" "x57" "x58" "x59" "x60" "x61" "y"  
+
+Ensemble accuracy on train: 
+   Model  Accuracy
+1 Boruta 0.7579118
+2 AdaBag 0.7480217
+3     rf 0.7507643
+4 rpart2 0.7104534
+
+Ensembling result: 
+   Boruta AdaBag    rf rpart2    Boruta    AdaBag        rf    rpart2 combOwnAcc   testAcc    valAcc
+3    TRUE  FALSE  TRUE   TRUE  0.931156        NA 0.7469054 0.7034851  0.9314419 0.9335365 0.9374861
+1    TRUE   TRUE  TRUE   TRUE  0.931156 0.7460484 0.7469054 0.7034851  0.9321097 0.9357265 0.9361513
+5    TRUE   TRUE FALSE   TRUE 0.9312512 0.7460484        NA 0.7034851  0.9337263 0.9340126 0.9361513
+7    TRUE  FALSE FALSE   TRUE 0.9312512        NA        NA 0.7034851  0.9312514 0.9312512 0.9354839
+11   TRUE  FALSE  TRUE  FALSE 0.9312512        NA 0.7468101        NA  0.9312524 0.9312512 0.9354839
+13   TRUE   TRUE FALSE  FALSE 0.9312512 0.7460484        NA        NA  0.9311547 0.9312512 0.9354839
+15   TRUE  FALSE FALSE  FALSE  0.931156        NA        NA        NA  0.7579118  0.931156 0.9350389
+9    TRUE   TRUE  TRUE  FALSE  0.931156 0.7460484 0.7470006        NA  0.9299182 0.9315369 0.9345940
+10  FALSE   TRUE  TRUE  FALSE        NA 0.7460484 0.7470006        NA  0.7485206 0.7509998 0.7468298
+4   FALSE  FALSE  TRUE   TRUE        NA        NA 0.7468101 0.7034851  0.7460474 0.7470006 0.7466073
+12  FALSE  FALSE  TRUE  FALSE        NA        NA 0.7470006        NA  0.7507643 0.7470006 0.7463849
+14  FALSE   TRUE FALSE  FALSE        NA 0.7460484        NA        NA  0.7480217 0.7460484 0.7457175
+2   FALSE   TRUE  TRUE   TRUE        NA 0.7460484 0.7472862 0.7034851  0.7469044  0.750238 0.7452725
+6   FALSE   TRUE FALSE   TRUE        NA 0.7460484        NA 0.7034851  0.7462397 0.7464293 0.7452725
+8   FALSE  FALSE FALSE   TRUE        NA        NA        NA 0.7034851  0.7104534 0.7034851 0.6969967
+
+======= Ensamble FIT calls: ========
+[[1]]
+train.formula(form = y ~ ., data = training, method = "Boruta", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5), tuneGrid = data.frame(mtry = 18))
+
+[[2]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "AdaBag", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5), tuneGrid = data.frame(maxdepth = 9, mfinal = 150))
+
+[[3]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "rf", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5), tuneGrid = data.frame(mtry = 18))
+
+[[4]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "rpart2", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5), tuneGrid = data.frame(maxdepth = 3:8))
+
+
+======= Combined FIT calls: ========
+[[1]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[2]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[3]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[4]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[5]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[6]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[7]]
+train.formula(form = y ~ ., data = training, method = "Boruta", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5), tuneGrid = data.frame(mtry = 18))
+
+[[8]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[9]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[10]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[11]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "rf", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5), tuneGrid = data.frame(mtry = 18))
+
+[[12]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "AdaBag", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5), tuneGrid = data.frame(maxdepth = 9, mfinal = 150))
+
+[[13]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[14]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+[[15]]
+train.formula(form = y ~ ., data = mmod$datasets$training, method = "rpart2", 
+    trControl = trainControl(method = "cv", verboseIter = T, 
+        number = 5), tuneGrid = data.frame(maxdepth = 3:8))
+
+======================================
+
+combFitIndex: 
+[1] 4
+
+Predict FIT calls: 
+[[1]]
+train.formula(form = y ~ ., data = data, method = "rf", trControl = trainControl(method = "cv", 
+    verboseIter = T, number = 5))
+
+
+
+ FINAL PREDICTION MODEL SETTINGS: 
+[[1]]
+[[1]]$fit
+Random Forest 
+
+10502 samples
+    2 predictor
+    7 classes: '0', '1', '2', '3', '4', '5', '6' 
+
+No pre-processing
+Resampling: Cross-Validated (5 fold) 
+Summary of sample sizes: 8401, 8401, 8401, 8401, 8404 
+Resampling results across tuning parameters:
+
+  mtry  Accuracy   Kappa      Accuracy SD  Kappa SD   
+   2    0.9253480  0.9012058  0.004343907  0.005798957
+   7    0.9312514  0.9091902  0.004519532  0.006015414
+  12    0.9312514  0.9091902  0.004519532  0.006015414
+
+Accuracy was used to select the optimal model using  the largest value.
+The final value used for the model was mtry = 7. 
+
+[[1]]$usePredv
+[1] TRUE
+
+[[1]]$predvCnames
+[1] "Boruta"   "rpart2"   "y"        "combPred"
+
+
+
+
+predicted df head: 
+   ID y
+1   0 6
+2   1 4
+3   2 2
+4   3 2
+5   4 2
+6   5 3
+7   6 3
+8   7 2
+9   8 4
+10  9 5
